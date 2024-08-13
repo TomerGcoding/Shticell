@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Shticell.iml" filepath="$PROJECT_DIR$/Shticell.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShticellEngine/ShticellEngine.iml" filepath="$PROJECT_DIR$/ShticellEngine/ShticellEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShticellUI/ShticellUI.iml" filepath="$PROJECT_DIR$/ShticellUI/ShticellUI.iml" />
     </modules>
   </component>
 </project>
