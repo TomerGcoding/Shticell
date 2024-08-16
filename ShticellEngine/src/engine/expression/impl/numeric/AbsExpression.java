@@ -1,4 +1,4 @@
-package engine.expression.api.impl.numeric;
+package engine.expression.impl.numeric;
 
 import engine.expression.api.Expression;
 import engine.sheet.api.CellType;

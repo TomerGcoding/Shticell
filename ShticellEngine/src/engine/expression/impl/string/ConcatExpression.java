@@ -1,24 +1,23 @@
-package engine.expression.api.impl.numeric;
+package engine.expression.impl.string;
 
 import engine.expression.api.Expression;
 import engine.sheet.api.CellType;
 import engine.sheet.api.EffectiveValue;
 import engine.sheet.impl.EffectiveValueImpl;
 
-public class DivideExpression implements Expression {
+public class ConcatExpression implements Expression {
     private Expression left;
     private Expression right;
-    public DivideExpression(Expression left, Expression right) {
+    public ConcatExpression(Expression left, Expression right) {
         this.left = left;
         this.right = right;
     }
-    @Override
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
         // do some checking... error handling...
-        double result = leftValue.extractValueWithExpectation(Double.class) / rightValue.extractValueWithExpectation(Double.class);
+        String result = leftValue.extractValueWithExpectation(String.class) + rightValue.extractValueWithExpectation(String.class);
 
-        return new EffectiveValueImpl(CellType.NUMERIC, result);
+        return new EffectiveValueImpl(CellType.STRING, result);
     }
 }

@@ -1,4 +1,4 @@
-package engine.expression.api.impl.string;
+package engine.expression.impl.string;
 
 import engine.expression.api.Expression;
 import engine.sheet.api.CellType;

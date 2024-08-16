@@ -24,6 +24,11 @@ public class EffectiveValueImpl implements EffectiveValue {
     }
 
     @Override
+    public String toString() {
+        return value.toString();
+    }
+
+    @Override
     public <T> T extractValueWithExpectation(Class<T> type) {
         if (cellType.isAssignableFrom(type)) {
             return type.cast(value);
