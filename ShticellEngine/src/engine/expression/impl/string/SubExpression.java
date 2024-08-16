@@ -19,8 +19,12 @@ public class SubExpression implements Expression {
         EffectiveValue start = startIndex.eval();
         EffectiveValue end = endIndex.eval();
         // do some checking... error handling...
-        String result = sourceString.extractValueWithExpectation(String.class).substring(
-                start.extractValueWithExpectation(Integer.class),end.extractValueWithExpectation(Integer.class));
+        String result = sourceString
+                .extractValueWithExpectation(String.class)
+                .substring(
+                        (int) Math.floor(start.extractValueWithExpectation(Double.class)), // Ensure start is an int
+                        (int) Math.floor(end.extractValueWithExpectation(Double.class))   // Ensure end is an int
+                );
 
         return new EffectiveValueImpl(CellType.STRING, result);
     }
