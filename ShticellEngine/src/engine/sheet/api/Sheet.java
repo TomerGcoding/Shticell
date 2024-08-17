@@ -11,6 +11,7 @@ public interface Sheet {
     int getVersion();
     Cell getCell(int row, int column);
     void setCell(int row, int column, String value);
+    void setCell(String id, String value);
     String getSheetName();
     Map<Coordinate, Cell> getCells();
     SheetProperties getProperties();

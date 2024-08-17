@@ -6,7 +6,9 @@ import engine.sheet.cell.api.Cell;
 import engine.sheet.cell.impl.CellImpl;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.coordinate.CoordinateFactory;
+import engine.sheet.coordinate.CoordinateFormatter;
 
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,17 +59,26 @@ public class SheetImpl implements Sheet {
     @Override
     public void setCell(int row, int column, String value) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
+        updateCell(coordinate, value);
+    }
+    @Override
+    public void setCell(String cellId, String value) {
+        int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
+        Coordinate coordinate = CoordinateFactory.createCoordinate(idx[0], idx[1]);
+        updateCell(coordinate, value);
+    }
+
+    private void updateCell(Coordinate coordinate, String value) {
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {
-            cell = new CellImpl(row,column,value,currVersion);
-            cell.calculateEffectiveValue();
-            activeCells.put(coordinate,cell);
-        }
-        // if null need to create the cell...
-        else{
-            cell.setCellOriginalValue(value);
-            cell.calculateEffectiveValue();
+            cell = new CellImpl(coordinate, value, currVersion);
+            activeCells.put(coordinate, cell);
+        }//only if "try" went good
+
+        cell.setCellOriginalValue(value);
+        cell.calculateEffectiveValue();
         }
 
     }
+
 }

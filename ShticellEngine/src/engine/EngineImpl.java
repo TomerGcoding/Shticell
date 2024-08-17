@@ -30,7 +30,7 @@ public class EngineImpl implements Engine{
     }
 
     @Override
-    public SheetDTO updateCell(String cellId, String cellValue) {
+    public SheetDTO setCell(String cellId, String cellValue) {
         return null;
     }
 

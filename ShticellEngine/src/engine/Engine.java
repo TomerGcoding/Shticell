@@ -10,7 +10,7 @@ public interface Engine {
 
     CellDTO showCell();
 
-    SheetDTO updateCell(String cellId, String cellValue);
+    SheetDTO setCell(String cellId, String cellValue);
 
     VersionTableDTO showVersionTable();
 

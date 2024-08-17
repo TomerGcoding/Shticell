@@ -20,8 +20,8 @@ public class CellImpl implements Cell {
     private final List<Cell> dependsOn;
     private final List<Cell> influencingOn;
 
-    public CellImpl(int row, int column, String originalValue,int version) {
-        this.coordinate = new CoordinateImpl(row, column);
+    public CellImpl(Coordinate coordinate, String originalValue,int version) {
+        this.coordinate = coordinate;
         this.originalValue = originalValue;
         this.effectiveValue = null;
         this.version = version;
@@ -75,5 +75,13 @@ public class CellImpl implements Cell {
     public List<Cell> getInfluencingOn() {
         return influencingOn;
     }
+
+//    void updateCell(String str)
+//    {
+//        setOriginalValue(str);
+//        calculateEffectiveValue();
+//
+//
+//    }
 
 }
