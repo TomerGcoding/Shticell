@@ -24,23 +24,14 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
-    public int getRowCount() {
-        return properties.numRows;
+    public Map<Coordinate, Cell> getCells() {
+        return activeCells;
     }
 
     @Override
-    public int getColumnCount() {
-        return properties.numCols;
-    }
-
-    @Override
-    public int getColumnWidth() {
-        return properties.colWidth;
-    }
-
-    @Override
-    public int getRowHeight() {
-        return properties.rowHeight;
+    public SheetProperties getProperties()
+    {
+        return properties;
     }
 
     @Override
@@ -76,37 +67,6 @@ public class SheetImpl implements Sheet {
         else{
             cell.setCellOriginalValue(value);
             cell.calculateEffectiveValue();
-        }
-
-    }
-
-    private class SheetProperties {
-        private final int numCols;
-        private final int numRows;
-        private final int colWidth;
-        private final int rowHeight;
-
-        public SheetProperties(int numCols, int numRows, int colWidth, int rowHeight) {
-            this.numCols = numCols;
-            this.numRows = numRows;
-            this.colWidth = colWidth;
-            this.rowHeight = rowHeight;
-        }
-
-        public int getNumCols() {
-            return numCols;
-        }
-
-        public int getNumRows() {
-            return numRows;
-        }
-
-        public int getColWidth() {
-            return colWidth;
-        }
-
-        public int getRowHeight() {
-            return rowHeight;
         }
 
     }

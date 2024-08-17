@@ -3,8 +3,15 @@ package engine;
 import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
 import engine.dto.VersionTableDTO;
+import engine.sheet.api.Sheet;
 
 public class EngineImpl implements Engine{
+    private Sheet sheet = null;
+
+    public EngineImpl(Sheet sheet) {
+        this.sheet = sheet;
+    }
+
     @Override
     public void loadSheetFile(String filePath) {
 
@@ -12,8 +19,9 @@ public class EngineImpl implements Engine{
 
     @Override
     public SheetDTO showSheet() {
-
-        return null;
+        SheetDTO sheetDTO = new SheetDTO(sheet.getCells(),sheet.getVersion(),
+                sheet.getSheetName(),sheet.getProperties());
+        return sheetDTO;
     }
 
     @Override

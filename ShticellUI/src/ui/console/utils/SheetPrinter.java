@@ -1,25 +1,26 @@
+package ui.console.utils;
 
-import engine.sheet.api.Sheet;
+import engine.dto.SheetDTO;
 import engine.sheet.cell.api.Cell;
 
 public class SheetPrinter {
 
-    private final Sheet sheet;
+    private final SheetDTO sheetDTO;
 
-    public SheetPrinter(Sheet sheet) {
-        this.sheet = sheet;
+    public SheetPrinter(SheetDTO sheet) {
+        this.sheetDTO = sheet;
     }
 
     public void printSheet() {
         // Print metadata
-        System.out.println("Sheet Name: " + sheet.getSheetName());
-        System.out.println("Version: " + sheet.getVersion());
+        System.out.println("Sheet Name: " + sheetDTO.getSheetName());
+        System.out.println("Version: " + sheetDTO.getCurrVersion());
         System.out.println();
 
-        int rows = sheet.getRowCount();
-        int columns = sheet.getColumnCount();
-        int columnWidth = sheet.getColumnWidth();
-        int lineWidth = sheet.getRowHeight();
+        int rows = sheetDTO.getProperties().getNumRows();
+        int columns = sheetDTO.getProperties().getNumCols();
+        int columnWidth = sheetDTO.getProperties().getColWidth();
+        int lineWidth = sheetDTO.getProperties().getRowHeight();
 
         // Print column headers (A, B, C, etc.)
         System.out.print("    "); // Initial padding for row numbers
@@ -38,7 +39,7 @@ public class SheetPrinter {
 
             // Print each cell in the row
             for (int col = 0; col < columns; col++) {
-                Cell cell = sheet.getCell(row, col);
+                Cell cell = sheetDTO.getCell(row, col);
                 String value = cell.getEffectiveValue().toString();
                 System.out.print(String.format("%-" + columnWidth + "s", truncateOrPad(value, columnWidth)));
 

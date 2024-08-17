@@ -1,7 +1,5 @@
 package engine;
 
-import comp.sheet.Sheet;
-import comp.sheet.cell.Cell;
 import engine.dto.*;
 
 public interface Engine {
