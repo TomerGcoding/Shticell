@@ -1,7 +1,7 @@
 package engine.expression.api;
 
 
-import engine.sheet.api.EffectiveValue;
+import engine.sheet.cell.api.EffectiveValue;
 
 public interface Expression {
     EffectiveValue eval();

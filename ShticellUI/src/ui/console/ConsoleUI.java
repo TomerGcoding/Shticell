@@ -46,10 +46,16 @@ public class ConsoleUI {
     }
 
     private void handleOption4() {
-        
+        System.out.println("Please choose a cell to update: ");
+        String cell = scanner.nextLine();
+        System.out.println("Please write the new cell value: ");
+        String value = scanner.nextLine();
+        engine.setCell(cell, value);
+        handleOption2();
     }
 
     private void handleOption3() {
+
     }
 
     private void handleOption1() {

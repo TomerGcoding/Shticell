@@ -1,4 +1,5 @@
 package engine.sheet.impl;
+import engine.sheet.coordinate.Coordinate;
 
 public class SheetProperties {
     private final int numCols;
@@ -29,4 +30,10 @@ public class SheetProperties {
         return rowHeight;
     }
 
+    public boolean isCoordinateLegal(Coordinate coordinate) {
+        int row = coordinate.getRow();
+        int column = coordinate.getColumn();
+
+        return row >= 0 && row < numRows && column >= 0 && column < numCols;
+    }
 }

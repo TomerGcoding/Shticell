@@ -2,14 +2,11 @@ package engine.sheet.cell.impl;
 
 import engine.expression.api.Expression;
 import engine.sheet.coordinate.Coordinate;
-import engine.sheet.coordinate.CoordinateImpl;
-import engine.expression.impl.string.UpperCaseExpression;
-import engine.sheet.api.EffectiveValue;
+import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.api.Cell;
 import engine.sheet.utils.FunctionParser;
 
 import java.util.List;
-import java.util.Map;
 
 public class CellImpl implements Cell {
 
@@ -56,8 +53,6 @@ public class CellImpl implements Cell {
         FunctionParser parser = new FunctionParser();
         // first question: what is the generic type of Expression ?
         Expression expression = parser.parseFunction(originalValue);
-
-        // second question: what is the return type of eval() ?
         effectiveValue = expression.eval();
     }
 

@@ -2,7 +2,6 @@ package engine.sheet.api;
 
 import engine.sheet.cell.api.Cell;
 import engine.sheet.coordinate.Coordinate;
-import engine.sheet.impl.SheetImpl;
 import engine.sheet.impl.SheetProperties;
 
 import java.util.Map;

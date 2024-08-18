@@ -1,6 +1,5 @@
 package engine.sheet.impl;
 
-import engine.sheet.api.EffectiveValue;
 import engine.sheet.api.Sheet;
 import engine.sheet.cell.api.Cell;
 import engine.sheet.cell.impl.CellImpl;
@@ -8,7 +7,6 @@ import engine.sheet.coordinate.Coordinate;
 import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
 
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +63,8 @@ public class SheetImpl implements Sheet {
     public void setCell(String cellId, String value) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
         Coordinate coordinate = CoordinateFactory.createCoordinate(idx[0], idx[1]);
+        if (!properties.isCoordinateLegal(coordinate))
+            throw (new IllegalArgumentException("Invalid coordinate"));
         updateCell(coordinate, value);
     }
 
@@ -77,8 +77,7 @@ public class SheetImpl implements Sheet {
 
         cell.setCellOriginalValue(value);
         cell.calculateEffectiveValue();
-        }
-
     }
+
 
 }

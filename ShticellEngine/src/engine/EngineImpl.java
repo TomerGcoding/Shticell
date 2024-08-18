@@ -5,8 +5,12 @@ import engine.dto.SheetDTO;
 import engine.dto.VersionTableDTO;
 import engine.sheet.api.Sheet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EngineImpl implements Engine{
     private Sheet sheet = null;
+    private List<SheetDTO> sheets = new ArrayList<>();
 
     public EngineImpl(Sheet sheet) {
         this.sheet = sheet;
@@ -31,7 +35,20 @@ public class EngineImpl implements Engine{
 
     @Override
     public SheetDTO setCell(String cellId, String cellValue) {
-        return null;
+
+        //just an example of some kind of exception struct
+        try {
+            sheet.setCell(cellId, cellValue);
+            }
+        catch (Exception e) {
+            System.out.println("something went wrong with update the cell, please try again");
+        }
+        finally {
+            System.out.println("we tried to update cell: " + cellId + "with value: " + cellValue);
+        }
+        SheetDTO newSheet = new SheetDTO(sheet.getCells(),sheet.getVersion(), sheet.getSheetName(),sheet.getProperties());
+        sheets.add(newSheet);
+        return newSheet;
     }
 
     @Override

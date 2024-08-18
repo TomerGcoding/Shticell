@@ -25,7 +25,7 @@ public class FunctionParser {
         FUNCTION_FACTORIES.put("MOD", (args) -> new ModuloExpression(args[0], args[1]));
         FUNCTION_FACTORIES.put("POW", (args) -> new PowExpression(args[0], args[1]));
         FUNCTION_FACTORIES.put("ABS", (args) -> new AbsExpression(args[0]));
-        //FUNCTION_FACTORIES.put("REF", (args) -> new RefExpression(args[0]));
+        FUNCTION_FACTORIES.put("REF", (args) -> new RefExpression(args[0], sheet));
         FUNCTION_FACTORIES.put("CONCAT", (args) -> new ConcatExpression(args[0],args[1]));
         FUNCTION_FACTORIES.put("SUB", (args) -> new SubExpression(args[0],args[1],args[2]));
 

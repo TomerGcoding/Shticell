@@ -1,10 +1,9 @@
 package engine.expression.impl.ref;
 
 import engine.expression.api.Expression;
-import engine.sheet.api.CellType;
-import engine.sheet.api.EffectiveValue;
-import engine.sheet.api.Sheet;
-import engine.sheet.impl.EffectiveValueImpl;
+import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.api.EffectiveValue;
+import engine.sheet.cell.impl.EffectiveValueImpl;
 
 public class RefExpression implements Expression {
     private final String cellId;
@@ -14,7 +13,6 @@ public class RefExpression implements Expression {
     }
 
     @Override
-    public EffectiveValue eval() {
-        return new EffectiveValueImpl(CellType.NUMERIC,cellId);
+    public EffectiveValue eval() {return new EffectiveValueImpl(CellType.NUMERIC,cellId);}
     }
 }
