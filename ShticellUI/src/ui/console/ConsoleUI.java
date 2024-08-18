@@ -8,8 +8,8 @@ import ui.console.utils.SheetPrinter;
 import java.util.Scanner;
 
 public class ConsoleUI {
-    private Scanner scanner;
-    private Engine engine;
+    private final Scanner scanner;
+    private final Engine engine;
 
     public ConsoleUI(Engine engine) {
         this.scanner = new Scanner(System.in);
