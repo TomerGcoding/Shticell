@@ -70,7 +70,9 @@ public class ConsoleUI {
 
     private int getUserChoice() {
         System.out.print("Enter your choice: ");
-        return scanner.nextInt();
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        return choice;
     }
 }
 

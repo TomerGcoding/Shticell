@@ -42,6 +42,7 @@ public class EngineImpl implements Engine{
             }
         catch (Exception e) {
             System.out.println("something went wrong with update the cell, please try again");
+            return null;
         }
         finally {
             System.out.println("we tried to update cell: " + cellId + "with value: " + cellValue);
