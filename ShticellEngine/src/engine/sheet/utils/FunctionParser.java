@@ -8,27 +8,37 @@ import engine.expression.impl.ref.RefExpression;
 import engine.expression.impl.string.ConcatExpression;
 import engine.expression.impl.string.StringExpression;
 import engine.expression.impl.string.SubExpression;
-import engine.sheet.cell.api.Cell;
-import engine.sheet.coordinate.Coordinate;
+import engine.sheet.api.Sheet;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 public class FunctionParser {
 
-    private static final Map<String, ExpressionFactory> FUNCTION_FACTORIES = new HashMap<>();
+    private final Sheet sheet;  // Instance variable for Sheet
 
-    static {
-        FUNCTION_FACTORIES.put("PLUS", (args) -> new PlusExpression(args[0], args[1]));
-        FUNCTION_FACTORIES.put("MINUS", (args) -> new MinusExpression(args[0], args[1]));
-        FUNCTION_FACTORIES.put("TIMES", (args) -> new TimesExpression(args[0], args[1]));
-        FUNCTION_FACTORIES.put("DIVIDE", (args) -> new DivideExpression(args[0], args[1]));
-        FUNCTION_FACTORIES.put("MOD", (args) -> new ModuloExpression(args[0], args[1]));
-        FUNCTION_FACTORIES.put("POW", (args) -> new PowExpression(args[0], args[1]));
-        FUNCTION_FACTORIES.put("ABS", (args) -> new AbsExpression(args[0]));
-        FUNCTION_FACTORIES.put("REF", (args) -> new RefExpression(args[0], sheet));
-        FUNCTION_FACTORIES.put("CONCAT", (args) -> new ConcatExpression(args[0],args[1]));
-        FUNCTION_FACTORIES.put("SUB", (args) -> new SubExpression(args[0],args[1],args[2]));
+    // Non-static Map, initialized in the constructor
+    private final Map<String, ExpressionFactory> functionFactories = new HashMap<>();
 
+    public FunctionParser(Sheet sheet) {
+        this.sheet = sheet;
+        initializeFunctionFactories();
+    }
+
+    // Initialize the function factories within the constructor
+    private void initializeFunctionFactories() {
+        functionFactories.put("PLUS", (args) -> new PlusExpression(args[0], args[1]));
+        functionFactories.put("MINUS", (args) -> new MinusExpression(args[0], args[1]));
+        functionFactories.put("TIMES", (args) -> new TimesExpression(args[0], args[1]));
+        functionFactories.put("DIVIDE", (args) -> new DivideExpression(args[0], args[1]));
+        functionFactories.put("MOD", (args) -> new ModuloExpression(args[0], args[1]));
+        functionFactories.put("POW", (args) -> new PowExpression(args[0], args[1]));
+        functionFactories.put("ABS", (args) -> new AbsExpression(args[0]));
+        functionFactories.put("REF", (args) -> new RefExpression(args[0].toString(), sheet));
+        functionFactories.put("CONCAT", (args) -> new ConcatExpression(args[0], args[1]));
+        functionFactories.put("SUB", (args) -> new SubExpression(args[0], args[1], args[2]));
     }
 
     public Expression parseFunction(String input) {
@@ -37,22 +47,20 @@ public class FunctionParser {
         if (input.matches("-?\\d+(\\.\\d+)?")) {
             return new ConstantExpression(Double.parseDouble(input));
         }
-        if(input.equals("TRUE")||input.equals("FALSE")) {
+        if (input.equals("TRUE") || input.equals("FALSE")) {
             return new BooleanExpression(input);
         }
 
         if (input.startsWith("{") && input.endsWith("}")) {
             input = input.substring(1, input.length() - 1).trim();
-        }
-        else{
+        } else {
             return new StringExpression(input);
         }
-
 
         List<String> parts = splitFunctionArguments(input);
 
         String functionName = parts.get(0).trim();
-        ExpressionFactory factory = FUNCTION_FACTORIES.get(functionName);
+        ExpressionFactory factory = functionFactories.get(functionName);
 
         if (factory == null) {
             throw new IllegalArgumentException("Unknown function: " + functionName);

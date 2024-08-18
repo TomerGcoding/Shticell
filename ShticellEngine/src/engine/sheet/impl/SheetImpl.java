@@ -6,6 +6,7 @@ import engine.sheet.cell.impl.CellImpl;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
+import engine.sheet.utils.FunctionParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +30,7 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
-    public SheetProperties getProperties()
-    {
+    public SheetProperties getProperties() {
         return properties;
     }
 
@@ -44,10 +44,9 @@ public class SheetImpl implements Sheet {
         return currVersion;
     }
 
-    public SheetProperties getSheetProperties(){
+    public SheetProperties getSheetProperties() {
         return properties;
     }
-
 
     @Override
     public Cell getCell(int row, int column) {
@@ -59,6 +58,7 @@ public class SheetImpl implements Sheet {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
         updateCell(coordinate, value);
     }
+
     @Override
     public void setCell(String cellId, String value) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
@@ -72,12 +72,28 @@ public class SheetImpl implements Sheet {
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {
             cell = new CellImpl(coordinate, value, currVersion);
-            activeCells.put(coordinate, cell);
-        }//only if "try" went good
-
+        }
         cell.setCellOriginalValue(value);
-        cell.calculateEffectiveValue();
+        try {
+            cell.calculateEffectiveValue(this);
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("couldn't update cell");
+        }
+        activeCells.put(coordinate,cell);
     }
 
+    // Method to get Coordinate from cell ID (like "12B")
+    @Override
+    public Coordinate getCoordinateFromCellId(String cellId) {
+        int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
+        return CoordinateFactory.createCoordinate(idx[0], idx[1]);
+    }
+
+    // Method to retrieve a Cell by Coordinate
+    @Override
+    public Cell getCell(Coordinate coordinate) {
+        return activeCells.get(coordinate);
+    }
 
 }

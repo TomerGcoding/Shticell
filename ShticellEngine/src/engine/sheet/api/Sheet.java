@@ -14,4 +14,6 @@ public interface Sheet {
     String getSheetName();
     Map<Coordinate, Cell> getCells();
     SheetProperties getProperties();
+    Coordinate getCoordinateFromCellId(String cellId);
+    public Cell getCell(Coordinate coordinate);
 }

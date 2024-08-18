@@ -1,6 +1,7 @@
 package engine.sheet.cell.impl;
 
 import engine.expression.api.Expression;
+import engine.sheet.api.Sheet;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.api.Cell;
@@ -46,14 +47,17 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public void calculateEffectiveValue() {
-        // build the expression object out of the original value...
-        // it can be {PLUS, 4, 5} OR {CONCAT, "hello", "world"}
-
-        FunctionParser parser = new FunctionParser();
+    public void calculateEffectiveValue(Sheet sheet) {
+        FunctionParser parser = new FunctionParser(sheet);
         // first question: what is the generic type of Expression ?
         Expression expression = parser.parseFunction(originalValue);
-        effectiveValue = expression.eval();
+        try {
+            effectiveValue = expression.eval();
+        }
+        catch (IllegalArgumentException e) {
+            effectiveValue = null;
+            throw e;
+        }
     }
 
     @Override

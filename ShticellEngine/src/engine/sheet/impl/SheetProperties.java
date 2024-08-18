@@ -7,9 +7,9 @@ public class SheetProperties {
     private final int colWidth;
     private final int rowHeight;
 
-    public SheetProperties(int numCols, int numRows, int colWidth, int rowHeight) {
-        this.numCols = numCols;
+    public SheetProperties(int numRows, int numCols, int rowHeight, int colWidth) {
         this.numRows = numRows;
+        this.numCols = numCols;
         this.colWidth = colWidth;
         this.rowHeight = rowHeight;
     }

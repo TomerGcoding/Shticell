@@ -16,4 +16,7 @@ public class StringExpression implements Expression {
     public EffectiveValue eval() {
         return new EffectiveValueImpl(CellType.STRING, value);
     }
+
+    @Override
+    public String toString() {return value;}
 }
