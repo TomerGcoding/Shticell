@@ -3,7 +3,10 @@ package ui.console;
 import engine.Engine;
 import engine.dto.SheetDTO;
 import jakarta.xml.bind.JAXBException;
-import ui.console.menus.Menu;
+import ui.console.menu.api.MenuItem;
+import ui.console.menu.impl.Menu;
+import ui.console.menu.impl.SimpleActionMenuItem;
+import ui.console.menu.impl.SubMenuItem;
 import ui.console.utils.SheetPrinter;
 
 import java.util.Scanner;
@@ -22,51 +25,41 @@ public class ConsoleUI {
         while (true) {
             mainMenu.display();
             int choice = getUserChoice();
-            if (choice == 6) break;
+            if (choice == 6) break;  // This should ideally be handled as a MenuItem action
             mainMenu.executeOption(choice);
         }
     }
 
-
     private Menu createMainMenu() {
         Menu menu = new Menu("Main Menu");
-        menu.addOption("Load a file", this::handleOption1);
-        menu.addOption("Show spreadsheet", this::handleOption2);
-        menu.addOption("Choose a cell to see it's data", this::handleOption3);
-        menu.addOption("Choose a cell to update", this::handleOption4);
-        menu.addOption("Show versions", this::handleOption5);
-        menu.addOption("Exit", this::handleOption6);
-        // Add more options as needed
+
+        menu.addMenuItem(new SimpleActionMenuItem("Load a file", this::handleOption1));
+        menu.addMenuItem(new SimpleActionMenuItem("Show spreadsheet", this::handleOption2));
+        menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to see its data", this::handleOption3));
+        menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to update", this::handleOption4));
+        menu.addMenuItem(new SimpleActionMenuItem("Show versions", this::handleOption5));
+        menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
+        Menu subMenu = createSubMenu("Save/Load an existing sheet",menu);
+        menu.addMenuItem(new SubMenuItem("Save/Load an existing sheet", subMenu));
+
+        // You can add more options or submenus here
         return menu;
     }
-
-    private void handleOption5() {
+    private Menu createSubMenu(String title,Menu mainMenu) {
+        Menu subMenu = new Menu(title);
+        subMenu.addMenuItem(new SimpleActionMenuItem("Load existing sheet", () -> System.out.println("Sub Option 1 selected")));
+        subMenu.addMenuItem(new SimpleActionMenuItem("Save existing sheet to file ", () -> System.out.println("Sub Option 2 selected")));
+        subMenu.addMenuItem(new SimpleActionMenuItem("Back to Main Menu", () -> mainMenu.display()));
+        return subMenu;
     }
 
-    private void handleOption6() {
-        
-    }
-
-    private void handleOption4() {
-        System.out.println("Please choose a cell to update: ");
-        String cell = scanner.nextLine();
-        System.out.println("Please write the new cell value: ");
-        String value = scanner.nextLine();
-        engine.setCell(cell, value);
-        handleOption2();
-    }
-
-    private void handleOption3() {
-
-    }
-
-    private void handleOption1(){
-        System.out.println("Please enter the full path to the XML file you want to load:  ");
+    private void handleOption1() {
+        System.out.println("Please enter the full path to the XML file you want to load: ");
         String path = scanner.nextLine();
         try {
             engine.loadSheetFile(path);
         } catch (JAXBException e) {
-            throw new RuntimeException(e);
+            System.out.println("Error loading file: " + e.getMessage());
         }
     }
 
@@ -76,11 +69,40 @@ public class ConsoleUI {
         printer.printSheet();
     }
 
+    private void handleOption3() {
+        System.out.println("Please choose a cell to see its data: ");
+        String cell = scanner.nextLine();
+//        String data = engine.getCellData(cell);  // Assuming a method to get cell data
+//        System.out.println("Data in cell " + cell + ": " + data);
+    }
+
+    private void handleOption4() {
+        System.out.println("Please choose a cell to update: ");
+        String cell = scanner.nextLine();
+        System.out.println("Please write the new cell value: ");
+        String value = scanner.nextLine();
+        engine.setCell(cell, value);
+        handleOption2(); // Display the updated spreadsheet
+    }
+
+    private void handleOption5() {
+        System.out.println("Show versions not implemented yet.");
+        // Implement this based on your version control system
+    }
+
+    private void handleExit() {
+        System.out.println("Exiting...");
+    }
+
+    private void handleOption7() {
+        System.out.println("Save/Load an existing sheet not implemented yet.");
+        // Implement your save/load logic here
+    }
+
     private int getUserChoice() {
         System.out.print("Enter your choice: ");
         int choice = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine();  // Consume the newline
         return choice;
     }
 }
-
