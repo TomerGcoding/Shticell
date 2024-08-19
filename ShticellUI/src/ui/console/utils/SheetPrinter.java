@@ -23,9 +23,12 @@ public class SheetPrinter {
         int rowHeight = sheetDTO.getProperties().getRowHeight();
 
         // Print column headers (A, B, C, etc.)
-        System.out.print("    "); // Initial padding for row numbers
+        System.out.print("   "); // Initial padding for row numbers
         for (int col = 0; col < columns; col++) {
-            System.out.print(String.format("%-" + columnWidth + "s", (char) ('A' + col)));
+            String header = String.valueOf((char) ('A' + col));
+            int padding = (columnWidth - header.length())/2 ; // Calculate padding for centering
+            System.out.print(" ".repeat(padding) + header + " ".repeat(columnWidth - header.length() - padding));
+            System.out.print(" ");
         }
         System.out.println();
 
@@ -35,10 +38,10 @@ public class SheetPrinter {
             for (int h = 0; h < rowHeight; h++) {
                 if (h == 0) {
                     // Print row number with two digits on the first row of the block
-                    System.out.print(String.format("%02d", row + 1) + " ");
+                    System.out.print(String.format("%02d", row + 1)+"|");
                 } else {
                     // Print padding for the row number
-                    System.out.print("   ");
+                    System.out.print("  |");
                 }
 
                 // Print each cell in the row
@@ -58,10 +61,10 @@ public class SheetPrinter {
 
                     // Print the value only in the first row of the cell block, padded to the left
                     if (h == 0) {
-                        System.out.print(String.format("%-" + columnWidth + "s", truncatedValue));
+                        System.out.print(String.format("%-" + (columnWidth) + "s", truncatedValue)+"|");
                     } else {
-                        // For other rows in the cell block, print spaces
-                        System.out.print(String.format("%-" + columnWidth + "s", ""));
+                        // For other rows in the cell block, print spaces followed by a pipe
+                        System.out.print(String.format("%-" + (columnWidth) + "s", "") + "|");
                     }
                 }
                 System.out.println();
@@ -77,5 +80,3 @@ public class SheetPrinter {
         }
     }
 }
-
-

@@ -1,10 +1,11 @@
 package engine;
 
 import engine.dto.*;
+import jakarta.xml.bind.JAXBException;
 
 public interface Engine {
 
-    void loadSheetFile(String filePath);
+    void loadSheetFile(String filePath) throws JAXBException;
 
     SheetDTO showSheet();
 

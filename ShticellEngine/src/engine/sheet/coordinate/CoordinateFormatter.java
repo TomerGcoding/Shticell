@@ -10,13 +10,13 @@ public class CoordinateFormatter {
     public static int[] cellIdToIndex(String cellId){
         // Find the point where the numbers end and the letters begin
         int i = 0;
-        while (i < cellId.length() && Character.isDigit(cellId.charAt(i))) {
+        while (i < cellId.length() && Character.isUpperCase(cellId.charAt(i))) {
             i++;
         }
 
         // Split the label into row part and column part
-        String rowPart = cellId.substring(0, i);
-        String columnPart = cellId.substring(i);
+        String columnPart = cellId.substring(0, i);
+        String rowPart = cellId.substring(i);
 
         // Convert the row part to an integer and subtract 1 to make it 0-based
         int rowIndex = Integer.parseInt(rowPart) - 1;
@@ -27,7 +27,7 @@ public class CoordinateFormatter {
         return new int[]{rowIndex, columnIndex};
     }
 
-    private static int getColumnIndex(String columnLabel) {
+    public static int getColumnIndex(String columnLabel) {
         int columnIndex = 0;
 
         for (int i = 0; i < columnLabel.length(); i++) {

@@ -2,6 +2,7 @@ package ui.console;
 
 import engine.Engine;
 import engine.dto.SheetDTO;
+import jakarta.xml.bind.JAXBException;
 import ui.console.menus.Menu;
 import ui.console.utils.SheetPrinter;
 
@@ -17,14 +18,15 @@ public class ConsoleUI {
     }
 
     public void start() {
+        Menu mainMenu = createMainMenu();
         while (true) {
-            Menu mainMenu = createMainMenu();
             mainMenu.display();
             int choice = getUserChoice();
             if (choice == 6) break;
             mainMenu.executeOption(choice);
         }
     }
+
 
     private Menu createMainMenu() {
         Menu menu = new Menu("Main Menu");
@@ -58,8 +60,14 @@ public class ConsoleUI {
 
     }
 
-    private void handleOption1() {
-        engine.loadSheetFile("someString");
+    private void handleOption1(){
+        System.out.println("Please enter the full path to the XML file you want to load:  ");
+        String path = scanner.nextLine();
+        try {
+            engine.loadSheetFile(path);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void handleOption2() {

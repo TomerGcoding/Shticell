@@ -14,14 +14,14 @@ import java.util.Map;
 public class SheetImpl implements Sheet {
 
     private Map<Coordinate, Cell> activeCells;
-    private static int currVersion = 0;
+    private static int currVersion = 1;
     private String sheetName;
     private SheetProperties properties;
 
     public SheetImpl(String sheetName,int rows, int columns,int rowHeight, int columnWidth) {
         this.activeCells = new HashMap<>();
         this.sheetName = sheetName;
-        properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
+        properties = new SheetProperties(rows, columns, columnWidth, rowHeight);
     }
 
     @Override
@@ -34,10 +34,12 @@ public class SheetImpl implements Sheet {
         return properties;
     }
 
+
     @Override
     public String getSheetName() {
         return sheetName;
     }
+
 
     @Override
     public int getVersion() {
