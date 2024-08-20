@@ -5,7 +5,8 @@ import engine.sheet.api.Sheet;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.api.Cell;
-import engine.sheet.utils.FunctionParser;
+import engine.expression.parser.FunctionParser;
+//import engine.sheet.utils.FunctionParser;
 
 import java.util.List;
 
@@ -45,20 +46,29 @@ public class CellImpl implements Cell {
     public EffectiveValue getEffectiveValue() {
         return effectiveValue;
     }
-
     @Override
     public void calculateEffectiveValue(Sheet sheet) {
-        FunctionParser parser = new FunctionParser(sheet);
-        // first question: what is the generic type of Expression ?
-        Expression expression = parser.parseFunction(originalValue);
-        try {
-            effectiveValue = expression.eval();
-        }
-        catch (IllegalArgumentException e) {
-            effectiveValue = null;
-            throw e;
-        }
+        // build the expression object out of the original value...
+        // it can be {PLUS, 4, 5} OR {CONCAT, hello, world}
+        Expression expression = FunctionParser.parseExpression(originalValue, sheet);
+
+        // second question: what is the return type of eval() ?
+        effectiveValue = expression.eval();
     }
+
+//    @Override
+//    public void calculateEffectiveValue(Sheet sheet) {
+//        FunctionParser parser = new FunctionParser(sheet);
+//        // first question: what is the generic type of Expression ?
+//        Expression expression = parser.parseFunction(originalValue, sheet);
+//        try {
+//            effectiveValue = expression.eval();
+//        }
+//        catch (IllegalArgumentException e) {
+//            effectiveValue = null;
+//            throw e;
+//        }
+//    }
 
     @Override
     public int getVersion() {

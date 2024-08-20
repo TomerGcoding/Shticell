@@ -3,6 +3,7 @@ package engine.expression.impl.ref;
 import engine.expression.api.Expression;
 import engine.sheet.cell.api.Cell;
 import engine.sheet.api.Sheet;
+import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.coordinate.Coordinate;
 
@@ -27,4 +28,13 @@ public class RefExpression implements Expression {
 
         return referencedCell.getEffectiveValue();  // Return the effective value of the referenced cell
     }
+
+    @Override
+    public CellType getFunctionResultType ()
+    {
+        Coordinate coordinate = sheet.getCoordinateFromCellId(cellId);  // Get the coordinate from the cell ID
+        Cell referencedCell = sheet.getCell(coordinate);
+        return referencedCell.getEffectiveValue().getCellType();
+    }
+
 }
