@@ -1,18 +1,17 @@
 package engine;
 
-import comp.sheet.Sheet;
-import comp.sheet.cell.Cell;
 import engine.dto.*;
+import jakarta.xml.bind.JAXBException;
 
 public interface Engine {
 
-    void loadSheetFile(String filePath);
+    void loadSheetFile(String filePath) throws JAXBException;
 
     SheetDTO showSheet();
 
     CellDTO showCell();
 
-    SheetDTO updateCell(String cellId, String cellValue);
+    SheetDTO setCell(String cellId, String cellValue);
 
     VersionTableDTO showVersionTable();
 
