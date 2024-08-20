@@ -6,7 +6,7 @@ import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
 public class AbsExpression implements Expression {
-    private Expression expression;
+    private final Expression expression;
     public AbsExpression(Expression expression) {
         this.expression = expression;
     }
@@ -17,4 +17,6 @@ public class AbsExpression implements Expression {
 
         return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
+    @Override
+    public CellType getFunctionResultType () {return CellType.NUMERIC; }
 }

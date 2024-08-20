@@ -6,8 +6,9 @@ import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
 public class ModuloExpression implements Expression {
-    private Expression left;
-    private Expression right;
+    private final Expression left;
+    private final Expression right;
+    private boolean isInt = true;
     public ModuloExpression(Expression left, Expression right) {
         this.left = left;
         this.right = right;
@@ -17,8 +18,17 @@ public class ModuloExpression implements Expression {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
         // do some checking... error handling...
-        int result = leftValue.extractValueWithExpectation(Integer.class) % rightValue.extractValueWithExpectation(Integer.class);
+        try {
+            int result = leftValue.extractValueWithExpectation(Integer.class) % rightValue.extractValueWithExpectation(Integer.class);
+            return new EffectiveValueImpl(CellType.NUMERIC, result);
+        }
+        catch (IllegalArgumentException e) {
+            isInt = false;
+            return new EffectiveValueImpl(CellType.STRING, "NaN");
+        }
 
-        return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
+
+    @Override
+    public CellType getFunctionResultType () {return CellType.NUMERIC; }
 }

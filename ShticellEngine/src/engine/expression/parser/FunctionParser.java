@@ -88,6 +88,48 @@ public enum FunctionParser {
             return new MinusExpression(left, right);
         }
     },
+    TIMES {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            // validations of the function. it should have exactly two arguments
+            if (arguments.size() != 2) {
+                throw new IllegalArgumentException("Invalid number of arguments for MINUS function. Expected 2, but got " + arguments.size());
+            }
+
+            // structure is good. parse arguments
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            // more validations on the expected argument types
+            if (!left.getFunctionResultType().equals(CellType.NUMERIC) || !right.getFunctionResultType().equals(CellType.NUMERIC)) {
+                throw new IllegalArgumentException("Invalid argument types for MINUS function. Expected NUMERIC, but got " + left.getFunctionResultType() + " and " + right.getFunctionResultType());
+            }
+
+            // all is good. create the relevant function instance
+            return new TimesExpression(left, right);
+        }
+    },
+    DIVIDE {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            // validations of the function. it should have exactly two arguments
+            if (arguments.size() != 2) {
+                throw new IllegalArgumentException("Invalid number of arguments for MINUS function. Expected 2, but got " + arguments.size());
+            }
+
+            // structure is good. parse arguments
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            // more validations on the expected argument types
+            if (!left.getFunctionResultType().equals(CellType.NUMERIC) || !right.getFunctionResultType().equals(CellType.NUMERIC)) {
+                throw new IllegalArgumentException("Invalid argument types for MINUS function. Expected NUMERIC, but got " + left.getFunctionResultType() + " and " + right.getFunctionResultType());
+            }
+
+            // all is good. create the relevant function instance
+            return new DivideExpression(left, right);
+        }
+    },
     UPPER_CASE {
         @Override
         public Expression parse(List<String> arguments, Sheet sheet) {

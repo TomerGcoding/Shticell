@@ -6,8 +6,8 @@ import engine.sheet.cell.impl.EffectiveValueImpl;
 
 public class PlusExpression implements Expression {
 
-    private Expression left;
-    private Expression right;
+    private final Expression left;
+    private final Expression right;
 
     public PlusExpression(Expression left, Expression right) {
         this.left = left;
@@ -24,4 +24,6 @@ public class PlusExpression implements Expression {
 
         return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
+    @Override
+    public CellType getFunctionResultType () {return CellType.NUMERIC; }
 }
