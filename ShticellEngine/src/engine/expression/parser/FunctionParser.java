@@ -23,7 +23,7 @@ public enum FunctionParser {
             }
 
             // all is good. create the relevant function instance
-            String actualValue = arguments.get(0).trim();
+            String actualValue = arguments.getFirst().trim();
             if (isBoolean(actualValue)) {
                 return new IdentityExpression(Boolean.parseBoolean(actualValue), CellType.BOOLEAN);
             } else if (isNumeric(actualValue)) {
@@ -105,7 +105,7 @@ public enum FunctionParser {
             }
 
             // all is good. create the relevant function instance
-            return new UpperCaseExpression(arg);
+            return new UpperCaseExpression(arg.toString());
         }
     }
 
@@ -171,7 +171,7 @@ public enum FunctionParser {
         String input = "{plus, {minus, 44, 22}, {plus, 1, 2}}";
 //        String input = "{upper_case, hello world}";
 //        String input = "4";
-        Expression expression = parseExpression(input, sheet);
+        Expression expression = parseExpression(input, null);
         EffectiveValue result = expression.eval();
         System.out.println("result: " + result.getValue() + " of type " + result.getCellType());
     }
