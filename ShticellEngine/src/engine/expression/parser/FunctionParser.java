@@ -2,6 +2,9 @@ package engine.expression.parser;
 
 import engine.expression.api.Expression;
 import engine.expression.impl.*;
+import engine.expression.impl.numeric.*;
+import engine.expression.impl.string.*;
+import engine.expression.impl.bool.*;
 import engine.sheet.api.Sheet;
 import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;

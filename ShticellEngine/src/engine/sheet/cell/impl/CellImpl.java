@@ -15,7 +15,7 @@ public class CellImpl implements Cell {
     private final Coordinate coordinate;
     private String originalValue;
     private EffectiveValue effectiveValue;
-    private int version;
+    private final int version;
     private final List<Cell> dependsOn;
     private final List<Cell> influencingOn;
 
