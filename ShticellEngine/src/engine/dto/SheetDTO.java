@@ -8,12 +8,14 @@ import engine.sheet.impl.SheetProperties;
 import java.util.Map;
 
 public class SheetDTO {
-    private final Map<Coordinate, Cell> activeCells;
+    private final Map<Coordinate, CellDTO> activeCells;
     private final int currVersion;
     private final String sheetName;
     private final SheetProperties properties;
 
-    public SheetDTO(Map<Coordinate, Cell> activeCells,int currVersion,String sheetName,
+    public SheetDTO(Map<Coordinate, CellDTO> activeCells,
+                    int currVersion,
+                    String sheetName,
                     SheetProperties properties) {
         this.properties = properties;
         this.activeCells = activeCells;
@@ -21,10 +23,11 @@ public class SheetDTO {
         this.sheetName = sheetName;
     }
 
-    public Map<Coordinate, Cell> getActiveCells() {
+    public Map<Coordinate, CellDTO> getActiveCells() {
         return activeCells;
     }
-    public Cell getCell(int row, int column) {
+
+    public CellDTO getCell(int row, int column) {
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));
     }
 

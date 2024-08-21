@@ -4,29 +4,28 @@ import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
 import engine.dto.VersionTableDTO;
 import engine.sheet.api.Sheet;
-import engine.sheet.coordinate.CoordinateFormatter;
-import engine.sheet.impl.SheetImpl;
+import engine.dto.DTOCreator;
 import engine.utils.SheetLoader;
-import jakarta.xml.bind.JAXBContext;
+import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
-import jaxb.schema.generated.STLCell;
-import jaxb.schema.generated.STLSheet;
 
-import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EngineImpl implements Engine{
     private Sheet sheet = null;
     private SheetLoader sheetLoader = new SheetLoader();
-    private List<SheetDTO> sheets = new ArrayList<>();
+    private Map<Integer,SheetDTO> availableVersions = new HashMap<>();
 
     @Override
     public void loadSheetFile(String filePath) throws JAXBException {
         try {
             sheetLoader.loadSheetFile(filePath);
             this.sheet = sheetLoader.getSheet();
+            availableVersions.clear();
+            availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
         } catch (JAXBException | IllegalArgumentException e) {
             // Handle exceptions, such as invalid XML format or invalid sheet dimensions
             throw e;  // rethrow to maintain behavior
@@ -38,8 +37,7 @@ public class EngineImpl implements Engine{
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
-        SheetDTO sheetDTO = new SheetDTO(sheet.getCells(),sheet.getVersion(),
-                sheet.getSheetName(),sheet.getProperties());
+        SheetDTO sheetDTO = DTOCreator.sheetToDTO(sheet);
         return sheetDTO;
     }
 
@@ -62,18 +60,22 @@ public class EngineImpl implements Engine{
         finally {
             System.out.println("we tried to update cell: " + cellId + "with value: " + cellValue);
         }
-        SheetDTO newSheet = new SheetDTO(sheet.getCells(),sheet.getVersion(), sheet.getSheetName(),sheet.getProperties());
-        sheets.add(newSheet);
+        SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
+        availableVersions.put(newSheet.getCurrVersion(),newSheet);
         return newSheet;
     }
 
     @Override
-    public VersionTableDTO showVersionTable() {
-        return null;
+    public Map<Integer,Integer> showVersionTable() {
+        if(availableVersions.isEmpty()){
+            throw new IllegalStateException("No versions were loaded.");
+        }
+        Map<Integer,Integer> versionTable = VersionShower.getVersionsToChooseFrom(availableVersions.values());
+        return versionTable;
     }
 
     @Override
     public SheetDTO showChosenVersion(int chosenVersion) {
-        return null;
+        return availableVersions.get(chosenVersion);
     }
 }

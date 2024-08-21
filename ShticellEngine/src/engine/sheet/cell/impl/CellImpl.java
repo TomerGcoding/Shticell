@@ -15,7 +15,7 @@ public class CellImpl implements Cell {
     private final Coordinate coordinate;
     private String originalValue;
     private EffectiveValue effectiveValue;
-    private final int version;
+    private int version;
     private final List<Cell> dependsOn;
     private final List<Cell> influencingOn;
 
@@ -73,6 +73,10 @@ public class CellImpl implements Cell {
     @Override
     public int getVersion() {
         return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @Override

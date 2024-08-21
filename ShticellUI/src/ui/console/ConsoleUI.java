@@ -2,13 +2,16 @@ package ui.console;
 
 import engine.Engine;
 import engine.dto.SheetDTO;
+import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
 import ui.console.menu.api.MenuItem;
 import ui.console.menu.impl.Menu;
 import ui.console.menu.impl.SimpleActionMenuItem;
 import ui.console.menu.impl.SubMenuItem;
 import ui.console.utils.SheetPrinter;
+import ui.console.utils.TablePrinter;
 
+import java.util.Map;
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -70,8 +73,8 @@ public class ConsoleUI {
     private void handleOption2() {
         try {
             SheetDTO result = engine.showSheet();
-            SheetPrinter printer = new SheetPrinter(result);
-            printer.printSheet();
+            SheetPrinter.printSheet(result);
+
         }
         catch (IllegalStateException e){
             System.out.println("Error showing sheet: " + e.getMessage());
@@ -97,8 +100,16 @@ public class ConsoleUI {
     }
 
     private void handleOption5() {
-        System.out.println("Show versions not implemented yet.");
-        // Implement this based on your version control system
+        try {
+            Map<Integer, Integer> versionTable = engine.showVersionTable();
+            TablePrinter.printVersionToCellChangedTable(versionTable);
+            System.out.println("Please choose a version to see its data: ");
+            int version = scanner.nextInt();
+            SheetPrinter.printSheet(engine.showChosenVersion(version));
+        }
+        catch (IllegalStateException e) {
+            System.out.println("Error showing version: " + e.getMessage());
+        }
     }
 
     private void handleExit() {
