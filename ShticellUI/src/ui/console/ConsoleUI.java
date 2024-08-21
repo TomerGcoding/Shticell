@@ -88,17 +88,39 @@ public class ConsoleUI {
         System.out.println("Please select a cell to view its details: ");
         String cellId = scanner.nextLine();
         CellDTO cellInfo = engine.getCellInfo(cellId);
-//        String data = engine.getCellData(cell);  // Assuming a method to get cell data
-//        System.out.println("Data in cell " + cell + ": " + data);
+        if (cellInfo != null) {
+            System.out.println("Cell ID: " + cellId + "\n Original Value: " + cellInfo.getOriginalValue() +
+                    "\n Effective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
+            System.out.println("\nDependencies of this cell:\n ");
+            cellInfo.getDependsOn().forEach(cellDTO -> System.out.println(cellDTO.getId() + ", "));
+            System.out.println("\nInfluences of this cell:\n ");
+            cellInfo.getInfluencingOn().forEach(cellDTO -> System.out.println(cellDTO.getId() + ", "));
+        }
+        else{
+            System.out.println("\nCell " + cellId + " has not been initialized yet.");
+        }
+
     }
 
     private void handleOption4() {
-        System.out.println("Please choose a cell to update: ");
-        String cell = scanner.nextLine();
-        CellDTO dto =
-        System.out.println("Please write the new cell value: ");
+        System.out.println("\nPlease select a cell to update: ");
+        String cellId = scanner.nextLine();
+        CellDTO cell = engine.getCellInfo(cellId);
+        if(cell != null) {
+            System.out.println("\nCell ID: " + cell.getId() + "\n Original Value: " + cell.getOriginalValue() +
+                    "\n Effective Value: " + cell.getEffectiveValue());
+        }
+        else {
+            System.out.println("\nCell " + cellId + " has not been initialized yet.");
+        }
+        System.out.println("\nPlease enter the new cell's value: ");
         String value = scanner.nextLine();
-        engine.setCell(cell, value);
+        try{
+            engine.setCell(cellId, value);
+        }
+        catch (IllegalArgumentException e) {
+            System.out.println("Error updating cell: " + e.getMessage());
+        }
         handleOption2(); // Display the updated spreadsheet
     }
 

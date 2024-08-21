@@ -9,6 +9,7 @@ import java.util.Map;
 public interface Sheet {
     int getVersion();
     Cell getCell(int row, int column);
+     Cell getCell(String cellId);
     void setCell(int row, int column, String value);
     void setCell(String id, String value);
     String getSheetName();

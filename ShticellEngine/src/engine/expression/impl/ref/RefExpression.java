@@ -3,7 +3,7 @@ package engine.expression.impl.ref;
 import engine.expression.api.Expression;
 import engine.sheet.cell.api.Cell;
 import engine.sheet.api.Sheet;
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.coordinate.Coordinate;
 

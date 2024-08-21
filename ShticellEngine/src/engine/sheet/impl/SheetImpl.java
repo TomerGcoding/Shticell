@@ -54,6 +54,11 @@ public class SheetImpl implements Sheet {
     public Cell getCell(int row, int column) {
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));
     }
+    @Override
+    public Cell getCell(String cellId)
+    {
+        return activeCells.get(CoordinateFactory.createCoordinate(cellId));
+    }
 
     @Override
     public void setCell(int row, int column, String value) {
@@ -68,14 +73,14 @@ public class SheetImpl implements Sheet {
         Coordinate coordinate = CoordinateFactory.createCoordinate(idx[0], idx[1]);
         if (!properties.isCoordinateLegal(coordinate))
             throw (new IllegalArgumentException("Invalid coordinate"));
-        updateCell(coordinate, value);
+        updateCell(cellId, coordinate, value);
 
     }
 
-    private void updateCell(Coordinate coordinate, String value) {
+    private void updateCell(String cellId, Coordinate coordinate, String value) {
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {
-            cell = new CellImpl(coordinate, value, currVersion);
+            cell = new CellImpl(cellId, coordinate, value, currVersion);
         }
         else {
             cell.setVersion(currVersion);

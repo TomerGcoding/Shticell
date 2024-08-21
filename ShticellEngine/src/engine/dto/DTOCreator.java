@@ -30,7 +30,8 @@ public class DTOCreator {
                 influencingOn.add(cellToDTO(influencingOnCell));
             }
         }
-        return new CellDTO(cell.getCoordinate(),
+        return new CellDTO(cell.getId(),
+                cell.getCoordinate(),
                 cell.getOriginalValue(),
                 effectiveValueToDTO(cell.getEffectiveValue()),
                 cell.getVersion(),

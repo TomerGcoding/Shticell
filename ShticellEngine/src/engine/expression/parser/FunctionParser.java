@@ -7,7 +7,7 @@ import engine.expression.impl.ref.*;
 import engine.expression.impl.string.*;
 //import engine.expression.impl.bool.*;
 import engine.sheet.api.Sheet;
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 
 import java.util.ArrayList;

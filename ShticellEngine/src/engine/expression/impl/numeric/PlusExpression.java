@@ -1,5 +1,5 @@
 package engine.expression.impl.numeric;
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 import engine.expression.api.Expression;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;

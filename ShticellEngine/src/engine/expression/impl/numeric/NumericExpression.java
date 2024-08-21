@@ -1,7 +1,7 @@
 package engine.expression.impl.numeric;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 
 public abstract class NumericExpression implements Expression {
     @Override

@@ -1,7 +1,7 @@
 package engine.expression.impl.string;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 
 public abstract class StringExpression implements Expression {
     @Override

@@ -1,6 +1,6 @@
 package engine.dto;
 
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 
 public class EffectiveValueDTO {
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 public class CellImpl implements Cell {
 
+    private final String ID;
     private final Coordinate coordinate;
     private String originalValue;
     private EffectiveValue effectiveValue;
@@ -19,7 +20,8 @@ public class CellImpl implements Cell {
     private final List<Cell> dependsOn;
     private final List<Cell> influencingOn;
 
-    public CellImpl(Coordinate coordinate, String originalValue,int version) {
+    public CellImpl (String cellId, Coordinate coordinate, String originalValue, int version) {
+        this.ID = cellId;
         this.coordinate = coordinate;
         this.originalValue = originalValue;
         this.effectiveValue = null;
@@ -28,24 +30,21 @@ public class CellImpl implements Cell {
         this.influencingOn = null;
     }
     @Override
-    public Coordinate getCoordinate() {
-        return coordinate;
-    }
+    public String getId () { return ID; }
 
     @Override
-    public String getOriginalValue() {
-        return originalValue;
-    }
+    public Coordinate getCoordinate() { return coordinate; }
 
     @Override
-    public void setCellOriginalValue(String value) {
-        this.originalValue = value;
-    }
+    public String getOriginalValue() { return originalValue; }
+
 
     @Override
-    public EffectiveValue getEffectiveValue() {
-        return effectiveValue;
-    }
+    public void setCellOriginalValue(String value) { this.originalValue = value; }
+
+    @Override
+    public EffectiveValue getEffectiveValue() { return effectiveValue; }
+
     @Override
     public void calculateEffectiveValue(Sheet sheet) {
         // build the expression object out of the original value...
@@ -56,20 +55,6 @@ public class CellImpl implements Cell {
         effectiveValue = expression.eval();
 
     }
-
-//    @Override
-//    public void calculateEffectiveValue(Sheet sheet) {
-//        FunctionParser parser = new FunctionParser(sheet);
-//        // first question: what is the generic type of Expression ?
-//        Expression expression = parser.parseFunction(originalValue, sheet);
-//        try {
-//            effectiveValue = expression.eval();
-//        }
-//        catch (IllegalArgumentException e) {
-//            effectiveValue = null;
-//            throw e;
-//        }
-//    }
 
     @Override
     public int getVersion() {
@@ -90,12 +75,6 @@ public class CellImpl implements Cell {
         return influencingOn;
     }
 
-//    void updateCell(String str)
-//    {
-//        setOriginalValue(str);
-//        calculateEffectiveValue();
-//
-//
-//    }
 
 }
+

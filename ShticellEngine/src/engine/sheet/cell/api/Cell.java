@@ -6,6 +6,7 @@ import engine.sheet.coordinate.Coordinate;
 import java.util.List;
 
 public interface Cell {
+    String getId ();
     Coordinate getCoordinate();
     String getOriginalValue();
     void setCellOriginalValue(String value);

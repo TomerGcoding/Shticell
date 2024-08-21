@@ -1,4 +1,4 @@
-package engine.sheet.cell.api;
+package engine.sheet.cell.impl;
 
 public enum CellType {
     NUMERIC(Double.class) ,

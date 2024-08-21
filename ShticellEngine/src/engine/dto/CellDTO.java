@@ -7,6 +7,7 @@ import engine.sheet.coordinate.Coordinate;
 import java.util.List;
 
 public class CellDTO {
+    private final String ID;
     private final Coordinate coordinate;
     private String originalValue;
     private EffectiveValueDTO effectiveValue;
@@ -14,7 +15,8 @@ public class CellDTO {
     private final List<CellDTO> dependsOn;
     private final List<CellDTO> influencingOn;
 
-    public CellDTO(Coordinate coordinate,
+    public CellDTO(String cellId,
+                   Coordinate coordinate,
                    String originalValue,
                    EffectiveValueDTO effectiveValue,
                    int version,
@@ -27,6 +29,8 @@ public class CellDTO {
         this.dependsOn = dependsOn;
         this.influencingOn = influencingOn;
     }
+
+    public String getId () { return null; }
 
     public Coordinate getCoordinate() {
         return coordinate;

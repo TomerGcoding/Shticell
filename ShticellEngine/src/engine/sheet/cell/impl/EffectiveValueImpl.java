@@ -1,6 +1,5 @@
 package engine.sheet.cell.impl;
 
-import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 
 public class EffectiveValueImpl implements EffectiveValue {
