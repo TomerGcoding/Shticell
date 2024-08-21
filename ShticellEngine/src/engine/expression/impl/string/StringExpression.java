@@ -18,5 +18,10 @@ public class StringExpression implements Expression {
     }
 
     @Override
+    public CellType getFunctionResultType() {
+        return CellType.STRING;
+    }
+
+    @Override
     public String toString() {return value;}
 }

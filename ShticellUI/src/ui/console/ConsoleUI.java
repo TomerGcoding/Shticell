@@ -58,15 +58,26 @@ public class ConsoleUI {
         String path = scanner.nextLine();
         try {
             engine.loadSheetFile(path);
+            System.out.println("File loaded successfully");
         } catch (JAXBException e) {
+            System.out.println("Error loading file: " + e.getMessage());
+        }
+        catch (IllegalArgumentException e) {
             System.out.println("Error loading file: " + e.getMessage());
         }
     }
 
     private void handleOption2() {
-        SheetDTO result = engine.showSheet();   // Example method
-        SheetPrinter printer = new SheetPrinter(result);
-        printer.printSheet();
+        try {
+            SheetDTO result = engine.showSheet();
+            SheetPrinter printer = new SheetPrinter(result);
+            printer.printSheet();
+        }
+        catch (IllegalStateException e){
+            System.out.println("Error showing sheet: " + e.getMessage());
+        }
+        // Example method
+
     }
 
     private void handleOption3() {
