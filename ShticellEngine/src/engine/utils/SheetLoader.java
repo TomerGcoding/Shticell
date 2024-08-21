@@ -1,4 +1,5 @@
 package engine.utils;
+import engine.dto.SheetDTO;
 import engine.sheet.api.Sheet;
 import engine.sheet.coordinate.CoordinateFormatter;
 import engine.sheet.impl.SheetImpl;
@@ -10,6 +11,9 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SheetLoader {
@@ -22,7 +26,7 @@ public class SheetLoader {
     private static final int MIN_COLUMNS = 1;
 
     private Sheet sheet;
-
+    private Map<Integer, SheetDTO> versions = new HashMap<>();
     public void loadSheetFile(String filePath) throws JAXBException {
         validateFilePath(filePath);
 
@@ -99,5 +103,6 @@ public class SheetLoader {
     public Sheet getSheet() {
         return this.sheet;
     }
+
 }
 

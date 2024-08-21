@@ -2,16 +2,14 @@ package engine;
 
 import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
-import engine.dto.VersionTableDTO;
 import engine.sheet.api.Sheet;
 import engine.dto.DTOCreator;
 import engine.utils.SheetLoader;
 import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
 
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class EngineImpl implements Engine{
@@ -31,6 +29,8 @@ public class EngineImpl implements Engine{
             throw e;  // rethrow to maintain behavior
         }
     }
+
+
 
     @Override
     public SheetDTO showSheet() {
@@ -76,6 +76,9 @@ public class EngineImpl implements Engine{
 
     @Override
     public SheetDTO showChosenVersion(int chosenVersion) {
-        return availableVersions.get(chosenVersion);
+        if (availableVersions.containsKey(chosenVersion)) {
+            return availableVersions.get(chosenVersion);
+        }
+        throw new IllegalStateException("No version was found for version: " + chosenVersion);
     }
 }

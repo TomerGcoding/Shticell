@@ -42,8 +42,8 @@ public class ConsoleUI {
         menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to update", this::handleOption4));
         menu.addMenuItem(new SimpleActionMenuItem("Show versions", this::handleOption5));
         menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
-        Menu subMenu = createSubMenu("Save/Load an existing sheet",menu);
-        menu.addMenuItem(new SubMenuItem("Save/Load an existing sheet", subMenu));
+        //Menu subMenu = createSubMenu("Save an existing sheet",menu);
+        menu.addMenuItem(new SimpleActionMenuItem("Save an existing sheet",this::handleOption7 ));
 
         // You can add more options or submenus here
         return menu;
@@ -117,9 +117,9 @@ public class ConsoleUI {
     }
 
     private void handleOption7() {
-        System.out.println("Save/Load an existing sheet not implemented yet.");
-        // Implement your save/load logic here
+        System.out.println("Please enter the full path to where you want to save the file: ");
     }
+
 
     private int getUserChoice() {
         System.out.print("Enter your choice: ");
