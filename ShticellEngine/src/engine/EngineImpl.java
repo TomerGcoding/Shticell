@@ -21,7 +21,8 @@ public class EngineImpl implements Engine{
     private Sheet sheet = null;
     private List<SheetDTO> sheets = new ArrayList<>();
 
-
+    public EngineImpl() {}
+    public EngineImpl(Sheet sheet) {this.sheet = sheet;}
     @Override
     public void loadSheetFile(String filePath) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(JAXB_XML_GENERATED_PACKAGE);
@@ -51,27 +52,23 @@ public class EngineImpl implements Engine{
     }
 
     @Override
-    public CellDTO showCell() {
-        return null;
+    public CellDTO getCellInfo(String cellId) {
+
     }
 
     @Override
-    public SheetDTO setCell(String cellId, String cellValue) {
+    public void setCell(String cellId, String cellValue) {
 
         //just an example of some kind of exception struct
         try {
             sheet.setCell(cellId, cellValue);
             }
         catch (Exception e) {
-            System.out.println("something went wrong with update the cell, please try again");
-            return null;
-        }
-        finally {
-            System.out.println("we tried to update cell: " + cellId + "with value: " + cellValue);
+            throw new IllegalArgumentException("Failed to update cell: " + cellId + " with the value: " + cellValue + "Please try again");
         }
         SheetDTO newSheet = new SheetDTO(sheet.getCells(),sheet.getVersion(), sheet.getSheetName(),sheet.getProperties());
+        sheet.incrementVersion();
         sheets.add(newSheet);
-        return newSheet;
     }
 
     @Override

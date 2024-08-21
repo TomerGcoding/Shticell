@@ -5,7 +5,7 @@ import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class DivideExpression implements Expression {
+public class DivideExpression extends NumericExpression {
     private final Expression left;
     private final Expression right;
     private boolean divisible;

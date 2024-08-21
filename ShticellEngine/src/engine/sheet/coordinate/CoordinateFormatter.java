@@ -35,7 +35,7 @@ public class CoordinateFormatter {
     }
 
     // Converts a column label (e.g., "AA") to a 0-based column index
-    private static int getColumnIndex(String columnLabel) {
+    public static int getColumnIndex(String columnLabel) {
         int columnIndex = 0;
 
         for (int i = 0; i < columnLabel.length(); i++) {

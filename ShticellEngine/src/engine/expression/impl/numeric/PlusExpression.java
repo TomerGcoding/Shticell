@@ -4,7 +4,7 @@ import engine.expression.api.Expression;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class PlusExpression implements Expression {
+public class PlusExpression extends NumericExpression {
 
     private final Expression left;
     private final Expression right;
@@ -24,6 +24,5 @@ public class PlusExpression implements Expression {
 
         return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
-    @Override
-    public CellType getFunctionResultType () {return CellType.NUMERIC; }
+
 }

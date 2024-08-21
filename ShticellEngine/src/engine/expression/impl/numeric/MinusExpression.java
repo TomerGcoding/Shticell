@@ -5,7 +5,7 @@ import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class MinusExpression implements Expression {
+public class MinusExpression extends NumericExpression {
     private final Expression left;
     private final Expression right;
 
@@ -22,6 +22,5 @@ public class MinusExpression implements Expression {
 
         return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
-    @Override
-    public CellType getFunctionResultType () {return CellType.NUMERIC; }
+
 }

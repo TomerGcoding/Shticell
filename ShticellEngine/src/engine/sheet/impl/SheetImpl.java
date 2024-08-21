@@ -80,9 +80,14 @@ public class SheetImpl implements Sheet {
             cell.calculateEffectiveValue(this);
         }
         catch (Exception e) {
-            throw new IllegalArgumentException("couldn't update cell");
+            throw new IllegalArgumentException("SheetImpl threw this exception");
         }
         activeCells.put(coordinate,cell);
+    }
+
+    @Override
+    public void incrementVersion() {
+        currVersion += 1;
     }
 
     // Method to get Coordinate from cell ID (like "12B")

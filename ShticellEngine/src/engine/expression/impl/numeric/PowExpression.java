@@ -5,7 +5,7 @@ import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class PowExpression implements Expression {
+public class PowExpression extends NumericExpression {
     private final Expression left;
     private final Expression right;
     public PowExpression(Expression left, Expression right) {
@@ -20,6 +20,4 @@ public class PowExpression implements Expression {
 
         return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
-    @Override
-    public CellType getFunctionResultType () {return CellType.NUMERIC; }
 }

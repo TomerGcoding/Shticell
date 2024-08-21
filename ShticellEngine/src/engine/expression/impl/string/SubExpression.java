@@ -5,7 +5,7 @@ import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class SubExpression implements Expression {
+public class SubExpression extends StringExpression {
     private Expression source;
     private Expression startIndex;
     private Expression endIndex;
@@ -28,5 +28,7 @@ public class SubExpression implements Expression {
 
         return new EffectiveValueImpl(CellType.STRING, result);
     }
+    @Override
+    public CellType getFunctionResultType () {return CellType.STRING; }
 
 }

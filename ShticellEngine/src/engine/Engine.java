@@ -9,9 +9,9 @@ public interface Engine {
 
     SheetDTO showSheet();
 
-    CellDTO showCell();
+    CellDTO getCellInfo(String cellId);
 
-    SheetDTO setCell(String cellId, String cellValue);
+    void setCell(String cellId, String cellValue);
 
     VersionTableDTO showVersionTable();
 

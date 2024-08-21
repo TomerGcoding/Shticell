@@ -1,6 +1,7 @@
 package ui.console;
 
 import engine.Engine;
+import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
 import jakarta.xml.bind.JAXBException;
 import ui.console.menu.api.MenuItem;
@@ -70,8 +71,9 @@ public class ConsoleUI {
     }
 
     private void handleOption3() {
-        System.out.println("Please choose a cell to see its data: ");
-        String cell = scanner.nextLine();
+        System.out.println("Please select a cell to view its details: ");
+        String cellId = scanner.nextLine();
+        CellDTO cellInfo = engine.getCellInfo(cellId);
 //        String data = engine.getCellData(cell);  // Assuming a method to get cell data
 //        System.out.println("Data in cell " + cell + ": " + data);
     }
@@ -79,6 +81,7 @@ public class ConsoleUI {
     private void handleOption4() {
         System.out.println("Please choose a cell to update: ");
         String cell = scanner.nextLine();
+        CellDTO dto =
         System.out.println("Please write the new cell value: ");
         String value = scanner.nextLine();
         engine.setCell(cell, value);

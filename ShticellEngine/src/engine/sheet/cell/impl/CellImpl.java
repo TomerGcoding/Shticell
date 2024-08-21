@@ -54,6 +54,7 @@ public class CellImpl implements Cell {
 
         // second question: what is the return type of eval() ?
         effectiveValue = expression.eval();
+
     }
 
 //    @Override

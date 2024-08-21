@@ -3,8 +3,9 @@ package engine.expression.parser;
 import engine.expression.api.Expression;
 import engine.expression.impl.*;
 import engine.expression.impl.numeric.*;
+import engine.expression.impl.ref.*;
 import engine.expression.impl.string.*;
-import engine.expression.impl.bool.*;
+//import engine.expression.impl.bool.*;
 import engine.sheet.api.Sheet;
 import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.api.EffectiveValue;
@@ -139,7 +140,7 @@ public enum FunctionParser {
             }
 
             // structure is good. parse arguments
-            Expression arg = parseExpression(arguments.get(0).trim(), sheet);
+            Expression arg = parseExpression(arguments.getFirst().trim(), sheet);
 
             // more validations on the expected argument types
             if (!arg.getFunctionResultType().equals(CellType.STRING)) {
@@ -148,6 +149,18 @@ public enum FunctionParser {
 
             // all is good. create the relevant function instance
             return new UpperCaseExpression(arg.toString());
+        }
+    },
+    REF {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            // validations of the function. it should have exactly one argument
+            if (arguments.size() != 1) {
+                throw new IllegalArgumentException("Invalid number of arguments for REF function. Expected 1, but got " + arguments.size());
+            }
+
+            // all is good. create the relevant function instance
+            return new RefExpression(arguments.getFirst(), sheet);
         }
     }
 
@@ -163,7 +176,7 @@ public enum FunctionParser {
             List<String> topLevelParts = parseMainParts(functionContent);
 
 
-            String functionName = topLevelParts.get(0).trim().toUpperCase();
+            String functionName = topLevelParts.getFirst().trim().toUpperCase();
 
             //remove the first element from the array
             topLevelParts.removeFirst();
@@ -196,7 +209,7 @@ public enum FunctionParser {
         }
 
         // Add the last part
-        if (buffer.length() > 0) {
+        if (!buffer.isEmpty()) {
             parts.add(buffer.toString().trim());
         }
 
