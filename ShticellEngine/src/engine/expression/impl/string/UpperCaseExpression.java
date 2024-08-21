@@ -4,7 +4,7 @@ import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.api.CellType;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class UpperCaseExpression extends StringExpression {
+public class UpperCaseExpression implements Expression {
 
     private final String value;
 
@@ -17,4 +17,8 @@ public class UpperCaseExpression extends StringExpression {
         return new EffectiveValueImpl(CellType.STRING, value.toUpperCase());
     }
 
+    @Override
+    public CellType getFunctionResultType() {
+        return CellType.STRING;
+    }
 }

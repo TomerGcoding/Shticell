@@ -3,6 +3,8 @@ package engine;
 import engine.dto.*;
 import jakarta.xml.bind.JAXBException;
 
+import java.util.Map;
+
 public interface Engine {
 
     void loadSheetFile(String filePath) throws JAXBException;
@@ -13,7 +15,7 @@ public interface Engine {
 
     void setCell(String cellId, String cellValue);
 
-    VersionTableDTO showVersionTable();
+    Map<Integer,Integer> showVersionTable();
 
     SheetDTO showChosenVersion(int chosenVersion);
 

@@ -31,4 +31,9 @@ public class SubExpression extends StringExpression {
     @Override
     public CellType getFunctionResultType () {return CellType.STRING; }
 
+    @Override
+    public CellType getFunctionResultType() {
+        return CellType.STRING;
+    }
+
 }

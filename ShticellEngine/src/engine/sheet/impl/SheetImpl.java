@@ -63,17 +63,22 @@ public class SheetImpl implements Sheet {
 
     @Override
     public void setCell(String cellId, String value) {
+        currVersion++;
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
         Coordinate coordinate = CoordinateFactory.createCoordinate(idx[0], idx[1]);
         if (!properties.isCoordinateLegal(coordinate))
             throw (new IllegalArgumentException("Invalid coordinate"));
         updateCell(coordinate, value);
+
     }
 
     private void updateCell(Coordinate coordinate, String value) {
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {
             cell = new CellImpl(coordinate, value, currVersion);
+        }
+        else {
+            cell.setVersion(currVersion);
         }
         cell.setCellOriginalValue(value);
         try {
