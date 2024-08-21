@@ -11,7 +11,7 @@
 			<STL-Original-Value>Menash</STL-Original-Value>
 		</STL-Cell>
 		<STL-Cell row="2" column="D">
-			<STL-Original-Value>{CONCAT,{REF,B2},{REF,C2}}</STL-Original-Value>
+			<STL-Original-Value>HelloMenash</STL-Original-Value>
 		</STL-Cell>
 	</STL-Cells>
 </STL-Sheet>

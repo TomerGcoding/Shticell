@@ -2,13 +2,16 @@ package ui.console;
 
 import engine.Engine;
 import engine.dto.SheetDTO;
+import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
 import ui.console.menu.api.MenuItem;
 import ui.console.menu.impl.Menu;
 import ui.console.menu.impl.SimpleActionMenuItem;
 import ui.console.menu.impl.SubMenuItem;
 import ui.console.utils.SheetPrinter;
+import ui.console.utils.TablePrinter;
 
+import java.util.Map;
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -39,8 +42,8 @@ public class ConsoleUI {
         menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to update", this::handleOption4));
         menu.addMenuItem(new SimpleActionMenuItem("Show versions", this::handleOption5));
         menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
-        Menu subMenu = createSubMenu("Save/Load an existing sheet",menu);
-        menu.addMenuItem(new SubMenuItem("Save/Load an existing sheet", subMenu));
+        //Menu subMenu = createSubMenu("Save an existing sheet",menu);
+        menu.addMenuItem(new SimpleActionMenuItem("Save an existing sheet",this::handleOption7 ));
 
         // You can add more options or submenus here
         return menu;
@@ -58,15 +61,26 @@ public class ConsoleUI {
         String path = scanner.nextLine();
         try {
             engine.loadSheetFile(path);
+            System.out.println("File loaded successfully");
         } catch (JAXBException e) {
+            System.out.println("Error loading file: " + e.getMessage());
+        }
+        catch (IllegalArgumentException e) {
             System.out.println("Error loading file: " + e.getMessage());
         }
     }
 
     private void handleOption2() {
-        SheetDTO result = engine.showSheet();   // Example method
-        SheetPrinter printer = new SheetPrinter(result);
-        printer.printSheet();
+        try {
+            SheetDTO result = engine.showSheet();
+            SheetPrinter.printSheet(result);
+
+        }
+        catch (IllegalStateException e){
+            System.out.println("Error showing sheet: " + e.getMessage());
+        }
+        // Example method
+
     }
 
     private void handleOption3() {
@@ -86,8 +100,16 @@ public class ConsoleUI {
     }
 
     private void handleOption5() {
-        System.out.println("Show versions not implemented yet.");
-        // Implement this based on your version control system
+        try {
+            Map<Integer, Integer> versionTable = engine.showVersionTable();
+            TablePrinter.printVersionToCellChangedTable(versionTable);
+            System.out.println("Please choose a version to see its data: ");
+            int version = scanner.nextInt();
+            SheetPrinter.printSheet(engine.showChosenVersion(version));
+        }
+        catch (IllegalStateException e) {
+            System.out.println("Error showing version: " + e.getMessage());
+        }
     }
 
     private void handleExit() {
@@ -95,9 +117,9 @@ public class ConsoleUI {
     }
 
     private void handleOption7() {
-        System.out.println("Save/Load an existing sheet not implemented yet.");
-        // Implement your save/load logic here
+        System.out.println("Please enter the full path to where you want to save the file: ");
     }
+
 
     private int getUserChoice() {
         System.out.print("Enter your choice: ");

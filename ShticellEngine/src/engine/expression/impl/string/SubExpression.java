@@ -29,4 +29,9 @@ public class SubExpression implements Expression {
         return new EffectiveValueImpl(CellType.STRING, result);
     }
 
+    @Override
+    public CellType getFunctionResultType() {
+        return CellType.STRING;
+    }
+
 }

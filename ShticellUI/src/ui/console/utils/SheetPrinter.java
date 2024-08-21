@@ -1,17 +1,13 @@
 package ui.console.utils;
 
+import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
 import engine.sheet.cell.api.Cell;
 
 public class SheetPrinter {
 
-    private final SheetDTO sheetDTO;
 
-    public SheetPrinter(SheetDTO sheet) {
-        this.sheetDTO = sheet;
-    }
-
-    public void printSheet() {
+    public static void printSheet(SheetDTO sheetDTO) {
         // Print metadata
         System.out.println("Sheet Name: " + sheetDTO.getSheetName());
         System.out.println("Version: " + sheetDTO.getCurrVersion());
@@ -46,7 +42,7 @@ public class SheetPrinter {
 
                 // Print each cell in the row
                 for (int col = 0; col < columns; col++) {
-                    Cell cell = sheetDTO.getCell(row, col);
+                    CellDTO cell = sheetDTO.getCell(row, col);
                     String value = "";
 
                     if (cell != null) {
@@ -72,7 +68,7 @@ public class SheetPrinter {
         }
     }
 
-    private String truncateOrPad(String value, int width) {
+    private static String truncateOrPad(String value, int width) {
         if (value.length() > width) {
             return value.substring(0, width); // Truncate if too long
         } else {
