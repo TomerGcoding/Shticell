@@ -63,7 +63,7 @@ public class SheetImpl implements Sheet {
     @Override
     public void setCell(int row, int column, String value) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-        updateCell(coordinate, value);
+        updateCell(CoordinateFormatter.indexToCellId(row, column), coordinate, value);
     }
 
     @Override

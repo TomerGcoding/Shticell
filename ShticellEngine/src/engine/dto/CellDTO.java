@@ -22,6 +22,7 @@ public class CellDTO {
                    int version,
                    List<CellDTO> dependsOn,
                    List<CellDTO> influencingOn) {
+        this.ID = cellId;
         this.coordinate = coordinate;
         this.originalValue = originalValue;
         this.effectiveValue = effectiveValue;
