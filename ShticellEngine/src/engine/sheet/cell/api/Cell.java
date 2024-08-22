@@ -16,5 +16,7 @@ public interface Cell {
     List<Cell> getDependsOn();
     List<Cell> getInfluencingOn();
     void setVersion(int currVersion);
+    void deleteCell();
+    void deleteDependency(Cell deleteMe);
 
 }

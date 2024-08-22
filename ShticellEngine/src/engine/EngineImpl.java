@@ -44,11 +44,11 @@ public class EngineImpl implements Engine{
 
     @Override
     public CellDTO getCellInfo(String cellId) {
-
         Cell originalCell = sheet.getCell(cellId);
         if (originalCell == null) {
             return null;
         }
+
         return DTOCreator.cellToDTO(originalCell);
     }
 
@@ -57,7 +57,10 @@ public class EngineImpl implements Engine{
 
         //just an example of some kind of exception struct
         try {
-            sheet.setCell(cellId, cellValue);
+            if (cellValue.isEmpty())
+                sheet.deleteCell(cellId);
+            else
+                sheet.setCell(cellId, cellValue);
             }
         catch (Exception e) {
             throw new IllegalArgumentException("Failed to update cell: " + cellId + "with the value: " + cellValue);

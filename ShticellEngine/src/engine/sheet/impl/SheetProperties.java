@@ -33,7 +33,10 @@ public class SheetProperties {
     public boolean isCoordinateLegal(Coordinate coordinate) {
         int row = coordinate.getRow();
         int column = coordinate.getColumn();
-
+        return isCoordinateLegal(row, column);
+    }
+    public boolean isCoordinateLegal(int row, int column) {
         return row >= 0 && row < numRows && column >= 0 && column < numCols;
     }
+
 }

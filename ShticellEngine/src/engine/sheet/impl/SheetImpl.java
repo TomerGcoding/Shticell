@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class SheetImpl implements Sheet {
 
-    private Map<Coordinate, Cell> activeCells;
+    private final Map<Coordinate, Cell> activeCells;
     private static int currVersion = 1;
     private final String sheetName;
     private final SheetProperties properties;
@@ -46,29 +46,37 @@ public class SheetImpl implements Sheet {
         return currVersion;
     }
 
+    @Override
     public SheetProperties getSheetProperties() {
         return properties;
     }
 
     @Override
     public Cell getCell(int row, int column) {
-        return activeCells.get(CoordinateFactory.createCoordinate(row, column));
+        if (!properties.isCoordinateLegal(row, column))
+            throw new IllegalArgumentException("Invalid coordinate");
+        return getCell(CoordinateFactory.createCoordinate(row, column));
     }
     @Override
     public Cell getCell(String cellId)
     {
-        return activeCells.get(CoordinateFactory.createCoordinate(cellId));
+        Coordinate coordinate = getCoordinateFromCellId(cellId);
+        if (coordinate == null)
+            throw new IllegalArgumentException("Invalid coordinate");
+        return getCell(coordinate);
     }
 
     @Override
     public void setCell(int row, int column, String value) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
+        if (!properties.isCoordinateLegal(coordinate))
+            throw (new IllegalArgumentException("Invalid coordinate"));
         updateCell(CoordinateFormatter.indexToCellId(row, column), coordinate, value);
     }
 
     @Override
     public void setCell(String cellId, String value) {
-        currVersion++;
+        // currVersion++;
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
         Coordinate coordinate = CoordinateFactory.createCoordinate(idx[0], idx[1]);
         if (!properties.isCoordinateLegal(coordinate))
@@ -90,7 +98,7 @@ public class SheetImpl implements Sheet {
             cell.calculateEffectiveValue(this);
         }
         catch (Exception e) {
-            throw new IllegalArgumentException("SheetImpl threw this exception");
+            throw new IllegalArgumentException("SheetImpl threw this exception after trying to update cell");
         }
         activeCells.put(coordinate,cell);
     }
@@ -104,13 +112,20 @@ public class SheetImpl implements Sheet {
     @Override
     public Coordinate getCoordinateFromCellId(String cellId) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
-        return CoordinateFactory.createCoordinate(idx[0], idx[1]);
+        return properties.isCoordinateLegal(idx[0], idx[1])? CoordinateFactory.createCoordinate(idx[0], idx[1]): null;
     }
 
     // Method to retrieve a Cell by Coordinate
     @Override
     public Cell getCell(Coordinate coordinate) {
         return activeCells.get(coordinate);
+    }
+
+    @Override
+    public void deleteCell(String cellId) {
+        Cell cell = getCell(cellId);
+        cell.deleteCell();
+        activeCells.remove(getCoordinateFromCellId(cellId));
     }
 
 }

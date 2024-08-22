@@ -12,6 +12,7 @@ import ui.console.menu.impl.SubMenuItem;
 import ui.console.utils.SheetPrinter;
 import ui.console.utils.TablePrinter;
 
+import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -87,20 +88,24 @@ public class ConsoleUI {
     private void handleOption3() {
         System.out.println("Please select a cell to view its details: ");
         String cellId = scanner.nextLine();
-        CellDTO cellInfo = engine.getCellInfo(cellId);
-        if (cellInfo != null) {
-            System.out.println("Cell ID: " + cellId + "\n Original Value: " + cellInfo.getOriginalValue() +
-                    "\n Effective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
-            System.out.println("\nDependencies of this cell:\n ");
-            cellInfo.getDependsOn().forEach(cellDTO -> System.out.println(cellDTO.getId() + ", "));
-            System.out.println("\nInfluences of this cell:\n ");
-            cellInfo.getInfluencingOn().forEach(cellDTO -> System.out.println(cellDTO.getId() + ", "));
-        }
-        else{
-            System.out.println("\nCell " + cellId + " has not been initialized yet.");
-        }
 
+        try {
+            CellDTO cellInfo = engine.getCellInfo(cellId);
+            if (cellInfo != null) {
+                System.out.println("Cell ID: " + cellId + "\n Original Value: " + cellInfo.getOriginalValue() +
+                        "\n Effective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
+                System.out.println("\nDependencies of this cell:\n ");
+                cellInfo.getDependsOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
+                System.out.println("\nInfluences of this cell:\n ");
+                cellInfo.getInfluencingOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
+            } else {
+                System.out.println("\nCell " + cellId + " has not been initialized yet.");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
+
 
     private void handleOption4() {
         System.out.println("\nPlease select a cell to update: ");
@@ -147,9 +152,22 @@ public class ConsoleUI {
 
 
     private int getUserChoice() {
-        System.out.print("Enter your choice: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();  // Consume the newline
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+        boolean validInput = false;
+
+        while (!validInput) {
+            System.out.print("Enter your choice: ");
+            try {
+                choice = scanner.nextInt();
+                validInput = true; // Exit loop if the input is a valid integer
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a valid integer.");
+                scanner.next(); // Clear the invalid input from the scanner
+            }
+        }
+
         return choice;
     }
+
 }

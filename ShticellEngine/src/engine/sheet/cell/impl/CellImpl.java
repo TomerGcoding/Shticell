@@ -17,8 +17,8 @@ public class CellImpl implements Cell {
     private String originalValue;
     private EffectiveValue effectiveValue;
     private int version;
-    private final List<Cell> dependsOn;
-    private final List<Cell> influencingOn;
+    private  List<Cell> dependsOn;
+    private  List<Cell> influencingOn;
 
     public CellImpl (String cellId, Coordinate coordinate, String originalValue, int version) {
         this.ID = cellId;
@@ -75,6 +75,19 @@ public class CellImpl implements Cell {
         return influencingOn;
     }
 
+    @Override
+    public void deleteCell() {
+        originalValue = null;
+        effectiveValue = null;
+        if (influencingOn != null)
+            influencingOn.forEach(c -> c.deleteDependency(this));
+        dependsOn = null;
+    }
 
+    public void deleteDependency(Cell deleteMe)
+    {
+        if (dependsOn != null)
+            dependsOn.remove(deleteMe);
+    }
 }
 
