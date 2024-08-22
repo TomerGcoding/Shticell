@@ -19,10 +19,10 @@ public class RefExpression implements Expression {
 
     @Override
     public EffectiveValue eval() {
-        Coordinate coordinate = sheet.getCoordinateFromCellId(cellId);
-            if (coordinate == null)
+        Coordinate refCoordinate = sheet.getCoordinateFromCellId(cellId);
+            if (refCoordinate == null)
                 throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);
-        Cell referencedCell = sheet.getCell(coordinate);
+        Cell referencedCell = sheet.getCell(refCoordinate);
 
         if (referencedCell == null) {
             throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);

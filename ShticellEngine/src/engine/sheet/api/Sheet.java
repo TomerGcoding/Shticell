@@ -20,4 +20,5 @@ public interface Sheet {
     void incrementVersion();
     SheetProperties getSheetProperties();
     void deleteCell(String cellId);
+    Sheet updateCellValueAndCalculate(int row, int column, String value);
 }

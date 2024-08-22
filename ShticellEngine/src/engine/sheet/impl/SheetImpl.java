@@ -8,8 +8,15 @@ import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
 //import engine.sheet.utils.FunctionParser;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.io.*;
+
+//import static java.util.stream.Nodes.collect;
 
 public class SheetImpl implements Sheet {
 
@@ -95,7 +102,7 @@ public class SheetImpl implements Sheet {
         }
         cell.setCellOriginalValue(value);
         try {
-            cell.calculateEffectiveValue(this);
+            cell.calculateEffectiveValue();
         }
         catch (Exception e) {
             throw new IllegalArgumentException("SheetImpl threw this exception after trying to update cell");
@@ -126,6 +133,101 @@ public class SheetImpl implements Sheet {
         Cell cell = getCell(cellId);
         cell.deleteCell();
         activeCells.remove(getCoordinateFromCellId(cellId));
+    }
+    @Override
+    public Sheet updateCellValueAndCalculate(int row, int column, String value) {
+
+        Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
+
+        SheetImpl newSheetVersion = copySheet();
+        Cell newCell = new CellImpl(row, column, value, newSheetVersion.getVersion() + 1, newSheetVersion);
+        newSheetVersion.activeCells.put(coordinate, newCell);
+
+        try {
+            newSheetVersion
+                    .orderCellsForCalculation()
+                    .stream()
+                    .filter(Cell::calculateEffectiveValue)
+                    .collect(Collectors.toList());
+
+
+
+            // successful calculation. update sheet and relevant cells version
+            // int newVersion = newSheetVersion.increaseVersion();
+            // cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
+
+            return newSheetVersion;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private List<Cell> orderCellsForCalculation() {
+        // Step 1: Build the graph
+        Map<Cell, List<Cell>> adjList = new HashMap<>();
+        Map<Cell, Integer> inDegree = new HashMap<>();
+
+        // Initialize the graph
+        for (Cell cell : activeCells.values()) {
+            adjList.put(cell, new ArrayList<>());
+            inDegree.put(cell, 0);
+        }
+
+        // Populate the graph with dependencies (edges)
+        for (Cell cell : activeCells.values()) {
+            for (Cell dependent : cell.getDependsOn()) {
+                adjList.get(dependent).add(cell); // dependent -> cell (an edge)
+                inDegree.put(cell, inDegree.get(cell) + 1); // increase in-degree of cell
+            }
+        }
+
+        // Step 2: Perform topological sort using Kahn's algorithm
+        List<Cell> sortedCells = new ArrayList<>();
+        Queue<Cell> queue = new LinkedList<>();
+
+        // Start with cells that have no dependencies (in-degree 0)
+        for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
+            if (entry.getValue() == 0) {
+                queue.add(entry.getKey());
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            Cell current = queue.poll();
+            sortedCells.add(current);
+
+            // Reduce the in-degree of all neighbors
+            for (Cell neighbor : adjList.get(current)) {
+                inDegree.put(neighbor, inDegree.get(neighbor) - 1);
+                if (inDegree.get(neighbor) == 0) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        // If there are still cells with a non-zero in-degree, a cycle exists
+        if (sortedCells.size() != activeCells.size()) {
+            throw new IllegalStateException("Circular dependency detected among cells.");
+        }
+
+        return sortedCells;
+    }
+
+
+    private SheetImpl copySheet() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(this);
+            oos.close();
+
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            return (SheetImpl) ois.readObject();
+        } catch (Exception e) {
+            //////
+            return null;
+        }
+
     }
 
 }

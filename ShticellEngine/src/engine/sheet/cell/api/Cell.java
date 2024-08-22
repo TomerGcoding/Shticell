@@ -11,12 +11,12 @@ public interface Cell {
     String getOriginalValue();
     void setCellOriginalValue(String value);
     EffectiveValue getEffectiveValue();
-    void calculateEffectiveValue(Sheet sheet);
+  //  void calculateEffectiveValue(Sheet sheet);
     int getVersion();
     List<Cell> getDependsOn();
     List<Cell> getInfluencingOn();
     void setVersion(int currVersion);
     void deleteCell();
     void deleteDependency(Cell deleteMe);
-
+    boolean calculateEffectiveValue();
 }
