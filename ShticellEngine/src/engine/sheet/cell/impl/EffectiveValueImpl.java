@@ -2,7 +2,9 @@ package engine.sheet.cell.impl;
 
 import engine.sheet.cell.api.EffectiveValue;
 
-public class EffectiveValueImpl implements EffectiveValue {
+import java.io.Serializable;
+
+public class EffectiveValueImpl implements EffectiveValue, Serializable {
 
     private CellType cellType;
     private Object value;
@@ -36,3 +38,4 @@ public class EffectiveValueImpl implements EffectiveValue {
         throw new IllegalArgumentException("exception in extractValueWithException");
     }
 }
+

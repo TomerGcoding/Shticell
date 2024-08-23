@@ -10,8 +10,8 @@ public interface Sheet {
     int getVersion();
     Cell getCell(int row, int column);
     Cell getCell(String cellId);
-    void setCell(int row, int column, String value);
-    void setCell(String id, String value);
+    Sheet setCell(int row, int column, String value);
+    Sheet setCell(String id, String value);
     String getSheetName();
     Map<Coordinate, Cell> getCells();
     SheetProperties getProperties();
@@ -21,4 +21,5 @@ public interface Sheet {
     SheetProperties getSheetProperties();
     void deleteCell(String cellId);
     Sheet updateCellValueAndCalculate(int row, int column, String value);
+    int increaseVersion();
 }

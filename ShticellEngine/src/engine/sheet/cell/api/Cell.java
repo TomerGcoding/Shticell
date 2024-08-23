@@ -1,11 +1,12 @@
 package engine.sheet.cell.api;
 
-import engine.sheet.api.Sheet;
+//import engine.sheet.api.Sheet;
 import engine.sheet.coordinate.Coordinate;
 
+//import java.io.Serializable;
 import java.util.List;
 
-public interface Cell {
+public interface Cell  {
     String getId ();
     Coordinate getCoordinate();
     String getOriginalValue();

@@ -90,7 +90,7 @@ public class SheetLoader {
             validateCellCoordinates(row, column, rows, columns);
 
             String value = cell.getSTLOriginalValue();
-            sheet.setCell(row, column, value);
+            this.sheet = sheet.setCell(row, column, value);
         }
     }
 

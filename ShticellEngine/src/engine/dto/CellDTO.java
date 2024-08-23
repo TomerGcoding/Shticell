@@ -1,16 +1,17 @@
 package engine.dto;
 
-import engine.sheet.cell.api.Cell;
-import engine.sheet.cell.api.EffectiveValue;
+//import engine.sheet.cell.api.Cell;
+//import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.coordinate.Coordinate;
+//import engine.sheet.coordinate.CoordinateFormatter;
 
 import java.util.List;
 
 public class CellDTO {
     private final String ID;
     private final Coordinate coordinate;
-    private String originalValue;
-    private EffectiveValueDTO effectiveValue;
+    private final String originalValue;
+    private final EffectiveValueDTO effectiveValue;
     private final int version;
     private final List<CellDTO> dependsOn;
     private final List<CellDTO> influencingOn;
@@ -31,7 +32,7 @@ public class CellDTO {
         this.influencingOn = influencingOn;
     }
 
-    public String getId () { return null; }
+    public String getId () { return ID; }
 
     public Coordinate getCoordinate() {
         return coordinate;

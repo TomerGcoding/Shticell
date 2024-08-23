@@ -6,29 +6,28 @@ import engine.sheet.cell.impl.CellImpl;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
-//import engine.sheet.utils.FunctionParser;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.io.*;
 
-//import static java.util.stream.Nodes.collect;
-
-public class SheetImpl implements Sheet {
+public class SheetImpl implements Sheet, Serializable {
 
     private final Map<Coordinate, Cell> activeCells;
     private static int currVersion = 1;
     private final String sheetName;
     private final SheetProperties properties;
 
-    public SheetImpl(String sheetName,int rows, int columns,int rowHeight, int columnWidth) {
+    public SheetImpl(String sheetName, int rows, int columns, int rowHeight, int columnWidth) {
         this.activeCells = new HashMap<>();
         this.sheetName = sheetName;
-        properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
+        this.properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
+    }
+
+    public SheetImpl() {
+        this.activeCells = new HashMap<>();
+        this.sheetName = "testtttt";
+        this.properties = new SheetProperties(10, 10, 1, 5);
     }
 
     @Override
@@ -41,12 +40,10 @@ public class SheetImpl implements Sheet {
         return properties;
     }
 
-
     @Override
     public String getSheetName() {
         return sheetName;
     }
-
 
     @Override
     public int getVersion() {
@@ -60,54 +57,50 @@ public class SheetImpl implements Sheet {
 
     @Override
     public Cell getCell(int row, int column) {
-        if (!properties.isCoordinateLegal(row, column))
+        if (!properties.isCoordinateLegal(row, column)) {
             throw new IllegalArgumentException("Invalid coordinate");
+        }
         return getCell(CoordinateFactory.createCoordinate(row, column));
     }
+
     @Override
-    public Cell getCell(String cellId)
-    {
+    public Cell getCell(String cellId) {
         Coordinate coordinate = getCoordinateFromCellId(cellId);
-        if (coordinate == null)
+        if (coordinate == null) {
             throw new IllegalArgumentException("Invalid coordinate");
+        }
         return getCell(coordinate);
     }
 
     @Override
-    public void setCell(int row, int column, String value) {
+    public Sheet setCell(int row, int column, String value) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-        if (!properties.isCoordinateLegal(coordinate))
-            throw (new IllegalArgumentException("Invalid coordinate"));
-        updateCell(CoordinateFormatter.indexToCellId(row, column), coordinate, value);
+        if (!properties.isCoordinateLegal(coordinate)) {
+            throw new IllegalArgumentException("Invalid coordinate");
+        }
+        return updateCellValueAndCalculate(row, column, value);
     }
 
     @Override
-    public void setCell(String cellId, String value) {
-        // currVersion++;
+    public Sheet setCell(String cellId, String value) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
-        Coordinate coordinate = CoordinateFactory.createCoordinate(idx[0], idx[1]);
-        if (!properties.isCoordinateLegal(coordinate))
-            throw (new IllegalArgumentException("Invalid coordinate"));
-        updateCell(cellId, coordinate, value);
-
+        return updateCellValueAndCalculate(idx[0], idx[1], value);
     }
 
     private void updateCell(String cellId, Coordinate coordinate, String value) {
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {
             cell = new CellImpl(cellId, coordinate, value, currVersion);
-        }
-        else {
+        } else {
             cell.setVersion(currVersion);
         }
         cell.setCellOriginalValue(value);
         try {
             cell.calculateEffectiveValue();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("SheetImpl threw this exception after trying to update cell", e);
         }
-        catch (Exception e) {
-            throw new IllegalArgumentException("SheetImpl threw this exception after trying to update cell");
-        }
-        activeCells.put(coordinate,cell);
+        activeCells.put(coordinate, cell);
     }
 
     @Override
@@ -115,14 +108,12 @@ public class SheetImpl implements Sheet {
         currVersion += 1;
     }
 
-    // Method to get Coordinate from cell ID (like "12B")
     @Override
     public Coordinate getCoordinateFromCellId(String cellId) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
-        return properties.isCoordinateLegal(idx[0], idx[1])? CoordinateFactory.createCoordinate(idx[0], idx[1]): null;
+        return properties.isCoordinateLegal(idx[0], idx[1]) ? CoordinateFactory.createCoordinate(idx[0], idx[1]) : null;
     }
 
-    // Method to retrieve a Cell by Coordinate
     @Override
     public Cell getCell(Coordinate coordinate) {
         return activeCells.get(coordinate);
@@ -131,35 +122,43 @@ public class SheetImpl implements Sheet {
     @Override
     public void deleteCell(String cellId) {
         Cell cell = getCell(cellId);
-        cell.deleteCell();
+        if (cell != null)
+            cell.deleteCell();
         activeCells.remove(getCoordinateFromCellId(cellId));
     }
+
     @Override
     public Sheet updateCellValueAndCalculate(int row, int column, String value) {
-
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
 
+        // Create a new version of the sheet (deep copy)
         SheetImpl newSheetVersion = copySheet();
         Cell newCell = new CellImpl(row, column, value, newSheetVersion.getVersion() + 1, newSheetVersion);
         newSheetVersion.activeCells.put(coordinate, newCell);
 
         try {
-            newSheetVersion
-                    .orderCellsForCalculation()
-                    .stream()
-                    .filter(Cell::calculateEffectiveValue)
+            List<Cell> orderedCells = newSheetVersion.orderCellsForCalculation();
+
+            List<Cell> cellsThatHaveChanged = orderedCells.stream()
+                    .filter(Cell::calculateEffectiveValue) // Calculate the effective value in topological order
                     .collect(Collectors.toList());
 
-
-
-            // successful calculation. update sheet and relevant cells version
-            // int newVersion = newSheetVersion.increaseVersion();
-            // cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
-
-            return newSheetVersion;
+            // Successful calculation: increment version and update cells
+            if (!cellsThatHaveChanged.isEmpty()) {
+                int newVersion = newSheetVersion.getVersion() + 1;
+                cellsThatHaveChanged.forEach(cell -> cell.setVersion(newVersion));
+                return newSheetVersion;
+            }
+            else
+                return this;
         } catch (Exception e) {
-            return null;
+            return this;
         }
+    }
+
+    public int increaseVersion() {
+        //currVersion += 1;
+        return currVersion + 1;
     }
 
     private List<Cell> orderCellsForCalculation() {
@@ -213,7 +212,6 @@ public class SheetImpl implements Sheet {
         return sortedCells;
     }
 
-
     private SheetImpl copySheet() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -224,10 +222,7 @@ public class SheetImpl implements Sheet {
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
             return (SheetImpl) ois.readObject();
         } catch (Exception e) {
-            //////
             return null;
         }
-
     }
-
 }

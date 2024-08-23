@@ -10,20 +10,21 @@ import engine.sheet.coordinate.CoordinateFormatter;
 import engine.sheet.coordinate.CoordinateImpl;
 //import engine.sheet.utils.FunctionParser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CellImpl implements Cell {
+public class CellImpl implements Cell, Serializable {
     private Sheet sheet;
     private final String ID;
     private final Coordinate coordinate;
     private String originalValue;
     private EffectiveValue effectiveValue;
     private int version;
-    private  List<Cell> dependsOn;
-    private  List<Cell> influencingOn;
+    private List<Cell> dependsOn;
+    private List<Cell> influencingOn;
 
-    public CellImpl (String cellId, Coordinate coordinate, String originalValue, int version) {
+    public CellImpl(String cellId, Coordinate coordinate, String originalValue, int version) {
         this.ID = cellId;
         this.coordinate = coordinate;
         this.originalValue = originalValue;
@@ -32,7 +33,8 @@ public class CellImpl implements Cell {
         this.dependsOn = null;
         this.influencingOn = null;
     }
-    public CellImpl(int row, int column, String originalValue, int version, Sheet sheet)  {
+
+    public CellImpl(int row, int column, String originalValue, int version, Sheet sheet) {
         this.sheet = sheet;
         this.coordinate = new CoordinateImpl(row, column);
         this.ID = CoordinateFormatter.indexToCellId(row, column);
@@ -41,21 +43,32 @@ public class CellImpl implements Cell {
         this.dependsOn = new ArrayList<>();
         this.influencingOn = new ArrayList<>();
     }
-    @Override
-    public String getId () { return ID; }
 
     @Override
-    public Coordinate getCoordinate() { return coordinate; }
+    public String getId() {
+        return ID;
+    }
 
     @Override
-    public String getOriginalValue() { return originalValue; }
+    public Coordinate getCoordinate() {
+        return coordinate;
+    }
+
+    @Override
+    public String getOriginalValue() {
+        return originalValue;
+    }
 
 
     @Override
-    public void setCellOriginalValue(String value) { this.originalValue = value; }
+    public void setCellOriginalValue(String value) {
+        this.originalValue = value;
+    }
 
     @Override
-    public EffectiveValue getEffectiveValue() { return effectiveValue; }
+    public EffectiveValue getEffectiveValue() {
+        return effectiveValue;
+    }
 
 //    @Override
 //    public void calculateEffectiveValue(Sheet sheet) {
@@ -89,15 +102,16 @@ public class CellImpl implements Cell {
 
     @Override
     public void deleteCell() {
-        originalValue = null;
-        effectiveValue = null;
-        if (influencingOn != null)
-            influencingOn.forEach(c -> c.deleteDependency(this));
-        dependsOn = null;
+        if (this != null) {
+            originalValue = null;
+            effectiveValue = null;
+            if (influencingOn != null)
+                influencingOn.forEach(c -> c.deleteDependency(this));
+            dependsOn = null;
+        }
     }
 
-    public void deleteDependency(Cell deleteMe)
-    {
+    public void deleteDependency(Cell deleteMe) {
         if (dependsOn != null)
             dependsOn.remove(deleteMe);
     }

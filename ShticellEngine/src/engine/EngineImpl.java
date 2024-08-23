@@ -20,15 +20,10 @@ public class EngineImpl implements Engine{
 
     @Override
     public void loadSheetFile(String filePath) throws JAXBException {
-        try {
-            sheetLoader.loadSheetFile(filePath);
-            this.sheet = sheetLoader.getSheet();
-            availableVersions.clear();
-            availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
-        } catch (JAXBException | IllegalArgumentException e) {
-            // Handle exceptions, such as invalid XML format or invalid sheet dimensions
-            throw e;  // rethrow to maintain behavior
-        }
+        sheetLoader.loadSheetFile(filePath);
+        this.sheet = sheetLoader.getSheet();
+        availableVersions.clear();
+        availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
     }
 
 
@@ -60,14 +55,14 @@ public class EngineImpl implements Engine{
             if (cellValue.isEmpty())
                 sheet.deleteCell(cellId);
             else
-                sheet.setCell(cellId, cellValue);
+                this.sheet = sheet.setCell(cellId, cellValue);
             }
         catch (Exception e) {
-            throw new IllegalArgumentException("Failed to update cell: " + cellId + "with the value: " + cellValue);
+            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue);
         }
         SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
         availableVersions.put(newSheet.getCurrVersion(),newSheet);
-        sheet.incrementVersion();
+       // sheet.incrementVersion();
     }
 
     @Override

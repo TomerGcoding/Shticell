@@ -3,12 +3,12 @@ package ui.console;
 import engine.Engine;
 import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
-import engine.utils.VersionShower;
+//import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
-import ui.console.menu.api.MenuItem;
+//import ui.console.menu.api.MenuItem;
 import ui.console.menu.impl.Menu;
 import ui.console.menu.impl.SimpleActionMenuItem;
-import ui.console.menu.impl.SubMenuItem;
+//import ui.console.menu.impl.SubMenuItem;
 import ui.console.utils.SheetPrinter;
 import ui.console.utils.TablePrinter;
 
@@ -112,8 +112,8 @@ public class ConsoleUI {
         String cellId = scanner.nextLine();
         CellDTO cell = engine.getCellInfo(cellId);
         if(cell != null) {
-            System.out.println("\nCell ID: " + cell.getId() + "\n Original Value: " + cell.getOriginalValue() +
-                    "\n Effective Value: " + cell.getEffectiveValue());
+            System.out.println("\nCell ID: " + cell.getId() + "\nOriginal Value: " + cell.getOriginalValue() +
+                    "\nEffective Value: " + cell.getEffectiveValue().toString());
         }
         else {
             System.out.println("\nCell " + cellId + " has not been initialized yet.");

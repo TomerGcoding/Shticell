@@ -1,7 +1,9 @@
 package engine.sheet.impl;
 import engine.sheet.coordinate.Coordinate;
 
-public class SheetProperties {
+import java.io.Serializable;
+
+public class SheetProperties implements Serializable {
     private final int numCols;
     private final int numRows;
     private final int colWidth;
