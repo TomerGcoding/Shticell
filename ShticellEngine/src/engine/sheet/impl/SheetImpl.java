@@ -145,13 +145,14 @@ public class SheetImpl implements Sheet, Serializable {
 
             // Successful calculation: increment version and update cells
             if (!cellsThatHaveChanged.isEmpty()) {
-                int newVersion = newSheetVersion.getVersion() + 1;
+                int newVersion = newSheetVersion.increaseVersion();
                 cellsThatHaveChanged.forEach(cell -> cell.setVersion(newVersion));
                 return newSheetVersion;
             }
             else
                 return this;
         } catch (Exception e) {
+           System.out.println(e.getMessage());
             return this;
         }
     }
@@ -162,11 +163,11 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     private List<Cell> orderCellsForCalculation() {
-        // Step 1: Build the graph
+
         Map<Cell, List<Cell>> adjList = new HashMap<>();
         Map<Cell, Integer> inDegree = new HashMap<>();
 
-        // Initialize the graph
+
         for (Cell cell : activeCells.values()) {
             adjList.put(cell, new ArrayList<>());
             inDegree.put(cell, 0);
@@ -174,11 +175,14 @@ public class SheetImpl implements Sheet, Serializable {
 
         // Populate the graph with dependencies (edges)
         for (Cell cell : activeCells.values()) {
+           //System.out.println("\ncell" + cell.getId() + "dependencies are: ");
             for (Cell dependent : cell.getDependsOn()) {
-                adjList.get(dependent).add(cell); // dependent -> cell (an edge)
-                inDegree.put(cell, inDegree.get(cell) + 1); // increase in-degree of cell
+                adjList.get(dependent).add(cell); // This should be correct, assuming `dependent -> cell`
+                inDegree.put(cell, inDegree.get(cell) + 1);
+             //   System.out.println(inDegree.get(cell) + ", ");
             }
         }
+
 
         // Step 2: Perform topological sort using Kahn's algorithm
         List<Cell> sortedCells = new ArrayList<>();

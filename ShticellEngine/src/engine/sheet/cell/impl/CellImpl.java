@@ -11,8 +11,7 @@ import engine.sheet.coordinate.CoordinateImpl;
 //import engine.sheet.utils.FunctionParser;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CellImpl implements Cell, Serializable {
     private Sheet sheet;
@@ -130,6 +129,18 @@ public class CellImpl implements Cell, Serializable {
             effectiveValue = newEffectiveValue;
             return true;
         }
+    }
+
+    @Override
+    public void addDependency(Cell cell) {
+        if (cell != this)
+           dependsOn.add(cell);
+    }
+
+    @Override
+    public void addInfluence(Cell cell) {
+        if (cell != this)
+            influencingOn.add(cell);
     }
 }
 

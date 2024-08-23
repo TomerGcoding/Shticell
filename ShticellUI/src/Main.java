@@ -17,8 +17,8 @@ import ui.console.ConsoleUI;
     public class Main {
         public static void main(String[] args) {
             SheetImpl sheet = new SheetImpl("TestSheet", 20, 10, 2, 10);
-            sheet.setCell("B12", "100");
-            sheet.setCell("C12", "{REF, B12}");
+//          sheet.setCell("B12", "100");
+//            sheet.setCell("C12", "{REF, B12}");
 
             Engine engine = new EngineImpl();  // Your engine implementation
             ConsoleUI ui = new ConsoleUI(engine);

@@ -23,10 +23,13 @@ public class RefExpression implements Expression {
             if (refCoordinate == null)
                 throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);
         Cell referencedCell = sheet.getCell(refCoordinate);
+        Cell thisCell = sheet.getCell(cellId);
+        thisCell.addDependency(referencedCell);
+        referencedCell.addInfluence(thisCell);
 
-        if (referencedCell == null) {
-            throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);
-        }
+//        if (referencedCell == null) {
+//            throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);
+//        }
 
         return referencedCell.getEffectiveValue();  // Return the effective value of the referenced cell
     }

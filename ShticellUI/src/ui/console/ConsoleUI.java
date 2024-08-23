@@ -92,8 +92,8 @@ public class ConsoleUI {
         try {
             CellDTO cellInfo = engine.getCellInfo(cellId);
             if (cellInfo != null) {
-                System.out.println("Cell ID: " + cellId + "\n Original Value: " + cellInfo.getOriginalValue() +
-                        "\n Effective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
+                System.out.println("Cell ID: " + cellId + "\nOriginal Value: " + cellInfo.getOriginalValue() +
+                        "\nEffective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
                 System.out.println("\nDependencies of this cell:\n ");
                 cellInfo.getDependsOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
                 System.out.println("\nInfluences of this cell:\n ");

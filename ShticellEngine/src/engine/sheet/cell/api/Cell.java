@@ -20,4 +20,8 @@ public interface Cell  {
     void deleteCell();
     void deleteDependency(Cell deleteMe);
     boolean calculateEffectiveValue();
+
+    void addDependency(Cell referencedCell);
+
+    void addInfluence(Cell thisCell);
 }

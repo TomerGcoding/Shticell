@@ -13,23 +13,44 @@ import java.util.Map;
 public class DTOCreator {
 
     public static EffectiveValueDTO effectiveValueToDTO(EffectiveValue effectiveValue) {
-        return new EffectiveValueDTO(effectiveValue.getCellType(),effectiveValue.getValue());
+        return new EffectiveValueDTO(effectiveValue.getCellType(), effectiveValue.getValue());
     }
 
     public static CellDTO cellToDTO(Cell cell) {
-        List<CellDTO> dependsOn = new ArrayList<CellDTO>();
+        return cellToDTO(cell, new ArrayList<>());
+    }
+
+    private static CellDTO cellToDTO(Cell cell, List<Cell> visitedCells) {
+        if (visitedCells.contains(cell)) {
+            // Break the recursion if we've already visited this cell
+            return null; // or handle it differently if needed
+        }
+
+        visitedCells.add(cell);
+
+        List<CellDTO> dependsOn = new ArrayList<>();
         if (cell.getDependsOn() != null) {
             for (Cell dependsOnCell : cell.getDependsOn()) {
-                dependsOn.add(cellToDTO(dependsOnCell));
+                CellDTO dependsOnDTO = cellToDTO(dependsOnCell, visitedCells);
+                if (dependsOnDTO != null) {
+                    dependsOn.add(dependsOnDTO);
+                }
             }
         }
 
-        List<CellDTO> influencingOn = new ArrayList<CellDTO>();
+        List<CellDTO> influencingOn = new ArrayList<>();
         if (cell.getInfluencingOn() != null) {
             for (Cell influencingOnCell : cell.getInfluencingOn()) {
-                influencingOn.add(cellToDTO(influencingOnCell));
+                CellDTO influencingOnDTO = cellToDTO(influencingOnCell, visitedCells);
+                if (influencingOnDTO != null) {
+                    influencingOn.add(influencingOnDTO);
+                }
             }
         }
+
+        // Remove the current cell from the visited list after processing
+        visitedCells.remove(cell);
+
         return new CellDTO(cell.getId(),
                 cell.getCoordinate(),
                 cell.getOriginalValue(),
@@ -40,9 +61,12 @@ public class DTOCreator {
     }
 
     public static SheetDTO sheetToDTO(Sheet sheet) {
-        Map<Coordinate,CellDTO> cells = new HashMap<Coordinate,CellDTO>();
-        for (Map.Entry<Coordinate,Cell> entry : sheet.getCells().entrySet()) {
-            cells.put(entry.getKey(), cellToDTO(entry.getValue()));
+        Map<Coordinate, CellDTO> cells = new HashMap<>();
+        for (Map.Entry<Coordinate, Cell> entry : sheet.getCells().entrySet()) {
+            CellDTO cellDTO = cellToDTO(entry.getValue());
+            if (cellDTO != null) {
+                cells.put(entry.getKey(), cellDTO);
+            }
         }
         return new SheetDTO(cells,
                 sheet.getVersion(),
