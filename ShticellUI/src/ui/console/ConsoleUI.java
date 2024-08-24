@@ -30,7 +30,10 @@ public class ConsoleUI {
         while (true) {
             mainMenu.display();
             int choice = getUserChoice();
-            if (choice == 6) break;  // This should ideally be handled as a MenuItem action
+            if (choice == 7) {
+                mainMenu.executeOption(choice);
+                break;
+            }// This should ideally be handled as a MenuItem action
             mainMenu.executeOption(choice);
         }
     }
@@ -43,24 +46,18 @@ public class ConsoleUI {
         menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to see its data", this::handleOption3));
         menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to update", this::handleOption4));
         menu.addMenuItem(new SimpleActionMenuItem("Show versions", this::handleOption5));
+        menu.addMenuItem(new SimpleActionMenuItem("Save an existing sheet",this::handleOption6 ));
         menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
-        //Menu subMenu = createSubMenu("Save an existing sheet",menu);
-        menu.addMenuItem(new SimpleActionMenuItem("Save an existing sheet",this::handleOption7 ));
 
         // You can add more options or submenus here
         return menu;
     }
-    private Menu createSubMenu(String title,Menu mainMenu) {
-        Menu subMenu = new Menu(title);
-        subMenu.addMenuItem(new SimpleActionMenuItem("Load existing sheet", () -> System.out.println("Sub Option 1 selected")));
-        subMenu.addMenuItem(new SimpleActionMenuItem("Save existing sheet to file ", () -> System.out.println("Sub Option 2 selected")));
-        subMenu.addMenuItem(new SimpleActionMenuItem("Back to Main Menu", () -> mainMenu.display()));
-        return subMenu;
-    }
 
     private void handleOption1() {
-        System.out.println("Please enter the full path to the XML file you want to load: ");
+        System.out.println("Please enter the full path to the XML file you want to load or Q/q to go back to the main menu: ");
         String path = scanner.nextLine();
+        if(checkIfQuit(path.trim()))
+            return;
         try {
             engine.loadSheetFile(path);
             System.out.println("File loaded successfully");
@@ -86,9 +83,10 @@ public class ConsoleUI {
     }
 
     private void handleOption3() {
-        System.out.println("Please select a cell to view its details: ");
+        System.out.println("Please select a cell to view its details or Q/q to go back to the main menu: ");
         String cellId = scanner.nextLine();
-
+        if(checkIfQuit(cellId))
+            return;
         try {
             CellDTO cellInfo = engine.getCellInfo(cellId);
             if (cellInfo != null) {
@@ -108,8 +106,10 @@ public class ConsoleUI {
 
 
     private void handleOption4() {
-        System.out.println("\nPlease select a cell to update: ");
+        System.out.println("\nPlease select a cell to update or Q/q to go back to the main menu: ");
         String cellId = scanner.nextLine();
+        if(checkIfQuit(cellId))
+            return;
         CellDTO cell = engine.getCellInfo(cellId);
         if(cell != null) {
             System.out.println("\nCell ID: " + cell.getId() + "\nOriginal Value: " + cell.getOriginalValue() +
@@ -118,8 +118,10 @@ public class ConsoleUI {
         else {
             System.out.println("\nCell " + cellId + " has not been initialized yet.");
         }
-        System.out.println("\nPlease enter the new cell's value: ");
+        System.out.println("\nPlease enter the new cell's value or Q/q to go back to the main menu: ");
         String value = scanner.nextLine();
+        if(checkIfQuit(value))
+            return;
         try{
             engine.setCell(cellId, value);
         }
@@ -133,11 +135,16 @@ public class ConsoleUI {
         try {
             Map<Integer, Integer> versionTable = engine.showVersionTable();
             TablePrinter.printVersionToCellChangedTable(versionTable);
-            System.out.println("Please choose a version to see its data: ");
-            int version = scanner.nextInt();
-            SheetPrinter.printSheet(engine.showChosenVersion(version));
+            System.out.println("Please choose a version to see its data or Q/q to go back to the main menu: ");
+            String version = scanner.nextLine();
+            if(checkIfQuit(version))
+                return;
+            SheetPrinter.printSheet(engine.showChosenVersion(Integer.parseInt(version)));
         }
         catch (IllegalStateException e) {
+            System.out.println("Error showing version: " + e.getMessage());
+        }
+        catch (NumberFormatException e) {
             System.out.println("Error showing version: " + e.getMessage());
         }
     }
@@ -146,7 +153,7 @@ public class ConsoleUI {
         System.out.println("Exiting...");
     }
 
-    private void handleOption7() {
+    private void handleOption6() {
         System.out.println("Please enter the full path to where you want to save the file: ");
     }
 
@@ -168,6 +175,13 @@ public class ConsoleUI {
         }
 
         return choice;
+    }
+
+    private boolean checkIfQuit(String input) {
+        if (input.toUpperCase().equals("Q")) {
+            return true;
+        }
+        return false;
     }
 
 }

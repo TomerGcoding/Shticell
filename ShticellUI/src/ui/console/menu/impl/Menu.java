@@ -30,7 +30,8 @@ public class Menu {
     public void executeOption(int choice) {
         if (choice < 1 || choice > items.size()) {
             System.out.println("Invalid option, please try again.");
-        } else {
+        }
+        else {
             items.get(choice - 1).execute();
         }
     }
