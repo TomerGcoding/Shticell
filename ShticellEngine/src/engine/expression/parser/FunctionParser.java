@@ -162,6 +162,21 @@ public enum FunctionParser {
             // all is good. create the relevant function instance
             return new RefExpression(arguments.getFirst(), sheet);
         }
+    },
+    CONCAT{
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            if (arguments.size() != 2) {
+                throw new IllegalArgumentException("Invalid number of arguments for CONCAT function. Expected 2, but got " + arguments.size());
+            }
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            if(!left.getFunctionResultType().equals(CellType.STRING) || !right.getFunctionResultType().equals(CellType.STRING)) {
+                throw new IllegalArgumentException("Invalid argument types for CONCAT function. Expected STRING, but got " + left.getFunctionResultType() + " and " + right.getFunctionResultType());
+            }
+            return new ConcatExpression(left, right);
+        }
     }
 
     ;

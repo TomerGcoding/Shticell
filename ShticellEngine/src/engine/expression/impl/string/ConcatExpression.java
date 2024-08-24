@@ -22,4 +22,5 @@ public class ConcatExpression extends StringExpression {
         return new EffectiveValueImpl(CellType.STRING, result);
     }
 
+
 }

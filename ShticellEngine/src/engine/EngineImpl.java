@@ -20,7 +20,13 @@ public class EngineImpl implements Engine{
 
     @Override
     public void loadSheetFile(String filePath) throws JAXBException {
-        sheetLoader.loadSheetFile(filePath);
+        try {
+            sheetLoader.loadSheetFile(filePath);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw e;
+        }
         this.sheet = sheetLoader.getSheet();
         availableVersions.clear();
         availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));

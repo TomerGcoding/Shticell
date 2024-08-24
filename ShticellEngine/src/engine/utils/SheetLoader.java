@@ -83,6 +83,7 @@ public class SheetLoader {
     }
 
     private void populateSheetWithCells(STLSheet stlSheet, int rows, int columns) {
+
         for (STLCell cell : stlSheet.getSTLCells().getSTLCell()) {
             int row = cell.getRow() - 1;
             int column = CoordinateFormatter.getColumnIndex(cell.getColumn());

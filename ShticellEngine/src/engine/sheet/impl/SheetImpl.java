@@ -78,7 +78,7 @@ public class SheetImpl implements Sheet, Serializable {
         if (!properties.isCoordinateLegal(coordinate)) {
             throw new IllegalArgumentException("Invalid coordinate");
         }
-        return updateCellValueAndCalculate(row, column, value);
+            return updateCellValueAndCalculate(row, column, value);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class SheetImpl implements Sheet, Serializable {
         Cell newCell = new CellImpl(row, column, value, newSheetVersion.getVersion() + 1, newSheetVersion);
         newSheetVersion.activeCells.put(coordinate, newCell);
 
-        try {
+        //try {
             List<Cell> orderedCells = newSheetVersion.orderCellsForCalculation();
 
             List<Cell> cellsThatHaveChanged = orderedCells.stream()
@@ -151,10 +151,10 @@ public class SheetImpl implements Sheet, Serializable {
             }
             else
                 return this;
-        } catch (Exception e) {
-           System.out.println(e.getMessage());
-            return this;
-        }
+        //} catch (Exception e) {
+        //   System.out.println(e.getMessage());
+        //    return this;
+        //}
     }
 
     public int increaseVersion() {
