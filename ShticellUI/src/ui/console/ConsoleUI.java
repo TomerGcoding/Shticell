@@ -94,9 +94,9 @@ public class ConsoleUI {
             if (cellInfo != null) {
                 System.out.println("Cell ID: " + cellId + "\nOriginal Value: " + cellInfo.getOriginalValue() +
                         "\nEffective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
-                System.out.println("\nDependencies of this cell:\n ");
+                System.out.println("\nDependencies of this cell: ");
                 cellInfo.getDependsOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
-                System.out.println("\nInfluences of this cell:\n ");
+                System.out.println("\nInfluences of this cell: ");
                 cellInfo.getInfluencingOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
             } else {
                 System.out.println("\nCell " + cellId + " has not been initialized yet.");

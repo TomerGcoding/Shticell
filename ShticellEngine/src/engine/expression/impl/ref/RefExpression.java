@@ -9,23 +9,23 @@ import engine.sheet.coordinate.Coordinate;
 
 public class RefExpression implements Expression {
 
-    private final String cellId;
+    private final String refCellId;
     private final Sheet sheet;
 
     public RefExpression(String cellId, Sheet sheet) {
-        this.cellId = cellId;
+        this.refCellId = cellId;
         this.sheet = sheet;
     }
 
     @Override
     public EffectiveValue eval() {
-        Coordinate refCoordinate = sheet.getCoordinateFromCellId(cellId);
+        Coordinate refCoordinate = sheet.getCoordinateFromCellId(refCellId);
             if (refCoordinate == null)
-                throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);
+                throw new IllegalArgumentException("Referenced cell does not exist: " + refCellId);
         Cell referencedCell = sheet.getCell(refCoordinate);
-        Cell thisCell = sheet.getCell(cellId);
-        thisCell.addDependency(referencedCell);
-        referencedCell.addInfluence(thisCell);
+//        Cell thisCell = sheet.getCell(refCellId);
+//        thisCell.addDependency(referencedCell);
+       // referencedCell.addInfluence(thisCell);
 
 //        if (referencedCell == null) {
 //            throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);
@@ -37,9 +37,11 @@ public class RefExpression implements Expression {
     @Override
     public CellType getFunctionResultType ()
     {
-        Coordinate coordinate = sheet.getCoordinateFromCellId(cellId);  // Get the coordinate from the cell ID
+        Coordinate coordinate = sheet.getCoordinateFromCellId(refCellId);  // Get the coordinate from the cell ID
         Cell referencedCell = sheet.getCell(coordinate);
         return referencedCell.getEffectiveValue().getCellType();
     }
+
+    public String getRefCellId () { return refCellId; }
 
 }

@@ -163,11 +163,10 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     private List<Cell> orderCellsForCalculation() {
-
         Map<Cell, List<Cell>> adjList = new HashMap<>();
         Map<Cell, Integer> inDegree = new HashMap<>();
 
-
+        // Initialize the graph
         for (Cell cell : activeCells.values()) {
             adjList.put(cell, new ArrayList<>());
             inDegree.put(cell, 0);
@@ -175,16 +174,22 @@ public class SheetImpl implements Sheet, Serializable {
 
         // Populate the graph with dependencies (edges)
         for (Cell cell : activeCells.values()) {
-           //System.out.println("\ncell" + cell.getId() + "dependencies are: ");
             for (Cell dependent : cell.getDependsOn()) {
-                adjList.get(dependent).add(cell); // This should be correct, assuming `dependent -> cell`
+                adjList.putIfAbsent(dependent, new ArrayList<>());
+                inDegree.putIfAbsent(dependent, 0); // Initialize in-degree if not present
+
+                adjList.get(dependent).add(cell);
                 inDegree.put(cell, inDegree.get(cell) + 1);
-             //   System.out.println(inDegree.get(cell) + ", ");
             }
         }
 
+        // Debugging: Print the graph structure
+//        System.out.println("Adjacency List:");
+//        adjList.forEach((key, value) -> System.out.println(key.getId() + " -> " + value.stream().map(Cell::getId).collect(Collectors.joining(", "))));
 
-        // Step 2: Perform topological sort using Kahn's algorithm
+//        System.out.println("In-Degree Map:");
+//        inDegree.forEach((key, value) -> System.out.println(key.getId() + ": " + value));
+
         List<Cell> sortedCells = new ArrayList<>();
         Queue<Cell> queue = new LinkedList<>();
 
@@ -209,12 +214,20 @@ public class SheetImpl implements Sheet, Serializable {
         }
 
         // If there are still cells with a non-zero in-degree, a cycle exists
-        if (sortedCells.size() != activeCells.size()) {
+        if (sortedCells.size() != inDegree.size()) {
+            System.out.println("Detected a cycle. Cells not sorted:");
+            for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
+                if (entry.getValue() > 0) {
+                    System.out.println(entry.getKey().getId());
+                }
+            }
             throw new IllegalStateException("Circular dependency detected among cells.");
         }
 
         return sortedCells;
     }
+
+
 
     private SheetImpl copySheet() {
         try {

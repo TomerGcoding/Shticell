@@ -1,6 +1,7 @@
 package engine.sheet.cell.impl;
 
 import engine.expression.api.Expression;
+import engine.expression.impl.ref.RefExpression;
 import engine.sheet.api.Sheet;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.cell.api.EffectiveValue;
@@ -104,10 +105,8 @@ public class CellImpl implements Cell, Serializable {
         if (this != null) {
             originalValue = null;
             effectiveValue = null;
-            if (influencingOn != null)
-                influencingOn.forEach(c -> c.deleteDependency(this));
-            dependsOn = null;
-        }
+            influencingOn.clear();
+            dependsOn.clear();        }
     }
 
     public void deleteDependency(Cell deleteMe) {
@@ -120,6 +119,12 @@ public class CellImpl implements Cell, Serializable {
         // build the expression object out of the original value...
         // it can be {PLUS, 4, 5} OR {CONCAT, {ref, A4}, world}
         Expression expression = FunctionParser.parseExpression(originalValue, sheet);
+        if (expression instanceof RefExpression) {
+            Cell refCell = sheet.getCell(((RefExpression) expression).getRefCellId());
+            this.addDependency(refCell);
+            refCell.addInfluence(this);
+        }
+
 
         EffectiveValue newEffectiveValue = expression.eval();
 
