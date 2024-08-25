@@ -4,14 +4,14 @@
         <STL-Size column-width-units="7" rows-height-units="1"/>
     </STL-Layout>
     <STL-Cells>
-        <STL-Cell row="5" column="B">
-            <STL-Original-Value>4</STL-Original-Value>
+        <STL-Cell row="2" column="B">
+            <STL-Original-Value>HELLO</STL-Original-Value>
         </STL-Cell>
         <STL-Cell row="2" column="C">
             <STL-Original-Value>Menash</STL-Original-Value>
         </STL-Cell>
         <STL-Cell row="2" column="A">
-            <STL-Original-Value>Hello</STL-Original-Value>
+            <STL-Original-Value>{CONCAT,{REF,B2},{REF,C2}}</STL-Original-Value>
         </STL-Cell>
     </STL-Cells>
 </STL-Sheet>

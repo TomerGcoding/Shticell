@@ -1,7 +1,11 @@
 package engine.sheet.cell.impl;
 
 import engine.expression.api.Expression;
+import engine.expression.impl.IdentityExpression;
+import engine.expression.impl.numeric.NumericExpression;
+import engine.expression.impl.numeric.PlusExpression;
 import engine.expression.impl.ref.RefExpression;
+import engine.expression.impl.string.StringExpression;
 import engine.sheet.api.Sheet;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.cell.api.EffectiveValue;
@@ -119,12 +123,9 @@ public class CellImpl implements Cell, Serializable {
         // build the expression object out of the original value...
         // it can be {PLUS, 4, 5} OR {CONCAT, {ref, A4}, world}
         Expression expression = FunctionParser.parseExpression(originalValue, sheet);
-        if (expression instanceof RefExpression) {
-            Cell refCell = sheet.getCell(((RefExpression) expression).getRefCellId());
-            this.addDependency(refCell);
-            refCell.addInfluence(this);
+        if(!(expression instanceof IdentityExpression)) {
+            collectDependenciesAndInfluences(expression);
         }
-
 
         EffectiveValue newEffectiveValue = expression.eval();
 
@@ -134,6 +135,38 @@ public class CellImpl implements Cell, Serializable {
             effectiveValue = newEffectiveValue;
             return true;
         }
+    }
+
+    private void collectDependenciesAndInfluences(Expression expression) {
+        if (expression instanceof RefExpression) {
+            // If the expression is a RefExpression, process it directly
+            String refCellId = ((RefExpression) expression).getRefCellId();
+            Cell refCell = sheet.getCell(refCellId);
+
+            // Add the current cell to the refCell's influence list
+            if(!refCell.getInfluencingOn().contains(this)) {
+                refCell.addInfluence(this);
+            }
+
+            // Add the refCell to the current cell's dependency list
+            if(!this.getDependsOn().contains(refCell)){
+            this.addDependency(refCell);
+            }
+        } else{
+            if(expression instanceof NumericExpression) {
+                List<Expression> expressions = ((NumericExpression) expression).getExpressions();
+                for(Expression e : expressions) {
+                    collectDependenciesAndInfluences(e);
+                }
+            }
+            if(expression instanceof StringExpression) {
+                List<Expression> expressions = ((StringExpression) expression).getExpressions();
+                for(Expression e : expressions) {
+                    collectDependenciesAndInfluences(e);
+                }
+            }
+        }
+        // You might need additional handling for other types of expressions if they exist
     }
 
     @Override

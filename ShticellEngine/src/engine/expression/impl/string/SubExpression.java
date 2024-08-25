@@ -5,6 +5,9 @@ import engine.sheet.cell.impl.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SubExpression extends StringExpression {
     private Expression source;
     private Expression startIndex;
@@ -28,8 +31,18 @@ public class SubExpression extends StringExpression {
 
         return new EffectiveValueImpl(CellType.STRING, result);
     }
+
     @Override
     public CellType getFunctionResultType () {return CellType.STRING; }
+
+    @Override
+    public List<Expression> getExpressions(){
+        List<Expression> expressions = new ArrayList<Expression>();
+        expressions.add(source);
+        expressions.add(startIndex);
+        expressions.add(endIndex);
+        return expressions;
+    }
 
 
 }

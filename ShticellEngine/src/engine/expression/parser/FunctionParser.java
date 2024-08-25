@@ -7,6 +7,7 @@ import engine.expression.impl.ref.*;
 import engine.expression.impl.string.*;
 //import engine.expression.impl.bool.*;
 import engine.sheet.api.Sheet;
+import engine.sheet.cell.api.Cell;
 import engine.sheet.cell.impl.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 
@@ -131,6 +132,52 @@ public enum FunctionParser {
             return new DivideExpression(left, right);
         }
     },
+    POW {
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            // validations of the function. it should have exactly two arguments
+            if (arguments.size() != 2) {
+                throw new IllegalArgumentException("Invalid number of arguments for POW function. Expected 2, but got " + arguments.size());
+            }
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+            // more validations on the expected argument types
+            if (!left.getFunctionResultType().equals(CellType.NUMERIC) || !right.getFunctionResultType().equals(CellType.NUMERIC)) {
+                throw new IllegalArgumentException("Invalid argument types for POW function. Expected NUMERIC, but got " + left.getFunctionResultType() + " and " + right.getFunctionResultType());
+            }
+
+            // all is good. create the relevant function instance
+            return new PowExpression(left, right);
+        }
+    },
+    ABS{
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            // validations of the function. it should have exactly two arguments
+            if (arguments.size() != 1) {
+                throw new IllegalArgumentException("Invalid number of arguments for ABS function. Expected 2, but got " + arguments.size());
+            }
+            Expression arg = parseExpression(arguments.getFirst().trim(), sheet);
+            // more validations on the expected argument types
+            if (!arg.getFunctionResultType().equals(CellType.NUMERIC)) {
+                throw new IllegalArgumentException("Invalid argument types for ABS function. Expected NUMERIC, but got " + arg.getFunctionResultType());
+            }
+
+            // all is good. create the relevant function instance
+            return new AbsExpression(arg);
+        }
+    },
+    MOD{
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            if (arguments.size() != 2) {
+                throw new IllegalArgumentException("Invalid number of arguments for MOD function. Expected 2, but got " + arguments.size());
+            }
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+            if (!left.getFunctionResultType().equals(CellType.NUMERIC) || !right.getFunctionResultType().equals(CellType.NUMERIC)) {
+                throw new IllegalArgumentException("Invalid argument types for POW function. Expected NUMERIC, but got" + left.getFunctionResultType() + " and" + right.getFunctionResultType());
+            }
+            return new ModuloExpression(left,right);
+        }
+    },
     UPPER_CASE {
         @Override
         public Expression parse(List<String> arguments, Sheet sheet) {
@@ -176,6 +223,23 @@ public enum FunctionParser {
                 throw new IllegalArgumentException("Invalid argument types for CONCAT function. Expected STRING, but got " + left.getFunctionResultType() + " and " + right.getFunctionResultType());
             }
             return new ConcatExpression(left, right);
+        }
+    },
+    SUB{
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            if (arguments.size() != 3) {
+                throw new IllegalArgumentException("Invalid number of arguments for SUB function. Expected 3, but got " + arguments.size());
+            }
+            Expression source = parseExpression(arguments.get(0).trim(), sheet);
+            Expression start = parseExpression(arguments.get(1).trim(), sheet);
+            Expression end = parseExpression(arguments.get(2).trim(), sheet);
+
+            if(!source.getFunctionResultType().equals(CellType.STRING)|| !start.getFunctionResultType().equals(CellType.NUMERIC)
+                    || !end.getFunctionResultType().equals(CellType.NUMERIC)) {
+                throw new IllegalArgumentException("Invalid argument types for CONCAT function. Expected STRING,NUMERIC,NUMERIC but got " + source.getFunctionResultType()
+                        + " , " + start.getFunctionResultType() + " and " + end.getFunctionResultType());
+            }
+            return new SubExpression(source, start, end);
         }
     }
 

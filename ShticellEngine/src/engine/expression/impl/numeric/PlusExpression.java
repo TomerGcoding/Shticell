@@ -4,6 +4,9 @@ import engine.expression.api.Expression;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlusExpression extends NumericExpression {
 
     private final Expression left;
@@ -24,5 +27,12 @@ public class PlusExpression extends NumericExpression {
 
         return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
+    public List<Expression> getExpressions() {
+        List<Expression> expressions = new ArrayList<Expression>();
+        expressions.add(left);
+        expressions.add(right);
+        return expressions;
+    }
+
 
 }
