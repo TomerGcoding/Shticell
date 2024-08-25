@@ -3,6 +3,7 @@ package ui.console.utils;
 import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
 import engine.sheet.cell.api.Cell;
+import engine.sheet.cell.impl.CellType;
 
 public class SheetPrinter {
 
@@ -48,7 +49,11 @@ public class SheetPrinter {
                     if (cell != null) {
                         // Check if EffectiveValue is not null and retrieve its value
                         if (cell.getEffectiveValue() != null && cell.getEffectiveValue().getValue() != null) {
-                            value = cell.getEffectiveValue().getValue().toString();
+                            if(cell.getEffectiveValue().getCellType() == CellType.NUMERIC)
+                                value = NumberFormatter.formatNumber((Double)cell.getEffectiveValue().getValue());
+                            else {
+                                value = cell.getEffectiveValue().getValue().toString();
+                            }
                         }
                     }
 
@@ -75,4 +80,6 @@ public class SheetPrinter {
             return value; // No padding needed since we're printing in the top-left corner
         }
     }
+
+
 }
