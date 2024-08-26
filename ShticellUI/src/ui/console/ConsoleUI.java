@@ -57,6 +57,7 @@ public class ConsoleUI {
         menu.addMenuItem(new SubMenuItem("Save/Load current system state",subMenu));
         subMenu.addMenuItem(new SimpleActionMenuItem("Save current system state", this::handleOption6));
         subMenu.addMenuItem(new SimpleActionMenuItem("Load saved system state",this::handleOption7));
+        subMenu.addMenuItem(new SimpleActionMenuItem("Back to main menu",()->{}));
 
         menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
 
