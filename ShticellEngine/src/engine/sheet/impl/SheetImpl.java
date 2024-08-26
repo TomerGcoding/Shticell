@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class SheetImpl implements Sheet, Serializable {
 
     private final Map<Coordinate, Cell> activeCells;
-    private static int currVersion = 1;
+    private static int currVersion = 0;
     private final String sheetName;
     private final SheetProperties properties;
 

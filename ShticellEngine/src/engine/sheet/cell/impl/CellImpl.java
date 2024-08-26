@@ -11,6 +11,7 @@ import engine.sheet.coordinate.Coordinate;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.api.Cell;
 import engine.expression.parser.FunctionParser;
+import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
 import engine.sheet.coordinate.CoordinateImpl;
 //import engine.sheet.utils.FunctionParser;
@@ -40,7 +41,7 @@ public class CellImpl implements Cell, Serializable {
 
     public CellImpl(int row, int column, String originalValue, int version, Sheet sheet) {
         this.sheet = sheet;
-        this.coordinate = new CoordinateImpl(row, column);
+        this.coordinate = CoordinateFactory.createCoordinate(row, column);
         this.ID = CoordinateFormatter.indexToCellId(row, column);
         this.originalValue = originalValue;
         this.version = version;

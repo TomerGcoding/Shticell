@@ -60,13 +60,13 @@ public class EngineImpl implements Engine, Serializable {
                 sheet.deleteCell(cellId);
             else
                 this.sheet = sheet.setCell(cellId, cellValue);
+            sheet.incrementVersion();
             }
         catch (Exception e) {
             throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue);
         }
         SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
         availableVersions.put(newSheet.getCurrVersion(),newSheet);
-       // sheet.incrementVersion();
     }
 
     @Override

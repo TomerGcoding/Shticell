@@ -84,7 +84,6 @@ public class SheetLoader implements Serializable {
     }
 
     private void populateSheetWithCells(STLSheet stlSheet, int rows, int columns) {
-
         for (STLCell cell : stlSheet.getSTLCells().getSTLCell()) {
             int row = cell.getRow() - 1;
             int column = CoordinateFormatter.getColumnIndex(cell.getColumn());
@@ -94,6 +93,7 @@ public class SheetLoader implements Serializable {
             String value = cell.getSTLOriginalValue();
             this.sheet = sheet.setCell(row, column, value);
         }
+        sheet.incrementVersion();
     }
 
     private void validateCellCoordinates(int row, int column, int rows, int columns) {
