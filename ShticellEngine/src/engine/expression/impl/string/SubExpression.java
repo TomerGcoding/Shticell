@@ -1,11 +1,14 @@
 package engine.expression.impl.string;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class SubExpression implements Expression {
+import java.util.ArrayList;
+import java.util.List;
+
+public class SubExpression extends StringExpression {
     private Expression source;
     private Expression startIndex;
     private Expression endIndex;
@@ -30,8 +33,16 @@ public class SubExpression implements Expression {
     }
 
     @Override
-    public CellType getFunctionResultType() {
-        return CellType.STRING;
+    public CellType getFunctionResultType () {return CellType.STRING; }
+
+    @Override
+    public List<Expression> getExpressions(){
+        List<Expression> expressions = new ArrayList<Expression>();
+        expressions.add(source);
+        expressions.add(startIndex);
+        expressions.add(endIndex);
+        return expressions;
     }
+
 
 }

@@ -1,25 +1,30 @@
 package engine.dto;
 
-import engine.sheet.cell.api.Cell;
-import engine.sheet.cell.api.EffectiveValue;
+//import engine.sheet.cell.api.Cell;
+//import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.coordinate.Coordinate;
+//import engine.sheet.coordinate.CoordinateFormatter;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CellDTO {
+public class CellDTO implements Serializable {
+    private final String ID;
     private final Coordinate coordinate;
-    private String originalValue;
-    private EffectiveValueDTO effectiveValue;
+    private final String originalValue;
+    private final EffectiveValueDTO effectiveValue;
     private final int version;
     private final List<CellDTO> dependsOn;
     private final List<CellDTO> influencingOn;
 
-    public CellDTO(Coordinate coordinate,
+    public CellDTO(String cellId,
+                   Coordinate coordinate,
                    String originalValue,
                    EffectiveValueDTO effectiveValue,
                    int version,
                    List<CellDTO> dependsOn,
                    List<CellDTO> influencingOn) {
+        this.ID = cellId;
         this.coordinate = coordinate;
         this.originalValue = originalValue;
         this.effectiveValue = effectiveValue;
@@ -27,6 +32,8 @@ public class CellDTO {
         this.dependsOn = dependsOn;
         this.influencingOn = influencingOn;
     }
+
+    public String getId () { return ID; }
 
     public Coordinate getCoordinate() {
         return coordinate;

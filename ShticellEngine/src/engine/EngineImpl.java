@@ -4,15 +4,16 @@ import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
 import engine.sheet.api.Sheet;
 import engine.dto.DTOCreator;
+import engine.sheet.cell.api.Cell;
 import engine.utils.SheetLoader;
 import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EngineImpl implements Engine{
+public class EngineImpl implements Engine, Serializable {
     private Sheet sheet = null;
     private SheetLoader sheetLoader = new SheetLoader();
     private Map<Integer,SheetDTO> availableVersions = new HashMap<>();
@@ -21,16 +22,15 @@ public class EngineImpl implements Engine{
     public void loadSheetFile(String filePath) throws JAXBException {
         try {
             sheetLoader.loadSheetFile(filePath);
-            this.sheet = sheetLoader.getSheet();
-            availableVersions.clear();
-            availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
-        } catch (JAXBException | IllegalArgumentException e) {
-            // Handle exceptions, such as invalid XML format or invalid sheet dimensions
-            throw e;  // rethrow to maintain behavior
         }
+        catch (IllegalArgumentException e)
+        {
+            throw e;
+        }
+        this.sheet = sheetLoader.getSheet();
+        availableVersions.clear();
+        availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
     }
-
-
 
     @Override
     public SheetDTO showSheet() {
@@ -42,27 +42,31 @@ public class EngineImpl implements Engine{
     }
 
     @Override
-    public CellDTO showCell() {
-        return null;
+    public CellDTO getCellInfo(String cellId) {
+        Cell originalCell = sheet.getCell(cellId);
+        if (originalCell == null) {
+            return null;
+        }
+
+        return DTOCreator.cellToDTO(originalCell);
     }
 
     @Override
-    public SheetDTO setCell(String cellId, String cellValue) {
+    public void setCell(String cellId, String cellValue) {
 
         //just an example of some kind of exception struct
         try {
-            sheet.setCell(cellId, cellValue);
+            if (cellValue.isEmpty())
+                sheet.deleteCell(cellId);
+            else
+                this.sheet = sheet.setCell(cellId, cellValue);
+            sheet.incrementVersion();
             }
         catch (Exception e) {
-            System.out.println("something went wrong with update the cell, please try again");
-            return null;
-        }
-        finally {
-            System.out.println("we tried to update cell: " + cellId + "with value: " + cellValue);
+            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue);
         }
         SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
         availableVersions.put(newSheet.getCurrVersion(),newSheet);
-        return newSheet;
     }
 
     @Override
@@ -80,5 +84,32 @@ public class EngineImpl implements Engine{
             return availableVersions.get(chosenVersion);
         }
         throw new IllegalStateException("No version was found for version: " + chosenVersion);
+    }
+
+    @Override
+    public void writeEngineToFile(String fileName) throws IOException {
+        try (ObjectOutputStream out =
+                     new ObjectOutputStream(
+                             new FileOutputStream(fileName))) {
+            out.writeObject(this);
+            out.flush();
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public Engine readEngineFromFile(String fileName) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in =
+                     new ObjectInputStream(
+                             new FileInputStream(fileName))) {
+            Engine engine = (EngineImpl) in.readObject();
+            return engine;
+        }catch (IOException e){
+            throw e;
+
+        }catch (ClassNotFoundException e) {
+            throw e;
+        }
     }
 }

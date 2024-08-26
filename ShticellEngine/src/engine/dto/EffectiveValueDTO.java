@@ -1,8 +1,10 @@
 package engine.dto;
 
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 
-public class EffectiveValueDTO {
+import java.io.Serializable;
+
+public class EffectiveValueDTO implements Serializable {
 
     private final CellType cellType;
     private final Object value;
@@ -19,4 +21,7 @@ public class EffectiveValueDTO {
     public Object getValue() {
         return value;
     }
+
+    @Override
+    public String toString() {return value.toString();}
 }

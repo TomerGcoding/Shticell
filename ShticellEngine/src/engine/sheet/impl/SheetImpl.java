@@ -6,22 +6,28 @@ import engine.sheet.cell.impl.CellImpl;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
-//import engine.sheet.utils.FunctionParser;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class SheetImpl implements Sheet {
+public class SheetImpl implements Sheet, Serializable {
 
-    private Map<Coordinate, Cell> activeCells;
-    private static int currVersion = 1;
+    private final Map<Coordinate, Cell> activeCells;
+    private static int currVersion = 0;
     private final String sheetName;
     private final SheetProperties properties;
 
-    public SheetImpl(String sheetName,int rows, int columns,int rowHeight, int columnWidth) {
+    public SheetImpl(String sheetName, int rows, int columns, int rowHeight, int columnWidth) {
         this.activeCells = new HashMap<>();
         this.sheetName = sheetName;
-        properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
+        this.properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
+    }
+
+    public SheetImpl() {
+        this.activeCells = new HashMap<>();
+        this.sheetName = "testtttt";
+        this.properties = new SheetProperties(10, 10, 1, 5);
     }
 
     @Override
@@ -34,73 +40,206 @@ public class SheetImpl implements Sheet {
         return properties;
     }
 
-
     @Override
     public String getSheetName() {
         return sheetName;
     }
-
 
     @Override
     public int getVersion() {
         return currVersion;
     }
 
+    @Override
     public SheetProperties getSheetProperties() {
         return properties;
     }
 
     @Override
     public Cell getCell(int row, int column) {
-        return activeCells.get(CoordinateFactory.createCoordinate(row, column));
+        if (!properties.isCoordinateLegal(row, column)) {
+            throw new IllegalArgumentException("Invalid coordinate");
+        }
+        return getCell(CoordinateFactory.createCoordinate(row, column));
     }
 
     @Override
-    public void setCell(int row, int column, String value) {
+    public Cell getCell(String cellId) {
+        Coordinate coordinate = getCoordinateFromCellId(cellId);
+        if (coordinate == null) {
+            throw new IllegalArgumentException("Invalid coordinate");
+        }
+        return getCell(coordinate);
+    }
+
+    @Override
+    public Sheet setCell(int row, int column, String value) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-        updateCell(coordinate, value);
+        if (!properties.isCoordinateLegal(coordinate)) {
+            throw new IllegalArgumentException("Invalid coordinate");
+        }
+            return updateCellValueAndCalculate(row, column, value);
     }
 
     @Override
-    public void setCell(String cellId, String value) {
-        currVersion++;
+    public Sheet setCell(String cellId, String value) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
-        Coordinate coordinate = CoordinateFactory.createCoordinate(idx[0], idx[1]);
-        if (!properties.isCoordinateLegal(coordinate))
-            throw (new IllegalArgumentException("Invalid coordinate"));
-        updateCell(coordinate, value);
-
+        return updateCellValueAndCalculate(idx[0], idx[1], value);
     }
 
-    private void updateCell(Coordinate coordinate, String value) {
+    private void updateCell(String cellId, Coordinate coordinate, String value) {
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {
-            cell = new CellImpl(coordinate, value, currVersion);
-        }
-        else {
+            cell = new CellImpl(cellId, coordinate, value, currVersion);
+        } else {
             cell.setVersion(currVersion);
         }
         cell.setCellOriginalValue(value);
         try {
-            cell.calculateEffectiveValue(this);
+            cell.calculateEffectiveValue();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("SheetImpl threw this exception after trying to update cell", e);
         }
-        catch (Exception e) {
-            throw new IllegalArgumentException("couldn't update cell");
-        }
-        activeCells.put(coordinate,cell);
+        activeCells.put(coordinate, cell);
     }
 
-    // Method to get Coordinate from cell ID (like "12B")
+    @Override
+    public void incrementVersion() {
+        currVersion += 1;
+    }
+
     @Override
     public Coordinate getCoordinateFromCellId(String cellId) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
-        return CoordinateFactory.createCoordinate(idx[0], idx[1]);
+        return properties.isCoordinateLegal(idx[0], idx[1]) ? CoordinateFactory.createCoordinate(idx[0], idx[1]) : null;
     }
 
-    // Method to retrieve a Cell by Coordinate
     @Override
     public Cell getCell(Coordinate coordinate) {
         return activeCells.get(coordinate);
     }
 
+    @Override
+    public void deleteCell(String cellId) {
+        Cell cell = getCell(cellId);
+        if (cell != null)
+            cell.deleteCell();
+        activeCells.remove(getCoordinateFromCellId(cellId));
+    }
+
+    @Override
+    public Sheet updateCellValueAndCalculate(int row, int column, String value) {
+        Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
+
+        // Create a new version of the sheet (deep copy)
+        SheetImpl newSheetVersion = copySheet();
+        Cell newCell = new CellImpl(row, column, value, newSheetVersion.getVersion() + 1, newSheetVersion);
+        newSheetVersion.activeCells.put(coordinate, newCell);
+
+        //try {
+            List<Cell> orderedCells = newSheetVersion.orderCellsForCalculation();
+
+            List<Cell> cellsThatHaveChanged = orderedCells.stream()
+                    .filter(Cell::calculateEffectiveValue) // Calculate the effective value in topological order
+                    .collect(Collectors.toList());
+
+            // Successful calculation: increment version and update cells
+            if (!cellsThatHaveChanged.isEmpty()) {
+                int newVersion = newSheetVersion.increaseVersion();
+                cellsThatHaveChanged.forEach(cell -> cell.setVersion(newVersion));
+                return newSheetVersion;
+            }
+            else
+                return this;
+        //} catch (Exception e) {
+        //   System.out.println(e.getMessage());
+        //    return this;
+        //}
+    }
+
+    public int increaseVersion() {
+        //currVersion += 1;
+        return currVersion + 1;
+    }
+
+    private List<Cell> orderCellsForCalculation() {
+        Map<Cell, List<Cell>> adjList = new HashMap<>();
+        Map<Cell, Integer> inDegree = new HashMap<>();
+
+        // Initialize the graph
+        for (Cell cell : activeCells.values()) {
+            adjList.put(cell, new ArrayList<>());
+            inDegree.put(cell, 0);
+        }
+
+        // Populate the graph with dependencies (edges)
+        for (Cell cell : activeCells.values()) {
+            for (Cell dependent : cell.getDependsOn()) {
+                adjList.putIfAbsent(dependent, new ArrayList<>());
+                inDegree.putIfAbsent(dependent, 0); // Initialize in-degree if not present
+
+                adjList.get(dependent).add(cell);
+                inDegree.put(cell, inDegree.get(cell) + 1);
+            }
+        }
+
+        // Debugging: Print the graph structure
+//        System.out.println("Adjacency List:");
+//        adjList.forEach((key, value) -> System.out.println(key.getId() + " -> " + value.stream().map(Cell::getId).collect(Collectors.joining(", "))));
+
+//        System.out.println("In-Degree Map:");
+//        inDegree.forEach((key, value) -> System.out.println(key.getId() + ": " + value));
+
+        List<Cell> sortedCells = new ArrayList<>();
+        Queue<Cell> queue = new LinkedList<>();
+
+        // Start with cells that have no dependencies (in-degree 0)
+        for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
+            if (entry.getValue() == 0) {
+                queue.add(entry.getKey());
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            Cell current = queue.poll();
+            sortedCells.add(current);
+
+            // Reduce the in-degree of all neighbors
+            for (Cell neighbor : adjList.get(current)) {
+                inDegree.put(neighbor, inDegree.get(neighbor) - 1);
+                if (inDegree.get(neighbor) == 0) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        // If there are still cells with a non-zero in-degree, a cycle exists
+        if (sortedCells.size() != inDegree.size()) {
+            System.out.println("Detected a cycle. Cells not sorted:");
+            for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
+                if (entry.getValue() > 0) {
+                    System.out.println(entry.getKey().getId());
+                }
+            }
+            throw new IllegalStateException("Circular dependency detected among cells.");
+        }
+
+        return sortedCells;
+    }
+
+
+
+    private SheetImpl copySheet() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(this);
+            oos.close();
+
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            return (SheetImpl) ois.readObject();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

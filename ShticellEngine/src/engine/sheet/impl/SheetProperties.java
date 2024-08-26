@@ -1,7 +1,9 @@
 package engine.sheet.impl;
 import engine.sheet.coordinate.Coordinate;
 
-public class SheetProperties {
+import java.io.Serializable;
+
+public class SheetProperties implements Serializable {
     private final int numCols;
     private final int numRows;
     private final int colWidth;
@@ -33,7 +35,10 @@ public class SheetProperties {
     public boolean isCoordinateLegal(Coordinate coordinate) {
         int row = coordinate.getRow();
         int column = coordinate.getColumn();
-
+        return isCoordinateLegal(row, column);
+    }
+    public boolean isCoordinateLegal(int row, int column) {
         return row >= 0 && row < numRows && column >= 0 && column < numCols;
     }
+
 }

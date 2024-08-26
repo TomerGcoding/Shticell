@@ -1,11 +1,14 @@
 package engine.expression.impl.numeric;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.api.CellType;
+import engine.sheet.cell.impl.CellType;
 import engine.sheet.cell.api.EffectiveValue;
 import engine.sheet.cell.impl.EffectiveValueImpl;
 
-public class PowExpression implements Expression {
+import java.util.ArrayList;
+import java.util.List;
+
+public class PowExpression extends NumericExpression {
     private final Expression left;
     private final Expression right;
     public PowExpression(Expression left, Expression right) {
@@ -20,6 +23,10 @@ public class PowExpression implements Expression {
 
         return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
-    @Override
-    public CellType getFunctionResultType () {return CellType.NUMERIC; }
+    public List<Expression> getExpressions() {
+        List<Expression> expressions = new ArrayList<Expression>();
+        expressions.add(left);
+        expressions.add(right);
+        return expressions;
+    }
 }
