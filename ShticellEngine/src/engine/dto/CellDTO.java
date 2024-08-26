@@ -5,9 +5,10 @@ package engine.dto;
 import engine.sheet.coordinate.Coordinate;
 //import engine.sheet.coordinate.CoordinateFormatter;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CellDTO {
+public class CellDTO implements Serializable {
     private final String ID;
     private final Coordinate coordinate;
     private final String originalValue;

@@ -9,6 +9,7 @@ import jakarta.xml.bind.JAXBException;
 import ui.console.menu.impl.Menu;
 import ui.console.menu.impl.SimpleActionMenuItem;
 //import ui.console.menu.impl.SubMenuItem;
+import ui.console.menu.impl.SubMenuItem;
 import ui.console.utils.SheetPrinter;
 import ui.console.utils.TablePrinter;
 
@@ -19,7 +20,7 @@ import java.util.Scanner;
 
 public class ConsoleUI {
     private final Scanner scanner;
-    private final Engine engine;
+    private Engine engine;
 
     public ConsoleUI(Engine engine) {
         this.scanner = new Scanner(System.in);
@@ -41,18 +42,29 @@ public class ConsoleUI {
 
     private Menu createMainMenu() {
         Menu menu = new Menu("Main Menu");
+        Menu subMenu = new Menu("Save/Load current system state");
 
         menu.addMenuItem(new SimpleActionMenuItem("Load a file", this::handleOption1));
+
         menu.addMenuItem(new SimpleActionMenuItem("Show spreadsheet", this::handleOption2));
+
         menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to see its data", this::handleOption3));
+
         menu.addMenuItem(new SimpleActionMenuItem("Choose a cell to update", this::handleOption4));
+
         menu.addMenuItem(new SimpleActionMenuItem("Show versions", this::handleOption5));
-        menu.addMenuItem(new SimpleActionMenuItem("Save an existing sheet",this::handleOption6 ));
+
+        menu.addMenuItem(new SubMenuItem("Save/Load current system state",subMenu));
+        subMenu.addMenuItem(new SimpleActionMenuItem("Save current system state", this::handleOption6));
+        subMenu.addMenuItem(new SimpleActionMenuItem("Load saved system state",this::handleOption7));
+
         menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
 
         // You can add more options or submenus here
         return menu;
     }
+
+
 
     private void handleOption1() {
         System.out.println("Please enter the full path to the XML file you want to load or Q/q to go back to the main menu: ");
@@ -155,12 +167,29 @@ public class ConsoleUI {
     }
 
     private void handleOption6() {
-        System.out.println("Please enter the full path to where you want to save the file: ");
+        System.out.println("Please enter the full path to where you want to save the file or q/Q to go back to the main menu: ");
         String path = scanner.nextLine();
+        if(checkIfQuit(path))
+            return;
         try{
             engine.writeEngineToFile(path);
+            System.out.println("System saved successfully");
         }
         catch (IOException e) {
+            System.out.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
+    private void handleOption7() {
+        System.out.println("Please enter the full path to where your saved file is or q/Q to go back to the main menu: ");
+        String path = scanner.nextLine();
+        if(checkIfQuit(path))
+            return;
+        try{
+            engine = engine.readEngineFromFile(path);
+            System.out.println("System loaded successfully");
+        }
+        catch (IOException | ClassNotFoundException e) {
             System.out.println("Error writing to file: " + e.getMessage());
         }
     }

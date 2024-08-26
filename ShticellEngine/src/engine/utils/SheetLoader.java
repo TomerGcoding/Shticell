@@ -12,11 +12,12 @@ import jakarta.xml.bind.Unmarshaller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class SheetLoader {
+public class SheetLoader implements Serializable {
 
     private static final String JAXB_XML_GENERATED_PACKAGE = "jaxb.schema.generated";
 

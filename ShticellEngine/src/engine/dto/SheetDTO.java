@@ -5,9 +5,10 @@ import engine.sheet.coordinate.Coordinate;
 import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.impl.SheetProperties;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class SheetDTO {
+public class SheetDTO implements Serializable {
     private final Map<Coordinate, CellDTO> activeCells;
     private final int currVersion;
     private final String sheetName;

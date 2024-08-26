@@ -2,7 +2,9 @@ package engine.dto;
 
 import engine.sheet.cell.impl.CellType;
 
-public class EffectiveValueDTO {
+import java.io.Serializable;
+
+public class EffectiveValueDTO implements Serializable {
 
     private final CellType cellType;
     private final Object value;
