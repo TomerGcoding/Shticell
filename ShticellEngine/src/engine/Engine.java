@@ -3,6 +3,7 @@ package engine;
 import engine.dto.*;
 import jakarta.xml.bind.JAXBException;
 
+import java.io.IOException;
 import java.util.Map;
 
 public interface Engine {
@@ -20,4 +21,7 @@ public interface Engine {
     SheetDTO showChosenVersion(int chosenVersion);
 
 
+    void writeEngineToFile(String fileName) throws IOException;
+
+    Engine readEngineFromFile(String fileName) throws IOException, ClassNotFoundException;
 }

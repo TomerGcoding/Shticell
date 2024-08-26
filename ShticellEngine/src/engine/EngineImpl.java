@@ -9,11 +9,11 @@ import engine.utils.SheetLoader;
 import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EngineImpl implements Engine{
+public class EngineImpl implements Engine, Serializable {
     private Sheet sheet = null;
     private SheetLoader sheetLoader = new SheetLoader();
     private Map<Integer,SheetDTO> availableVersions = new HashMap<>();
@@ -31,8 +31,6 @@ public class EngineImpl implements Engine{
         availableVersions.clear();
         availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
     }
-
-
 
     @Override
     public SheetDTO showSheet() {
@@ -86,5 +84,32 @@ public class EngineImpl implements Engine{
             return availableVersions.get(chosenVersion);
         }
         throw new IllegalStateException("No version was found for version: " + chosenVersion);
+    }
+
+    @Override
+    public void writeEngineToFile(String fileName) throws IOException {
+        try (ObjectOutputStream out =
+                     new ObjectOutputStream(
+                             new FileOutputStream(fileName))) {
+            out.writeObject(this);
+            out.flush();
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public Engine readEngineFromFile(String fileName) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream in =
+                     new ObjectInputStream(
+                             new FileInputStream(fileName))) {
+            Engine engine = (EngineImpl) in.readObject();
+            return engine;
+        }catch (IOException e){
+            throw e;
+
+        }catch (ClassNotFoundException e) {
+            throw e;
+        }
     }
 }

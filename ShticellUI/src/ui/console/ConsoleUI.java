@@ -12,6 +12,7 @@ import ui.console.menu.impl.SimpleActionMenuItem;
 import ui.console.utils.SheetPrinter;
 import ui.console.utils.TablePrinter;
 
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
@@ -155,6 +156,13 @@ public class ConsoleUI {
 
     private void handleOption6() {
         System.out.println("Please enter the full path to where you want to save the file: ");
+        String path = scanner.nextLine();
+        try{
+            engine.writeEngineToFile(path);
+        }
+        catch (IOException e) {
+            System.out.println("Error writing to file: " + e.getMessage());
+        }
     }
 
 
