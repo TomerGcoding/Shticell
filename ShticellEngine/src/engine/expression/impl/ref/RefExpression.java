@@ -25,10 +25,10 @@ public class RefExpression implements Expression {
                 throw new IllegalArgumentException("Referenced cell does not exist: " + refCellId);
         Cell referencedCell = sheet.getCell(refCoordinate);
 
-//        if(referencedCell == null) {
-//            EffectiveValue result = new EffectiveValueImpl(CellType.UNKNOWN, "");
-//            return result;
-//        }
+        if(referencedCell == null) {
+            EffectiveValue result = new EffectiveValueImpl(CellType.UNKNOWN, "");
+            return result;
+        }
 
         return referencedCell.getEffectiveValue();  // Return the effective value of the referenced cell
     }
