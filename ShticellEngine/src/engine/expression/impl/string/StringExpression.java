@@ -1,7 +1,7 @@
 package engine.expression.impl.string;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.impl.CellType;
+import engine.cell.impl.CellType;
 
 import java.util.List;
 

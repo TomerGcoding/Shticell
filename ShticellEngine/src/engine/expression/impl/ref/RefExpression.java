@@ -1,10 +1,11 @@
 package engine.expression.impl.ref;
 
+import engine.cell.impl.EffectiveValueImpl;
 import engine.expression.api.Expression;
-import engine.sheet.cell.api.Cell;
+import engine.cell.api.Cell;
 import engine.sheet.api.Sheet;
-import engine.sheet.cell.impl.CellType;
-import engine.sheet.cell.api.EffectiveValue;
+import engine.cell.impl.CellType;
+import engine.cell.api.EffectiveValue;
 import engine.sheet.coordinate.Coordinate;
 
 public class RefExpression implements Expression {
@@ -23,24 +24,18 @@ public class RefExpression implements Expression {
             if (refCoordinate == null)
                 throw new IllegalArgumentException("Referenced cell does not exist: " + refCellId);
         Cell referencedCell = sheet.getCell(refCoordinate);
-//        Cell thisCell = sheet.getCell(refCellId);
-//        thisCell.addDependency(referencedCell);
-       // referencedCell.addInfluence(thisCell);
 
-//        if (referencedCell == null) {
-//            throw new IllegalArgumentException("Referenced cell does not exist: " + cellId);
+//        if(referencedCell == null) {
+//            EffectiveValue result = new EffectiveValueImpl(CellType.UNKNOWN, "");
+//            return result;
 //        }
 
         return referencedCell.getEffectiveValue();  // Return the effective value of the referenced cell
     }
 
+
     @Override
-    public CellType getFunctionResultType ()
-    {
-        Coordinate coordinate = sheet.getCoordinateFromCellId(refCellId);  // Get the coordinate from the cell ID
-        Cell referencedCell = sheet.getCell(coordinate);
-        return referencedCell.getEffectiveValue().getCellType();
-    }
+    public CellType getFunctionResultType () { return CellType.UNKNOWN; }
 
     public String getRefCellId () { return refCellId; }
 

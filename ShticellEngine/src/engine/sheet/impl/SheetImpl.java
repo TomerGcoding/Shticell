@@ -1,8 +1,8 @@
 package engine.sheet.impl;
 
 import engine.sheet.api.Sheet;
-import engine.sheet.cell.api.Cell;
-import engine.sheet.cell.impl.CellImpl;
+import engine.cell.api.Cell;
+import engine.cell.impl.CellImpl;
 import engine.sheet.coordinate.Coordinate;
 import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
@@ -87,21 +87,6 @@ public class SheetImpl implements Sheet, Serializable {
         return updateCellValueAndCalculate(idx[0], idx[1], value);
     }
 
-    private void updateCell(String cellId, Coordinate coordinate, String value) {
-        Cell cell = activeCells.get(coordinate);
-        if (cell == null) {
-            cell = new CellImpl(cellId, coordinate, value, currVersion);
-        } else {
-            cell.setVersion(currVersion);
-        }
-        cell.setCellOriginalValue(value);
-        try {
-            cell.calculateEffectiveValue();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("SheetImpl threw this exception after trying to update cell", e);
-        }
-        activeCells.put(coordinate, cell);
-    }
 
     @Override
     public void incrementVersion() {
@@ -139,12 +124,13 @@ public class SheetImpl implements Sheet, Serializable {
         //try {
             List<Cell> orderedCells = newSheetVersion.orderCellsForCalculation();
 
+
             List<Cell> cellsThatHaveChanged = orderedCells.stream()
                     .filter(Cell::calculateEffectiveValue) // Calculate the effective value in topological order
                     .collect(Collectors.toList());
 
             // Successful calculation: increment version and update cells
-            if (!cellsThatHaveChanged.isEmpty()) {
+            if (cellsThatHaveChanged.isEmpty()) {
                 int newVersion = newSheetVersion.increaseVersion();
                 cellsThatHaveChanged.forEach(cell -> cell.setVersion(newVersion));
                 return newSheetVersion;
@@ -158,37 +144,36 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     public int increaseVersion() {
-        //currVersion += 1;
         return currVersion + 1;
     }
 
     private List<Cell> orderCellsForCalculation() {
-        Map<Cell, List<Cell>> adjList = new HashMap<>();
+        Map<Cell, Set<Cell>> adjList = new HashMap<>();
         Map<Cell, Integer> inDegree = new HashMap<>();
 
         // Initialize the graph
         for (Cell cell : activeCells.values()) {
-            adjList.put(cell, new ArrayList<>());
+            adjList.put(cell, new HashSet<>());
             inDegree.put(cell, 0);
         }
 
         // Populate the graph with dependencies (edges)
         for (Cell cell : activeCells.values()) {
-            for (Cell dependent : cell.getDependsOn()) {
-                adjList.putIfAbsent(dependent, new ArrayList<>());
-                inDegree.putIfAbsent(dependent, 0); // Initialize in-degree if not present
-
-                adjList.get(dependent).add(cell);
-                inDegree.put(cell, inDegree.get(cell) + 1);
+            if (cell.getId().equals("B4"))
+                System.out.println("\nlet's look at B4 list: " +  cell.getInfluencingOn());
+            //Set<Cell> neighbores = cell.getInfluencingOn();
+            for (Cell neighbor : cell.getInfluencingOn()) {
+                adjList.get(cell).add(neighbor);
+                inDegree.put(neighbor, inDegree.get(neighbor) + 1);
             }
         }
 
         // Debugging: Print the graph structure
-//        System.out.println("Adjacency List:");
-//        adjList.forEach((key, value) -> System.out.println(key.getId() + " -> " + value.stream().map(Cell::getId).collect(Collectors.joining(", "))));
+        System.out.println("Adjacency List:");
+        adjList.forEach((key, value) -> System.out.println(key.getId() + " -> " + value.stream().map(Cell::getId).collect(Collectors.joining(", "))));
 
-//        System.out.println("In-Degree Map:");
-//        inDegree.forEach((key, value) -> System.out.println(key.getId() + ": " + value));
+        System.out.println("In-Degree Map:");
+        inDegree.forEach((key, value) -> System.out.println(key.getId() + ": " + value));
 
         List<Cell> sortedCells = new ArrayList<>();
         Queue<Cell> queue = new LinkedList<>();
@@ -202,10 +187,13 @@ public class SheetImpl implements Sheet, Serializable {
 
         while (!queue.isEmpty()) {
             Cell current = queue.poll();
+            //System.out.println("current = " + current.getId());
             sortedCells.add(current);
 
             // Reduce the in-degree of all neighbors
+          // System.out.println("neighbore: ");
             for (Cell neighbor : adjList.get(current)) {
+              //  System.out.println(neighbor.getId());
                 inDegree.put(neighbor, inDegree.get(neighbor) - 1);
                 if (inDegree.get(neighbor) == 0) {
                     queue.add(neighbor);
@@ -213,17 +201,21 @@ public class SheetImpl implements Sheet, Serializable {
             }
         }
 
-        // If there are still cells with a non-zero in-degree, a cycle exists
+//        // If there are still cells with a non-zero in-degree, a cycle exists
         if (sortedCells.size() != inDegree.size()) {
-            System.out.println("Detected a cycle. Cells not sorted:");
-            for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
-                if (entry.getValue() > 0) {
-                    System.out.println(entry.getKey().getId());
-                }
-            }
+//            System.out.println("Detected a cycle. Cells not sorted:");
+//            for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
+//                if (entry.getValue() > 0) {
+//                    System.out.println(entry.getKey().getId() + "degree = " + entry.getValue());
+//                }
+//            }
             throw new IllegalStateException("Circular dependency detected among cells.");
         }
-
+        if(sortedCells.size() > 15) {
+            System.out.printf("\nno cycle detected!" +
+                    " \n A1 effective value is: " + getCell("A1").getEffectiveValue() +
+                    " B4 effective value is: " + getCell("B4").getEffectiveValue() + "\n");
+        }
         return sortedCells;
     }
 
@@ -242,4 +234,5 @@ public class SheetImpl implements Sheet, Serializable {
             return null;
         }
     }
+
 }

@@ -2,8 +2,7 @@ package ui.console.utils;
 
 import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
-import engine.sheet.cell.api.Cell;
-import engine.sheet.cell.impl.CellType;
+import engine.cell.impl.CellType;
 
 public class SheetPrinter {
 
