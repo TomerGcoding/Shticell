@@ -1,6 +1,6 @@
-package engine.sheet.cell.api;
+package engine.cell.api;
 
-import engine.sheet.cell.impl.CellType;
+import engine.cell.impl.CellType;
 
 public interface EffectiveValue {
     CellType getCellType();
