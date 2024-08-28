@@ -1,14 +1,14 @@
-package engine.sheet.cell.impl;
+package engine.cell.impl;
 
-import engine.sheet.cell.api.EffectiveValue;
+import engine.cell.api.EffectiveValue;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 public class EffectiveValueImpl implements EffectiveValue, Serializable {
 
-    private CellType cellType;
-    private Object value;
+    private final CellType cellType;
+    private final Object value;
 
     public EffectiveValueImpl(CellType cellType, Object value) {
         this.cellType = cellType;
@@ -45,11 +45,17 @@ public class EffectiveValueImpl implements EffectiveValue, Serializable {
 
     @Override
     public <T> T extractValueWithExpectation(Class<T> type) {
+        if (type == Integer.class && cellType == CellType.NUMERIC && value instanceof Double) {
+            Double doubleValue = (Double) value;
+            if (doubleValue % 1 == 0) {
+                return type.cast(doubleValue.intValue());  // Cast Double to Integer if it's effectively an integer
+            }
+        }
+
         if (cellType.isAssignableFrom(type)) {
             return type.cast(value);
         }
 
-        throw new IllegalArgumentException("exception in extractValueWithException");
+        throw new IllegalArgumentException("Cannot cast " + value + " to " + type.getSimpleName());
     }
 }
-

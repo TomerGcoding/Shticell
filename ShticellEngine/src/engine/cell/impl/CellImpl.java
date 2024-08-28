@@ -1,43 +1,41 @@
-package engine.sheet.cell.impl;
+package engine.cell.impl;
 
+import engine.cell.api.EffectiveValue;
 import engine.expression.api.Expression;
 import engine.expression.impl.IdentityExpression;
 import engine.expression.impl.numeric.NumericExpression;
-import engine.expression.impl.numeric.PlusExpression;
 import engine.expression.impl.ref.RefExpression;
 import engine.expression.impl.string.StringExpression;
 import engine.sheet.api.Sheet;
 import engine.sheet.coordinate.Coordinate;
-import engine.sheet.cell.api.EffectiveValue;
-import engine.sheet.cell.api.Cell;
+import engine.cell.api.Cell;
 import engine.expression.parser.FunctionParser;
 import engine.sheet.coordinate.CoordinateFactory;
 import engine.sheet.coordinate.CoordinateFormatter;
-import engine.sheet.coordinate.CoordinateImpl;
 //import engine.sheet.utils.FunctionParser;
 
 import java.io.Serializable;
 import java.util.*;
 
 public class CellImpl implements Cell, Serializable {
-    private Sheet sheet;
+    private final Sheet sheet;
     private final String ID;
     private final Coordinate coordinate;
     private String originalValue;
     private EffectiveValue effectiveValue;
     private int version;
-    private List<Cell> dependsOn;
-    private List<Cell> influencingOn;
+    private final Set<Cell> dependsOn;
+    private final Set<Cell> influencingOn;
 
-    public CellImpl(String cellId, Coordinate coordinate, String originalValue, int version) {
-        this.ID = cellId;
-        this.coordinate = coordinate;
-        this.originalValue = originalValue;
-        this.effectiveValue = null;
-        this.version = version;
-        this.dependsOn = null;
-        this.influencingOn = null;
-    }
+//    public CellImpl(String cellId, Coordinate coordinate, String originalValue, int version) {
+//        this.ID = cellId;
+//        this.coordinate = coordinate;
+//        this.originalValue = originalValue;
+//        this.effectiveValue = null;
+//        this.version = version;
+//        this.dependsOn = null;
+//        this.influencingOn = null;
+//    }
 
     public CellImpl(int row, int column, String originalValue, int version, Sheet sheet) {
         this.sheet = sheet;
@@ -45,8 +43,8 @@ public class CellImpl implements Cell, Serializable {
         this.ID = CoordinateFormatter.indexToCellId(row, column);
         this.originalValue = originalValue;
         this.version = version;
-        this.dependsOn = new ArrayList<>();
-        this.influencingOn = new ArrayList<>();
+        this.dependsOn = new HashSet<>();
+        this.influencingOn = new HashSet<>();
     }
 
     @Override
@@ -96,22 +94,22 @@ public class CellImpl implements Cell, Serializable {
     }
 
     @Override
-    public List<Cell> getDependsOn() {
+    public Set<Cell> getDependsOn() {
         return dependsOn;
     }
 
     @Override
-    public List<Cell> getInfluencingOn() {
+    public Set<Cell> getInfluencingOn() {
         return influencingOn;
     }
 
     @Override
     public void deleteCell() {
-        if (this != null) {
-            originalValue = null;
-            effectiveValue = null;
-            influencingOn.clear();
-            dependsOn.clear();        }
+        deleteMeFromInfluenceList();
+        originalValue = null;
+        effectiveValue = null;
+        influencingOn.clear();
+        dependsOn.clear();
     }
 
     public void deleteDependency(Cell deleteMe) {
@@ -121,18 +119,18 @@ public class CellImpl implements Cell, Serializable {
 
     @Override
     public boolean calculateEffectiveValue() {
-        // build the expression object out of the original value...
-        // it can be {PLUS, 4, 5} OR {CONCAT, {ref, A4}, world}
+
         Expression expression = FunctionParser.parseExpression(originalValue, sheet);
+
         if(!(expression instanceof IdentityExpression)) {
             collectDependenciesAndInfluences(expression);
         }
-
         EffectiveValue newEffectiveValue = expression.eval();
 
         if (newEffectiveValue.equals(effectiveValue)) {
             return false;
-        } else {
+        }
+        else {
             effectiveValue = newEffectiveValue;
             return true;
         }
@@ -142,18 +140,21 @@ public class CellImpl implements Cell, Serializable {
         if (expression instanceof RefExpression) {
             // If the expression is a RefExpression, process it directly
             String refCellId = ((RefExpression) expression).getRefCellId();
+
             Cell refCell = sheet.getCell(refCellId);
+            if (refCell != null) {
+                // Add the current cell to the refCell's influence list
+                if (!refCell.getInfluencingOn().contains(this)) {
+                    refCell.addInfluence(this);
+                    addDependency((refCell));
 
-            // Add the current cell to the refCell's influence list
-            if(!refCell.getInfluencingOn().contains(this)) {
-                refCell.addInfluence(this);
+                    // Add the refCell to the current cell's dependency list
+                    // if(!this.getDependsOn().contains(refCell)){
+                    this.addDependency(refCell);
+                }
             }
-
-            // Add the refCell to the current cell's dependency list
-            if(!this.getDependsOn().contains(refCell)){
-            this.addDependency(refCell);
-            }
-        } else{
+        }
+        else {
             if(expression instanceof NumericExpression) {
                 List<Expression> expressions = ((NumericExpression) expression).getExpressions();
                 for(Expression e : expressions) {
@@ -167,19 +168,52 @@ public class CellImpl implements Cell, Serializable {
                 }
             }
         }
-        // You might need additional handling for other types of expressions if they exist
     }
 
     @Override
     public void addDependency(Cell cell) {
-        if (cell != this)
-           dependsOn.add(cell);
+        if (cell != null && !cell.equals(this) && !isCellInList(cell, dependsOn)) {
+            dependsOn.add(cell);
+        }
     }
 
     @Override
     public void addInfluence(Cell cell) {
-        if (cell != this)
+        if (cell != null && !cell.equals(this) && !isCellInList(cell, influencingOn))
             influencingOn.add(cell);
+    }
+
+    private boolean isCellInList(Cell cell, Set<Cell> cellSet ) {
+        for (Cell dependentCell : cellSet) {
+            if (dependentCell.getId().equals(cell.getId())) {
+                return true;  // Cell with the same ID is already in the list
+            }
+        }
+        return false;  // No cell with the same ID was found
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CellImpl cell = (CellImpl) o;
+        return Objects.equals(ID, cell.ID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(ID);
+    }
+
+    @Override
+    public void removeFromInfluenceOn(Cell originCell) {
+        influencingOn.remove(originCell);
+    }
+
+    @Override
+    public void deleteMeFromInfluenceList() {
+        for (Cell cell : dependsOn)
+            cell.removeFromInfluenceOn(this);
     }
 }
 

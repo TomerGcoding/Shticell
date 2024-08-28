@@ -4,7 +4,7 @@ import engine.dto.CellDTO;
 import engine.dto.SheetDTO;
 import engine.sheet.api.Sheet;
 import engine.dto.DTOCreator;
-import engine.sheet.cell.api.Cell;
+import engine.cell.api.Cell;
 import engine.utils.SheetLoader;
 import engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
@@ -15,18 +15,12 @@ import java.util.Map;
 
 public class EngineImpl implements Engine, Serializable {
     private Sheet sheet = null;
-    private SheetLoader sheetLoader = new SheetLoader();
-    private Map<Integer,SheetDTO> availableVersions = new HashMap<>();
+    private  final SheetLoader sheetLoader = new SheetLoader();
+    private final Map<Integer,SheetDTO> availableVersions = new HashMap<>();
 
     @Override
     public void loadSheetFile(String filePath) throws JAXBException {
-        try {
             sheetLoader.loadSheetFile(filePath);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw e;
-        }
         this.sheet = sheetLoader.getSheet();
         availableVersions.clear();
         availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
@@ -37,33 +31,34 @@ public class EngineImpl implements Engine, Serializable {
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
-        SheetDTO sheetDTO = DTOCreator.sheetToDTO(sheet);
-        return sheetDTO;
+        return DTOCreator.sheetToDTO(sheet);
     }
 
     @Override
     public CellDTO getCellInfo(String cellId) {
         Cell originalCell = sheet.getCell(cellId);
-        if (originalCell == null) {
-            return null;
-        }
-
-        return DTOCreator.cellToDTO(originalCell);
+        return originalCell != null? DTOCreator.cellToDTO(originalCell): null;
     }
 
     @Override
     public void setCell(String cellId, String cellValue) {
 
-        //just an example of some kind of exception struct
         try {
+
             if (cellValue.isEmpty())
-                sheet.deleteCell(cellId);
-            else
-                this.sheet = sheet.setCell(cellId, cellValue);
-            sheet.incrementVersion();
+                 sheet.deleteCell(cellId);
+            else {
+                Sheet newSheet = sheet.setCell(cellId, cellValue);
+                if (newSheet != sheet){
+                    sheet = newSheet;
+                    sheet.incrementVersion();}
             }
+
+        }
+
         catch (Exception e) {
-            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue);
+            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue + "because "
+                    + e.getMessage() + "\n" );
         }
         SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
         availableVersions.put(newSheet.getCurrVersion(),newSheet);

@@ -1,6 +1,6 @@
 package engine.dto;
 
-import engine.sheet.cell.impl.CellType;
+import engine.cell.impl.CellType;
 
 import java.io.Serializable;
 
