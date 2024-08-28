@@ -144,7 +144,6 @@ public class ConsoleUI {
                 flag = false;
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                //continue;
             }
         }
             flag = true;

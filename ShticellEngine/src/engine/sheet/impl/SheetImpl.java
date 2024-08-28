@@ -115,9 +115,13 @@ public class SheetImpl implements Sheet, Serializable {
     @Override
     public Sheet updateCellValueAndCalculate(int row, int column, String value) {
         Cell originCell = getCell(row, column);
-        if (originCell != null)
-            if (originCell.getOriginalValue() == value)
+        if (originCell != null) {
+            if (value.trim().equals(originCell.getOriginalValue().trim()))
                 return this;
+            for (Cell cell : originCell.getDependsOn())
+                cell.removeFromInfluenceOn(originCell);
+        }
+
 
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
 
@@ -159,9 +163,9 @@ public class SheetImpl implements Sheet, Serializable {
          //   if (cell.getId().equals("B4"))
                // System.out.println("\nlet's look at B4 list: " +  cell.getInfluencingOn());
             //Set<Cell> neighbores = cell.getInfluencingOn();
-            for (Cell neighbor : cell.getInfluencingOn()) {
-                adjList.get(cell).add(neighbor);
-                inDegree.put(neighbor, inDegree.get(neighbor) + 1);
+            for (Cell neighbor : cell.getDependsOn()) {
+                adjList.get(neighbor).add(cell);
+                inDegree.put(cell, inDegree.get(cell) + 1);
             }
         }
 
