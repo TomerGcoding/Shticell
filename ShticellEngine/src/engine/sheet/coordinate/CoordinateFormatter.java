@@ -9,14 +9,12 @@ public class CoordinateFormatter {
         return columnLabel + rowLabel;
     }
 
-    // Converts a cell ID (e.g., "AA12") into a 0-based row and column index
     public static int[] cellIdToIndex(String cellId) {
-        // Validate the format of the cellId
+        cellId = cellId.toUpperCase();
         if (!cellId.matches("^[A-Z]+\\d+$")) {
             throw new IllegalArgumentException("Invalid cell ID format: " + cellId);
         }
 
-        // Split the cellId into the column part (letters) and row part (numbers)
         int i = 0;
         while (i < cellId.length() && Character.isLetter(cellId.charAt(i))) {
             i++;
@@ -25,10 +23,8 @@ public class CoordinateFormatter {
         String columnPart = cellId.substring(0, i);
         String rowPart = cellId.substring(i);
 
-        // Convert the row part to an integer and subtract 1 to make it 0-based
         int rowIndex = Integer.parseInt(rowPart) - 1;
 
-        // Convert the column part to a 0-based column index
         int columnIndex = getColumnIndex(columnPart);
 
         return new int[]{rowIndex, columnIndex};

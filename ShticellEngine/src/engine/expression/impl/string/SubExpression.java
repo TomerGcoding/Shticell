@@ -1,9 +1,9 @@
 package engine.expression.impl.string;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.impl.CellType;
-import engine.sheet.cell.api.EffectiveValue;
-import engine.sheet.cell.impl.EffectiveValueImpl;
+import engine.cell.impl.CellType;
+import engine.cell.api.EffectiveValue;
+import engine.cell.impl.EffectiveValueImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,20 @@ public class SubExpression extends StringExpression {
         EffectiveValue sourceString = source.eval();
         EffectiveValue start = startIndex.eval();
         EffectiveValue end = endIndex.eval();
-        // do some checking... error handling...
-        String result = sourceString
-                .extractValueWithExpectation(String.class)
-                .substring(
-                        (int) Math.floor(start.extractValueWithExpectation(Double.class)), // Ensure start is an int
-                        (int) Math.floor(end.extractValueWithExpectation(Double.class))   // Ensure end is an int
-                );
 
-        return new EffectiveValueImpl(CellType.STRING, result);
+        try {
+            String result = sourceString
+                    .extractValueWithExpectation(String.class)
+                    .substring(
+                            (int) Math.floor(start.extractValueWithExpectation(Double.class) ) -1 , // Ensure start is an int
+                            (int) Math.floor(end.extractValueWithExpectation(Double.class))   // Ensure end is an int
+                    );
+
+            return new EffectiveValueImpl(CellType.STRING, result);
+        }
+        catch (Exception e) {
+            return new EffectiveValueImpl((CellType.UNKNOWN), "!UNDEFINED!" );
+        }
     }
 
     @Override

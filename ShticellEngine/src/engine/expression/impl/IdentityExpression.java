@@ -1,9 +1,9 @@
 package engine.expression.impl;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.impl.CellType;
-import engine.sheet.cell.api.EffectiveValue;
-import engine.sheet.cell.impl.EffectiveValueImpl;
+import engine.cell.impl.CellType;
+import engine.cell.api.EffectiveValue;
+import engine.cell.impl.EffectiveValueImpl;
 
 public class IdentityExpression implements Expression {
 

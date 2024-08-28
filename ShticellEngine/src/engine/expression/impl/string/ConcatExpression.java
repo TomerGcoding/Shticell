@@ -1,9 +1,9 @@
 package engine.expression.impl.string;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.impl.CellType;
-import engine.sheet.cell.api.EffectiveValue;
-import engine.sheet.cell.impl.EffectiveValueImpl;
+import engine.cell.impl.CellType;
+import engine.cell.api.EffectiveValue;
+import engine.cell.impl.EffectiveValueImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +19,14 @@ public class ConcatExpression extends StringExpression {
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
-        // do some checking... error handling...
-        String result = leftValue.extractValueWithExpectation(String.class) + rightValue.extractValueWithExpectation(String.class);
 
-        return new EffectiveValueImpl(CellType.STRING, result);
+        try {
+            String result = leftValue.extractValueWithExpectation(String.class) + rightValue.extractValueWithExpectation(String.class);
+            return new EffectiveValueImpl(CellType.STRING, result);
+        }
+        catch (Exception e) {
+            return new EffectiveValueImpl((CellType.UNKNOWN), "!UNDEFINED!" );
+        }
     }
     @Override
     public List<Expression> getExpressions(){

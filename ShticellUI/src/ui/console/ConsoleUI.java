@@ -97,50 +97,69 @@ public class ConsoleUI {
     }
 
     private void handleOption3() {
-        System.out.println("Please select a cell to view its details or Q/q to go back to the main menu: ");
-        String cellId = scanner.nextLine();
-        if(checkIfQuit(cellId))
-            return;
-        try {
-            CellDTO cellInfo = engine.getCellInfo(cellId);
-            if (cellInfo != null) {
-                System.out.println("Cell ID: " + cellId + "\nOriginal Value: " + cellInfo.getOriginalValue() +
-                        "\nEffective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
-                System.out.println("\nDependencies of this cell: ");
-                cellInfo.getDependsOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
-                System.out.println("\nInfluences of this cell: ");
-                cellInfo.getInfluencingOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
-            } else {
-                System.out.println("\nCell " + cellId + " has not been initialized yet.");
+        String cellId = "";
+        boolean flag = true;
+        while (flag) {
+            System.out.println("Please select a cell to view its details or Q/q to go back to the main menu: ");
+            cellId = scanner.nextLine();
+            if (checkIfQuit(cellId))
+                return;
+            try {
+                CellDTO cellInfo = engine.getCellInfo(cellId);
+                flag = false;
+                if (cellInfo != null) {
+                    System.out.println("Cell ID: " + cellId + "\nOriginal Value: " + cellInfo.getOriginalValue() +
+                            "\nEffective Value: " + cellInfo.getEffectiveValue() + "\nLast updated version: " + cellInfo.getVersion());
+                    System.out.println("\nDependencies of this cell: ");
+                    cellInfo.getDependsOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
+                    System.out.println("\nInfluences of this cell: ");
+                    cellInfo.getInfluencingOn().forEach(cellDTO -> System.out.print(cellDTO.getId() + ", "));
+                } else {
+                    System.out.println("\nCell " + cellId + " has not been initialized yet.");
+                }
+
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
             }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
         }
     }
 
 
     private void handleOption4() {
-        System.out.println("\nPlease select a cell to update or Q/q to go back to the main menu: ");
-        String cellId = scanner.nextLine();
-        if(checkIfQuit(cellId))
-            return;
-        CellDTO cell = engine.getCellInfo(cellId);
-        if(cell != null) {
-            System.out.println("\nCell ID: " + cell.getId() + "\nOriginal Value: " + cell.getOriginalValue() +
-                    "\nEffective Value: " + cell.getEffectiveValue().toString());
+        boolean flag = true;
+        String cellId = "";
+        while (flag) {
+            System.out.println("\nPlease select a cell to update or Q/q to go back to the main menu: ");
+            cellId = scanner.nextLine();
+            if (checkIfQuit(cellId))
+                return;
+            try {
+                CellDTO cell = engine.getCellInfo(cellId);
+                if (cell != null) {
+                    System.out.println("\nCell ID: " + cell.getId() + "\nOriginal Value: " + cell.getOriginalValue() +
+                            "\nEffective Value: " + cell.getEffectiveValue().toString());
+                } else {
+                    System.out.println("\nCell " + cellId + " has not been initialized yet.");
+                }
+                flag = false;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
-        else {
-            System.out.println("\nCell " + cellId + " has not been initialized yet.");
-        }
-        System.out.println("\nPlease enter the new cell's value or Q/q to go back to the main menu: ");
-        String value = scanner.nextLine();
-        if(checkIfQuit(value))
-            return;
-        try{
-            engine.setCell(cellId, value);
-        }
-        catch (IllegalArgumentException e) {
-            System.out.println("Error updating cell: " + e.getMessage());
+            flag = true;
+        while (flag)
+            {
+            System.out.println("\nPlease enter the new cell's value or Q/q to go back to the main menu: ");
+            String value = scanner.nextLine();
+            if (checkIfQuit(value))
+                return;
+            try {
+                engine.setCell(cellId, value);
+                flag = false;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error updating cell: " + e.getMessage());
+                handleOption4();
+            }
         }
         handleOption2(); // Display the updated spreadsheet
     }

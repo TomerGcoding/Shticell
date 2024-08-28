@@ -1,8 +1,8 @@
 package engine.dto;
 
 import engine.sheet.api.Sheet;
-import engine.sheet.cell.api.Cell;
-import engine.sheet.cell.api.EffectiveValue;
+import engine.cell.api.Cell;
+import engine.cell.api.EffectiveValue;
 import engine.sheet.coordinate.Coordinate;
 
 import java.util.ArrayList;

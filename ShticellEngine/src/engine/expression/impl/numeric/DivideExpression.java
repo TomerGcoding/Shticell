@@ -1,9 +1,9 @@
 package engine.expression.impl.numeric;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.impl.CellType;
-import engine.sheet.cell.api.EffectiveValue;
-import engine.sheet.cell.impl.EffectiveValueImpl;
+import engine.cell.impl.CellType;
+import engine.cell.api.EffectiveValue;
+import engine.cell.impl.EffectiveValueImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +21,19 @@ public class DivideExpression extends NumericExpression {
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
-        // do some checking... error handling...
+
         try {
+            double divider = rightValue.extractValueWithExpectation(Double.class);
+            if (divider == 0)
+                return new EffectiveValueImpl(CellType.UNKNOWN, "NaN");
+
             double result = leftValue.extractValueWithExpectation(Double.class) / rightValue.extractValueWithExpectation(Double.class);
             return new EffectiveValueImpl(CellType.NUMERIC, result);
         }
-        catch (ArithmeticException e)
+        catch (Exception e)
         {
             divisible = false;
-            return new EffectiveValueImpl(CellType.STRING, "NaN");
+            return new EffectiveValueImpl(CellType.UNKNOWN, "NaN");
         }
 
     }
