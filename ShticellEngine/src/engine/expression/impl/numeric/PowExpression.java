@@ -1,9 +1,9 @@
 package engine.expression.impl.numeric;
 
 import engine.expression.api.Expression;
-import engine.sheet.cell.impl.CellType;
-import engine.sheet.cell.api.EffectiveValue;
-import engine.sheet.cell.impl.EffectiveValueImpl;
+import engine.cell.impl.CellType;
+import engine.cell.api.EffectiveValue;
+import engine.cell.impl.EffectiveValueImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +18,23 @@ public class PowExpression extends NumericExpression {
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
-        // do some checking... error handling...
-        double result = Math.pow(leftValue.extractValueWithExpectation(Double.class),rightValue.extractValueWithExpectation(Double.class));
+        try {
+            double base = leftValue.extractValueWithExpectation(Double.class);
+            double pow = rightValue.extractValueWithExpectation(Double.class);
+            if (base == 0 && pow == 0)
+                return new EffectiveValueImpl((CellType.UNKNOWN), "NaN" );
 
-        return new EffectiveValueImpl(CellType.NUMERIC, result);
+            double result = Math.pow(base, pow);
+            return new EffectiveValueImpl(CellType.NUMERIC, result);
+
+        }
+        catch (Exception e) {
+            return new EffectiveValueImpl((CellType.UNKNOWN), "NaN" );
+        }
+
     }
     public List<Expression> getExpressions() {
-        List<Expression> expressions = new ArrayList<Expression>();
+        List<Expression> expressions = new ArrayList<>();
         expressions.add(left);
         expressions.add(right);
         return expressions;

@@ -115,12 +115,13 @@ public class SheetImpl implements Sheet, Serializable {
     @Override
     public Sheet updateCellValueAndCalculate(int row, int column, String value) {
         Cell originCell = getCell(row, column);
+
         if (originCell != null) {
             if (value.trim().equals(originCell.getOriginalValue().trim()))
                 return this;
-            for (Cell cell : originCell.getDependsOn())
-                cell.removeFromInfluenceOn(originCell);
+            originCell.deleteMeFromInfluenceList();
         }
+
 
 
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);

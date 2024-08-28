@@ -1,7 +1,7 @@
 package engine.dto;
 
-//import engine.sheet.cell.api.Cell;
-//import engine.sheet.cell.api.EffectiveValue;
+//import engine.cell.api.cell.Cell;
+//import engine.cell.api.cell.EffectiveValue;
 import engine.sheet.coordinate.Coordinate;
 //import engine.sheet.coordinate.CoordinateFormatter;
 
