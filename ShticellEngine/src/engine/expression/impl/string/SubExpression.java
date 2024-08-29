@@ -26,7 +26,7 @@ public class SubExpression extends StringExpression {
             String result = sourceString
                     .extractValueWithExpectation(String.class)
                     .substring(
-                            (int) Math.floor(start.extractValueWithExpectation(Double.class) ) -1 , // Ensure start is an int
+                            (int) Math.floor(start.extractValueWithExpectation(Double.class) ), // Ensure start is an int
                             (int) Math.floor(end.extractValueWithExpectation(Double.class))   // Ensure end is an int
                     );
 

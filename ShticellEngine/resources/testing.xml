@@ -10,7 +10,7 @@
         <STL-Cell row="2" column="C">
             <STL-Original-Value>Menash</STL-Original-Value>
         </STL-Cell>
-        <STL-Cell row="2" column="A">
+        <STL-Cell row="2" column="D">
             <STL-Original-Value>{CONCAT,{REF,B2},{REF,C2}}</STL-Original-Value>
         </STL-Cell>
     </STL-Cells>

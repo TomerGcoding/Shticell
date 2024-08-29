@@ -22,6 +22,7 @@ public class SheetImpl implements Sheet, Serializable {
         this.activeCells = new HashMap<>();
         this.sheetName = sheetName;
         this.properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
+        currVersion = 0;
     }
 
     public SheetImpl() {

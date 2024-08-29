@@ -20,7 +20,7 @@ public class EngineImpl implements Engine, Serializable {
 
     @Override
     public void loadSheetFile(String filePath) throws JAXBException {
-            sheetLoader.loadSheetFile(filePath);
+        sheetLoader.loadSheetFile(filePath);
         this.sheet = sheetLoader.getSheet();
         availableVersions.clear();
         availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
@@ -36,15 +36,19 @@ public class EngineImpl implements Engine, Serializable {
 
     @Override
     public CellDTO getCellInfo(String cellId) {
+        if (sheet == null) {
+            throw new IllegalStateException("No sheet is currently loaded.");
+        }
         Cell originalCell = sheet.getCell(cellId);
         return originalCell != null? DTOCreator.cellToDTO(originalCell): null;
     }
 
     @Override
     public void setCell(String cellId, String cellValue) {
-
+        if (sheet == null) {
+            throw new IllegalStateException("No sheet is currently loaded.");
+        }
         try {
-
             if (cellValue.isEmpty())
                  sheet.deleteCell(cellId);
             else {
