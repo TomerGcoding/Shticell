@@ -50,7 +50,10 @@ public class SheetPrinter {
                         if (cell.getEffectiveValue() != null && cell.getEffectiveValue().getValue() != null) {
                             if(cell.getEffectiveValue().getCellType() == CellType.NUMERIC)
                                 value = NumberFormatter.formatNumber((Double)cell.getEffectiveValue().getValue());
-                            else {
+                            else if(cell.getEffectiveValue().getCellType()==CellType.BOOLEAN)
+                                value = cell.getEffectiveValue().getValue().toString().toUpperCase();
+                            else
+                            {
                                 value = cell.getEffectiveValue().getValue().toString();
                             }
                         }
