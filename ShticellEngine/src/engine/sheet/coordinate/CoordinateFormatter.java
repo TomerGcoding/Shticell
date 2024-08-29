@@ -2,10 +2,9 @@ package engine.sheet.coordinate;
 
 public class CoordinateFormatter {
 
-    // Converts a 0-based row and column index into a cell ID (e.g., (11, 26) -> "AA12")
     public static String indexToCellId(int row, int column) {
         String columnLabel = getColumnLabel(column);
-        int rowLabel = row + 1;  // Rows are 1-based, so add 1 to the row index
+        int rowLabel = row + 1;
         return columnLabel + rowLabel;
     }
 
@@ -30,7 +29,6 @@ public class CoordinateFormatter {
         return new int[]{rowIndex, columnIndex};
     }
 
-    // Converts a column label (e.g., "AA") to a 0-based column index
     public static int getColumnIndex(String columnLabel) {
         int columnIndex = 0;
 
@@ -42,7 +40,6 @@ public class CoordinateFormatter {
         return columnIndex - 1;  // Make it 0-based
     }
 
-    // Converts a 0-based column index to a column label (e.g., 26 -> "AA")
     private static String getColumnLabel(int columnIndex) {
         StringBuilder columnLabel = new StringBuilder();
 

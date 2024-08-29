@@ -26,8 +26,7 @@ public class RefExpression implements Expression {
         Cell referencedCell = sheet.getCell(refCoordinate);
 
         if(referencedCell == null) {
-            EffectiveValue result = new EffectiveValueImpl(CellType.UNKNOWN, "");
-            return result;
+            return new EffectiveValueImpl(CellType.UNKNOWN, "");
         }
 
         return referencedCell.getEffectiveValue();  // Return the effective value of the referenced cell

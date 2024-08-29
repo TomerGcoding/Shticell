@@ -7,14 +7,11 @@ public interface Cell  {
     String getId ();
     Coordinate getCoordinate();
     String getOriginalValue();
-    void setCellOriginalValue(String value);
     EffectiveValue getEffectiveValue();
     int getVersion();
     Set<Cell> getDependsOn();
     Set<Cell> getInfluencingOn();
     void setVersion(int currVersion);
-    void deleteCell();
-    void deleteDependency(Cell deleteMe);
     boolean calculateEffectiveValue();
     void addDependency(Cell referencedCell);
     void addInfluence(Cell thisCell);

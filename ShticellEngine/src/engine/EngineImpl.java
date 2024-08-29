@@ -49,21 +49,14 @@ public class EngineImpl implements Engine, Serializable {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
         try {
-            if (cellValue.isEmpty()) {
-                sheet.deleteCell(cellId);
-                sheet.incrementVersion();
-            }
-            else {
                 Sheet newSheet = sheet.setCell(cellId, cellValue);
                 if (newSheet != sheet){
                     sheet = newSheet;
                     sheet.incrementVersion();}
-            }
-
         }
 
         catch (Exception e) {
-            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue + "because "
+            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue + " because: "
                     + e.getMessage() + "\n" );
         }
         SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
@@ -75,8 +68,7 @@ public class EngineImpl implements Engine, Serializable {
         if(availableVersions.isEmpty()){
             throw new IllegalStateException("No versions were loaded.");
         }
-        Map<Integer,Integer> versionTable = VersionShower.getVersionsToChooseFrom(availableVersions.values());
-        return versionTable;
+        return VersionShower.getVersionsToChooseFrom(availableVersions.values());
     }
 
     @Override

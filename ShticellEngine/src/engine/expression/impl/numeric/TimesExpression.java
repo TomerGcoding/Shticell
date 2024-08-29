@@ -15,6 +15,7 @@ public class TimesExpression extends NumericExpression {
         this.left = left;
         this.right = right;
     }
+
     @Override
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
@@ -28,6 +29,7 @@ public class TimesExpression extends NumericExpression {
             return new EffectiveValueImpl((CellType.UNKNOWN), "NaN" );
         }
     }
+
     @Override
     public List<Expression> getExpressions() {
         List<Expression> expressions = new ArrayList<Expression>();

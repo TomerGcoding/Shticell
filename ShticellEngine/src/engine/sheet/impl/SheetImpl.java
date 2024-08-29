@@ -52,11 +52,6 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public SheetProperties getSheetProperties() {
-        return properties;
-    }
-
-    @Override
     public Cell getCell(int row, int column) {
         if (!properties.isCoordinateLegal(row, column)) {
             throw new IllegalArgumentException("Invalid coordinate");
@@ -106,14 +101,6 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public void deleteCell(String cellId) {
-        Cell cell = getCell(cellId);
-        if (cell != null)
-            cell.deleteCell();
-        activeCells.remove(getCoordinateFromCellId(cellId));
-    }
-
-    @Override
     public Sheet updateCellValueAndCalculate(int row, int column, String value) {
         Cell originCell = getCell(row, column);
 
@@ -123,8 +110,6 @@ public class SheetImpl implements Sheet, Serializable {
             originCell.deleteMeFromInfluenceList();
         }
 
-
-
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
 
         SheetImpl newSheetVersion = copySheet();
@@ -133,12 +118,10 @@ public class SheetImpl implements Sheet, Serializable {
         newSheetVersion.activeCells.put(coordinate, newCell);
 
         List<Cell> orderedCells = newSheetVersion.orderCellsForCalculation();
-       // newCell.deleteEffectiveValue();
 
         List<Cell> cellsThatHaveChanged = orderedCells.stream()
                 .filter(Cell::calculateEffectiveValue) // Calculate the effective value in topological order
                 .collect(Collectors.toList());
-
         cellsThatHaveChanged.add(newCell);
 
         int newVersion = newSheetVersion.increaseVersion();
@@ -154,34 +137,21 @@ public class SheetImpl implements Sheet, Serializable {
         Map<Cell, Set<Cell>> adjList = new HashMap<>();
         Map<Cell, Integer> inDegree = new HashMap<>();
 
-        // Initialize the graph
         for (Cell cell : activeCells.values()) {
             adjList.put(cell, new HashSet<>());
             inDegree.put(cell, 0);
         }
 
-        // Populate the graph with dependencies (edges)
         for (Cell cell : activeCells.values()) {
-         //   if (cell.getId().equals("B4"))
-               // System.out.println("\nlet's look at B4 list: " +  cell.getInfluencingOn());
-            //Set<Cell> neighbores = cell.getInfluencingOn();
             for (Cell neighbor : cell.getDependsOn()) {
                 adjList.get(neighbor).add(cell);
                 inDegree.put(cell, inDegree.get(cell) + 1);
             }
         }
 
-//        // Debugging: Print the graph structure
-//        System.out.println("Adjacency List:");
-//        adjList.forEach((key, value) -> System.out.println(key.getId() + " -> " + value.stream().map(Cell::getId).collect(Collectors.joining(", "))));
-//
-//        System.out.println("In-Degree Map:");
-//        inDegree.forEach((key, value) -> System.out.println(key.getId() + ": " + value));
-
         List<Cell> sortedCells = new ArrayList<>();
         Queue<Cell> queue = new LinkedList<>();
 
-        // Start with cells that have no dependencies (in-degree 0)
         for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
             if (entry.getValue() == 0) {
                 queue.add(entry.getKey());
@@ -190,13 +160,9 @@ public class SheetImpl implements Sheet, Serializable {
 
         while (!queue.isEmpty()) {
             Cell current = queue.poll();
-            //System.out.println("current = " + current.getId());
             sortedCells.add(current);
 
-            // Reduce the in-degree of all neighbors
-          // System.out.println("neighbore: ");
             for (Cell neighbor : adjList.get(current)) {
-              //  System.out.println(neighbor.getId());
                 inDegree.put(neighbor, inDegree.get(neighbor) - 1);
                 if (inDegree.get(neighbor) == 0) {
                     queue.add(neighbor);
@@ -204,17 +170,9 @@ public class SheetImpl implements Sheet, Serializable {
             }
         }
 
-//        // If there are still cells with a non-zero in-degree, a cycle exists
         if (sortedCells.size() != inDegree.size()) {
-//            System.out.println("Detected a cycle. Cells not sorted:");
-//            for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
-//                if (entry.getValue() > 0) {
-//                    System.out.println(entry.getKey().getId() + "degree = " + entry.getValue());
-//                }
-//            }
-            throw new IllegalStateException("Circular dependency detected among cells.");
+            throw new IllegalStateException("circular dependency detected among cells.");
         }
-
         return sortedCells;
     }
 

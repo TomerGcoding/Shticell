@@ -21,21 +21,12 @@ public class CellImpl implements Cell, Serializable {
     private final Sheet sheet;
     private final String ID;
     private final Coordinate coordinate;
-    private String originalValue;
+    private final String originalValue;
     private EffectiveValue effectiveValue;
     private int version;
     private final Set<Cell> dependsOn;
     private final Set<Cell> influencingOn;
 
-//    public CellImpl(String cellId, Coordinate coordinate, String originalValue, int version) {
-//        this.ID = cellId;
-//        this.coordinate = coordinate;
-//        this.originalValue = originalValue;
-//        this.effectiveValue = null;
-//        this.version = version;
-//        this.dependsOn = null;
-//        this.influencingOn = null;
-//    }
 
     public CellImpl(int row, int column, String originalValue, int version, Sheet sheet) {
         this.sheet = sheet;
@@ -62,27 +53,11 @@ public class CellImpl implements Cell, Serializable {
         return originalValue;
     }
 
-
-    @Override
-    public void setCellOriginalValue(String value) {
-        this.originalValue = value;
-    }
-
     @Override
     public EffectiveValue getEffectiveValue() {
         return effectiveValue;
     }
 
-//    @Override
-//    public void calculateEffectiveValue(Sheet sheet) {
-//        // build the expression object out of the original value...
-//        // it can be {PLUS, 4, 5} OR {CONCAT, hello, world}
-//        Expression expression = FunctionParser.parseExpression(originalValue, sheet);
-//
-//        // second question: what is the return type of eval() ?
-//        effectiveValue = expression.eval();
-//
-//    }
 
     @Override
     public int getVersion() {
@@ -101,15 +76,6 @@ public class CellImpl implements Cell, Serializable {
     @Override
     public Set<Cell> getInfluencingOn() {
         return influencingOn;
-    }
-
-    @Override
-    public void deleteCell() {
-        deleteMeFromInfluenceList();
-        originalValue = null;
-        effectiveValue = null;
-        influencingOn.clear();
-        dependsOn.clear();
     }
 
     public void deleteDependency(Cell deleteMe) {
@@ -138,18 +104,14 @@ public class CellImpl implements Cell, Serializable {
 
     private void collectDependenciesAndInfluences(Expression expression) {
         if (expression instanceof RefExpression) {
-            // If the expression is a RefExpression, process it directly
             String refCellId = ((RefExpression) expression).getRefCellId();
 
             Cell refCell = sheet.getCell(refCellId);
             if (refCell != null) {
-                // Add the current cell to the refCell's influence list
                 if (!refCell.getInfluencingOn().contains(this)) {
                     refCell.addInfluence(this);
                     addDependency((refCell));
 
-                    // Add the refCell to the current cell's dependency list
-                    // if(!this.getDependsOn().contains(refCell)){
                     this.addDependency(refCell);
                 }
             }
@@ -186,10 +148,10 @@ public class CellImpl implements Cell, Serializable {
     private boolean isCellInList(Cell cell, Set<Cell> cellSet ) {
         for (Cell dependentCell : cellSet) {
             if (dependentCell.getId().equals(cell.getId())) {
-                return true;  // Cell with the same ID is already in the list
+                return true;
             }
         }
-        return false;  // No cell with the same ID was found
+        return false;
     }
 
     @Override

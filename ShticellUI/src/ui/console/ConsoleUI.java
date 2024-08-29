@@ -61,7 +61,6 @@ public class ConsoleUI {
 
         menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
 
-        // You can add more options or submenus here
         return menu;
     }
 
@@ -92,13 +91,11 @@ public class ConsoleUI {
         catch (IllegalStateException e){
             System.out.println("Error showing sheet: " + e.getMessage());
         }
-        // Example method
-
     }
 
     private void handleOption3() {
         try {
-            String cellId = "";
+            String cellId;
             boolean flag = true;
             while (flag) {
                 System.out.println("Please select a cell to view its details or Q/q to go back to the main menu: ");
@@ -170,7 +167,6 @@ public class ConsoleUI {
             System.out.println("Error updating cell: " + e.getMessage());
         }
 
-        // Display the updated spreadsheet
     }
 
     private void handleOption5() {
@@ -234,10 +230,10 @@ public class ConsoleUI {
             System.out.print("Enter your choice: ");
             try {
                 choice = scanner.nextInt();
-                validInput = true; // Exit loop if the input is a valid integer
+                validInput = true;
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a valid integer.");
-                scanner.next(); // Clear the invalid input from the scanner
+                scanner.next();
             }
         }
 

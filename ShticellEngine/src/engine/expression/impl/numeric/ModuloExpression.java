@@ -16,6 +16,7 @@ public class ModuloExpression extends NumericExpression {
         this.left = left;
         this.right = right;
     }
+
     @Override
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
@@ -30,6 +31,7 @@ public class ModuloExpression extends NumericExpression {
         }
 
     }
+
     @Override
     public List<Expression> getExpressions() {
         List<Expression> expressions = new ArrayList<>();

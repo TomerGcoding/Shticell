@@ -29,6 +29,7 @@ public class MinusExpression extends NumericExpression {
             return new EffectiveValueImpl((CellType.UNKNOWN), "NaN" );
         }
     }
+
     @Override
     public List<Expression> getExpressions() {
         List<Expression> expressions = new ArrayList<>();

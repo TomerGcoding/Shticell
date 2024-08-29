@@ -1,7 +1,6 @@
 package engine.sheet.coordinate;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 public class CoordinateImpl implements Coordinate, Serializable {
     private final int row;
@@ -11,12 +10,6 @@ public class CoordinateImpl implements Coordinate, Serializable {
         this.row = row;
         this.column = column;
     }
-//    public CoordinateImpl(String cellId) {
-//        this(CoordinateFormatter.cellIdToIndex(cellId));
-//    }
-//    public CoordinateImpl(int[] indexArray) {
-//        this(indexArray[0], indexArray[1]);
-//    }
 
     @Override
     public boolean equals(Object o) {
@@ -28,9 +21,9 @@ public class CoordinateImpl implements Coordinate, Serializable {
 
     @Override
     public int hashCode() {
-        int result = 17; // Start with a non-zero constant prime number
-        result = 31 * result + row; // Multiply by 31 and add the first field
-        result = 31 * result + column; // Multiply by 31 and add the second field
+        int result = 17;
+        result = 31 * result + row;
+        result = 31 * result + column;
         return result;
     }
 

@@ -19,7 +19,7 @@ public enum FunctionParser {
         public Expression parse(List<String> arguments, Sheet sheet) {
             validateArgumentCount(arguments, 1, "IDENTITY");
 
-            String actualValue = arguments.get(0).trim();
+            String actualValue = arguments.getFirst().trim();
             if (isBoolean(actualValue)) {
                 return new IdentityExpression(Boolean.parseBoolean(actualValue), CellType.BOOLEAN);
             } else if (isNumeric(actualValue)) {
@@ -99,7 +99,7 @@ public enum FunctionParser {
         public Expression parse(List<String> arguments, Sheet sheet) {
             validateArgumentCount(arguments, 1, "ABS");
 
-            Expression arg = parseExpression(arguments.get(0).trim(), sheet);
+            Expression arg = parseExpression(arguments.getFirst().trim(), sheet);
 
             validateArgumentType(arg, CellType.NUMERIC, "ABS");
 
@@ -124,7 +124,7 @@ public enum FunctionParser {
         public Expression parse(List<String> arguments, Sheet sheet) {
             validateArgumentCount(arguments, 1, "REF");
 
-            return new RefExpression(arguments.get(0), sheet);
+            return new RefExpression(arguments.getFirst(), sheet);
         }
     },
     CONCAT {
@@ -157,29 +157,25 @@ public enum FunctionParser {
         }
     };
 
-    // Abstract parse method for all function types
     abstract public Expression parse(List<String> arguments, Sheet sheet);
 
-    // Utility method to parse a string expression into an Expression object
     public static Expression parseExpression(String input, Sheet sheet) {
         if (input.startsWith("{") && input.endsWith("}")) {
                 String functionContent = input.substring(1, input.length() - 1);
                 List<String> topLevelParts = parseMainParts(functionContent);
-                String functionName = topLevelParts.get(0).trim().toUpperCase();
-                topLevelParts.remove(0); // Remove function name from the list of arguments
+                String functionName = topLevelParts.getFirst().trim().toUpperCase();
+                topLevelParts.removeFirst();
             try {
                 return FunctionParser.valueOf(functionName).parse(topLevelParts, sheet);
             }
             catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("\nfunction " + topLevelParts.get(0).trim() + " does'nt exists in shticell.");
+                throw new IllegalArgumentException(" function " + topLevelParts.getFirst().trim() + " doesn't exists in Shticell.");
             }
         }
 
-        // Handle identity expression
         return FunctionParser.IDENTITY.parse(List.of(input.trim()), sheet);
     }
 
-    // Utility method to split the main parts of a function expression
     private static List<String> parseMainParts(String input) {
         List<String> parts = new ArrayList<>();
         StringBuilder buffer = new StringBuilder();
@@ -194,34 +190,31 @@ public enum FunctionParser {
 
             if (c == ',' && stack.isEmpty()) {
                 parts.add(buffer.toString().trim());
-                buffer.setLength(0); // Clear the buffer for the next part
+                buffer.setLength(0);
             } else {
                 buffer.append(c);
             }
         }
 
-        if (buffer.length() > 0) {
+        if (!buffer.isEmpty()) {
             parts.add(buffer.toString().trim());
         }
 
         return parts;
     }
 
-    // Utility method to validate the number of arguments
     private static void validateArgumentCount(List<String> arguments, int expected, String functionName) {
         if (arguments.size() != expected) {
             throw new IllegalArgumentException("Invalid number of arguments for " + functionName + " function. Expected " + expected + ", but got " + arguments.size());
         }
     }
 
-    // Utility method to validate the type of a single argument
     private static void validateArgumentType(Expression expression, CellType expectedType, String functionName) {
         if (!expression.getFunctionResultType().equals(expectedType) && !expression.getFunctionResultType().equals(CellType.UNKNOWN)) {
             throw new IllegalArgumentException("Invalid argument type for " + functionName + " function. Expected " + expectedType + ", but got " + expression.getFunctionResultType());
         }
     }
 
-    // Utility method to validate the types of multiple arguments
     private static void validateArgumentTypes(List<Expression> expressions, CellType expectedType, String functionName) {
         for (Expression expression : expressions) {
             validateArgumentType(expression, expectedType, functionName);

@@ -17,6 +17,7 @@ public class DivideExpression extends NumericExpression {
         this.right = right;
         divisible = true;
     }
+
     @Override
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
@@ -37,6 +38,7 @@ public class DivideExpression extends NumericExpression {
         }
 
     }
+
     @Override
     public CellType getFunctionResultType() {return divisible? CellType.NUMERIC: CellType.STRING; }
 

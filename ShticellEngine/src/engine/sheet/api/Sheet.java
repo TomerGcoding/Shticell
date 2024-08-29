@@ -18,8 +18,6 @@ public interface Sheet {
     Coordinate getCoordinateFromCellId(String cellId);
     Cell getCell(Coordinate coordinate);
     void incrementVersion();
-    SheetProperties getSheetProperties();
-    void deleteCell(String cellId);
     Sheet updateCellValueAndCalculate(int row, int column, String value);
     int increaseVersion();
 }

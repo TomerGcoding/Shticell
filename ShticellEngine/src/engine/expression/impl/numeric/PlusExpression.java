@@ -30,6 +30,7 @@ public class PlusExpression extends NumericExpression {
            return new EffectiveValueImpl((CellType.UNKNOWN), "NaN" );
        }
     }
+
     public List<Expression> getExpressions() {
         List<Expression> expressions = new ArrayList<>();
         expressions.add(left);

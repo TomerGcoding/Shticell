@@ -15,6 +15,7 @@ public class PowExpression extends NumericExpression {
         this.left = left;
         this.right = right;
     }
+    @Override
     public EffectiveValue eval() {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
@@ -33,6 +34,8 @@ public class PowExpression extends NumericExpression {
         }
 
     }
+
+    @Override
     public List<Expression> getExpressions() {
         List<Expression> expressions = new ArrayList<>();
         expressions.add(left);

@@ -6,8 +6,8 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class SubMenuItem implements MenuItem {
-    private String description;
-    private Menu submenu;
+    private final String description;
+    private final Menu submenu;
 
     public SubMenuItem(String description, Menu submenu) {
         this.description = description;

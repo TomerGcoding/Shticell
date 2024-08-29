@@ -3,8 +3,8 @@ package ui.console.menu.impl;
 import ui.console.menu.api.MenuItem;
 
 public class SimpleActionMenuItem implements MenuItem {
-    private String description;
-    private Runnable action;
+    private final String description;
+    private final Runnable action;
 
     public SimpleActionMenuItem(String description, Runnable action) {
         this.description = description;

@@ -27,7 +27,7 @@ public class SheetLoader implements Serializable {
     private static final int MIN_COLUMNS = 1;
 
     private Sheet sheet;
-    private Map<Integer, SheetDTO> versions = new HashMap<>();
+    private final Map<Integer, SheetDTO> versions = new HashMap<>();
     public void loadSheetFile(String filePath) throws JAXBException {
         validateFilePath(filePath);
 

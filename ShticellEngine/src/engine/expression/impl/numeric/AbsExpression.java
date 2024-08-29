@@ -13,6 +13,7 @@ public class AbsExpression extends NumericExpression {
     public AbsExpression(Expression expression) {
         this.expression = expression;
     }
+
     @Override
     public EffectiveValue eval() {
         EffectiveValue value = expression.eval();

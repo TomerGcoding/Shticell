@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Menu {
-    private String title;
-    private List<MenuItem> items;
+    private final String title;
+    private final List<MenuItem> items;
 
     public Menu(String title) {
         this.title = title;
