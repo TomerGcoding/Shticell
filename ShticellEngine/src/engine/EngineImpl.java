@@ -49,8 +49,10 @@ public class EngineImpl implements Engine, Serializable {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
         try {
-            if (cellValue.isEmpty())
-                 sheet.deleteCell(cellId);
+            if (cellValue.isEmpty()) {
+                sheet.deleteCell(cellId);
+                sheet.incrementVersion();
+            }
             else {
                 Sheet newSheet = sheet.setCell(cellId, cellValue);
                 if (newSheet != sheet){
