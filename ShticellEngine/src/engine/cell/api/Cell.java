@@ -1,7 +1,8 @@
 package engine.cell.api;
 
 import engine.sheet.coordinate.Coordinate;
-import java.util.Set;
+
+import java.util.List;
 
 public interface Cell  {
     String getId ();
@@ -9,8 +10,8 @@ public interface Cell  {
     String getOriginalValue();
     EffectiveValue getEffectiveValue();
     int getVersion();
-    Set<Cell> getDependsOn();
-    Set<Cell> getInfluencingOn();
+    List<Cell> getDependsOn();
+    List<Cell> getInfluencingOn();
     void setVersion(int currVersion);
     boolean calculateEffectiveValue();
     void addDependency(Cell referencedCell);

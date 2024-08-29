@@ -24,8 +24,8 @@ public class CellImpl implements Cell, Serializable {
     private final String originalValue;
     private EffectiveValue effectiveValue;
     private int version;
-    private final Set<Cell> dependsOn;
-    private final Set<Cell> influencingOn;
+    private final List<Cell> dependsOn;
+    private final List<Cell> influencingOn;
 
 
     public CellImpl(int row, int column, String originalValue, int version, Sheet sheet) {
@@ -34,8 +34,8 @@ public class CellImpl implements Cell, Serializable {
         this.ID = CoordinateFormatter.indexToCellId(row, column);
         this.originalValue = originalValue;
         this.version = version;
-        this.dependsOn = new HashSet<>();
-        this.influencingOn = new HashSet<>();
+        this.dependsOn = new ArrayList<>();
+        this.influencingOn = new ArrayList<>();
     }
 
     @Override
@@ -69,19 +69,15 @@ public class CellImpl implements Cell, Serializable {
     }
 
     @Override
-    public Set<Cell> getDependsOn() {
+    public List<Cell> getDependsOn() {
         return dependsOn;
     }
 
     @Override
-    public Set<Cell> getInfluencingOn() {
+    public List<Cell> getInfluencingOn() {
         return influencingOn;
     }
 
-    public void deleteDependency(Cell deleteMe) {
-        if (dependsOn != null)
-            dependsOn.remove(deleteMe);
-    }
 
     @Override
     public boolean calculateEffectiveValue() {
@@ -112,7 +108,7 @@ public class CellImpl implements Cell, Serializable {
                     refCell.addInfluence(this);
                     addDependency((refCell));
 
-                    this.addDependency(refCell);
+                    // this.addDependency(refCell);
                 }
             }
         }
@@ -145,7 +141,7 @@ public class CellImpl implements Cell, Serializable {
             influencingOn.add(cell);
     }
 
-    private boolean isCellInList(Cell cell, Set<Cell> cellSet ) {
+    private boolean isCellInList(Cell cell, List<Cell> cellSet ) {
         for (Cell dependentCell : cellSet) {
             if (dependentCell.getId().equals(cell.getId())) {
                 return true;
@@ -168,14 +164,15 @@ public class CellImpl implements Cell, Serializable {
     }
 
     @Override
-    public void removeFromInfluenceOn(Cell originCell) {
-        influencingOn.remove(originCell);
+    public void removeFromInfluenceOn(Cell cell) {
+        influencingOn.remove(cell);
     }
 
     @Override
     public void deleteMeFromInfluenceList() {
-        for (Cell cell : dependsOn)
+        for (Cell cell : dependsOn) {
             cell.removeFromInfluenceOn(this);
+        }
     }
 }
 
