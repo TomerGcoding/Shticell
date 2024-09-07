@@ -3,6 +3,7 @@ package com.shticell.ui.gui.header;
 import com.shticell.engine.Engine;
 import com.shticell.engine.EngineImpl;
 import com.shticell.engine.dto.SheetDTO;
+import com.shticell.ui.gui.app.AppController;
 import com.shticell.ui.utils.SheetPrinter;
 import jakarta.xml.bind.JAXBException;
 import javafx.fxml.FXML;
@@ -15,8 +16,8 @@ import java.io.File;
 
 public class HeaderController {
 
-    private Engine engine= new EngineImpl();
-
+    private AppController appController;
+    private Engine engine;
     @FXML
     private Label filePathLabel;
 
@@ -42,6 +43,7 @@ public class HeaderController {
         if (selectedFile != null) {
             try {
                 engine.loadSheetFile(selectedFile.getAbsolutePath());
+                appController.populateSheetGrid(engine.showSheet());
                 filePathLabel.setText(selectedFile.getAbsolutePath());
                 versionPickerComboBox.getItems().clear();
                 versionPickerComboBox.getItems().add(1);
@@ -82,5 +84,12 @@ public class HeaderController {
             alert.setHeaderText("Failed to update version");
             alert.setContentText(e.getMessage());
         }
+    }
+
+    public void setMainController(AppController appController) {
+        this.appController = appController;
+    }
+    public void setEngine(Engine engine) {
+        this.engine = engine;
     }
 }
