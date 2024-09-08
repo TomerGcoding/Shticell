@@ -7,11 +7,10 @@
 
 package jaxb.schema.generated;
 
+import javax.xml.namespace.QName;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlElementDecl;
 import jakarta.xml.bind.annotation.XmlRegistry;
-
-import javax.xml.namespace.QName;
 
 
 /**
@@ -68,6 +67,36 @@ public class ObjectFactory {
      */
     public STLLayout createSTLLayout() {
         return new STLLayout();
+    }
+
+    /**
+     * Create an instance of {@link STLRanges }
+     * 
+     * @return
+     *     the new instance of {@link STLRanges }
+     */
+    public STLRanges createSTLRanges() {
+        return new STLRanges();
+    }
+
+    /**
+     * Create an instance of {@link STLRange }
+     * 
+     * @return
+     *     the new instance of {@link STLRange }
+     */
+    public STLRange createSTLRange() {
+        return new STLRange();
+    }
+
+    /**
+     * Create an instance of {@link STLBoundaries }
+     * 
+     * @return
+     *     the new instance of {@link STLBoundaries }
+     */
+    public STLBoundaries createSTLBoundaries() {
+        return new STLBoundaries();
     }
 
     /**
