@@ -1,4 +1,4 @@
-package com.shticell.ui.utils;
+package com.shticell.ui.console.utils;
 
 import java.util.Map;
 

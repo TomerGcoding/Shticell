@@ -1,6 +1,8 @@
 package com.shticell.engine.cell.impl;
 
 import com.shticell.engine.cell.api.EffectiveValue;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.StringProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
