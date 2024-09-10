@@ -13,17 +13,20 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.shticell.engine.dto.DTOCreator.sheetToDTO;
+
 public class EngineImpl implements Engine, Serializable {
     private Sheet sheet = null;
     private  final SheetLoader sheetLoader = new SheetLoader();
     private final Map<Integer,SheetDTO> availableVersions = new HashMap<>();
 
     @Override
-    public void loadSheetFile(String filePath) throws JAXBException {
+    public SheetDTO loadSheetFile(String filePath) throws JAXBException {
         sheetLoader.loadSheetFile(filePath);
         this.sheet = sheetLoader.getSheet();
         availableVersions.clear();
-        availableVersions.put(sheet.getVersion(),DTOCreator.sheetToDTO(sheet));
+        availableVersions.put(sheet.getVersion(), sheetToDTO(sheet));
+        return DTOCreator.sheetToDTO(sheet);
     }
 
     @Override
@@ -31,7 +34,7 @@ public class EngineImpl implements Engine, Serializable {
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
-        return DTOCreator.sheetToDTO(sheet);
+        return sheetToDTO(sheet);
     }
 
     @Override
@@ -59,7 +62,7 @@ public class EngineImpl implements Engine, Serializable {
             throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue + " because: "
                     + e.getMessage() + "\n" );
         }
-        SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
+        SheetDTO newSheet = sheetToDTO(sheet);
         availableVersions.put(newSheet.getCurrVersion(),newSheet);
     }
 

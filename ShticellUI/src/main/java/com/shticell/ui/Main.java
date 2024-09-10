@@ -37,7 +37,7 @@ public class Main extends Application {
         primaryStage.setTitle("Hello There in FXML");
 
         Parent load = FXMLLoader.load(getClass().getResource("jfx/main/main.fxml"));
-        Scene scene = new Scene(load, 600, 400);
+        Scene scene = new Scene(load);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

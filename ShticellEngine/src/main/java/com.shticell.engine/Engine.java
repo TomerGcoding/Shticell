@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface Engine {
 
-    void loadSheetFile(String filePath) throws JAXBException;
+    SheetDTO loadSheetFile(String filePath) throws JAXBException;
 
     SheetDTO showSheet();
 
