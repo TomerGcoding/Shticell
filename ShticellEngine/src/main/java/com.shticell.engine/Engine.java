@@ -25,4 +25,6 @@ public interface Engine {
     void writeEngineToFile(String fileName) throws IOException;
 
     Engine readEngineFromFile(String fileName) throws IOException, ClassNotFoundException;
+
+    void addRange(String name, String cellsRange);
 }

@@ -1,5 +1,7 @@
 package com.shticell.engine.sheet.impl;
 
+import com.shticell.engine.range.Range;
+import com.shticell.engine.range.RangeImpl;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.cell.api.Cell;
 import com.shticell.engine.cell.impl.CellImpl;
@@ -14,22 +16,19 @@ import java.util.stream.Collectors;
 public class SheetImpl implements Sheet, Serializable {
 
     private final Map<Coordinate, Cell> activeCells;
+    private final  Map <String, Range> activeRanges;
     private static int currVersion = 0;
     private final String sheetName;
     private final SheetProperties properties;
 
     public SheetImpl(String sheetName, int rows, int columns, int rowHeight, int columnWidth) {
         this.activeCells = new HashMap<>();
+        this.activeRanges = new HashMap<>();
         this.sheetName = sheetName;
         this.properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
         currVersion = 0;
     }
 
-    public SheetImpl() {
-        this.activeCells = new HashMap<>();
-        this.sheetName = "testtttt";
-        this.properties = new SheetProperties(10, 10, 1, 5);
-    }
 
     @Override
     public Map<Coordinate, Cell> getCells() {
@@ -176,6 +175,26 @@ public class SheetImpl implements Sheet, Serializable {
         return sortedCells;
     }
 
+    @Override
+    public void addRange(String name, String cellsRange) throws IllegalArgumentException {
+        if (activeRanges.containsKey(name)) {
+            throw new IllegalArgumentException("Invalid name: A range with the name '" + name + "' already exists.");
+        }
+
+        // Parse the range
+        String[] rangeParts = cellsRange.split("\\.\\.");
+        if (rangeParts.length != 2) {
+            throw new IllegalArgumentException("Invalid range format: " + cellsRange);
+        }
+
+        Range range = new RangeImpl(rangeParts[0], rangeParts[1], this);
+        activeRanges.put(name, range);  // Store the range in activeRanges
+    }
+
+    // Add a method to add a cell to the sheet
+    public void addCell(Coordinate coordinate, Cell cell) {
+        activeCells.put(coordinate, cell);
+    }
 
 
     private SheetImpl copySheet() {

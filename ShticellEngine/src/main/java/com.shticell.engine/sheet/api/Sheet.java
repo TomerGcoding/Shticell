@@ -20,4 +20,7 @@ public interface Sheet {
     void incrementVersion();
     Sheet updateCellValueAndCalculate(int row, int column, String value);
     int increaseVersion();
+
+    void addRange(String name, String cellsRange);
+    void addCell(Coordinate coordinate, Cell cell);
 }
