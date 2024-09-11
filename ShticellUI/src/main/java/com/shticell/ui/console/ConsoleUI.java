@@ -2,13 +2,13 @@ package com.shticell.ui.console;
 
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.ui.console.menu.impl.Menu;
-import com.shticell.ui.utils.SheetPrinter;
+import com.shticell.ui.console.utils.SheetPrinter;
 import com.shticell.engine.Engine;
 import com.shticell.engine.dto.CellDTO;
 import jakarta.xml.bind.JAXBException;
 import com.shticell.ui.console.menu.impl.SimpleActionMenuItem;
 import com.shticell.ui.console.menu.impl.SubMenuItem;
-import com.shticell.ui.utils.TablePrinter;
+import com.shticell.ui.console.utils.TablePrinter;
 
 import java.io.IOException;
 import java.util.InputMismatchException;

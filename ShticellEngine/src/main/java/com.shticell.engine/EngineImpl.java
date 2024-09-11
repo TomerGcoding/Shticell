@@ -13,17 +13,20 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.shticell.engine.dto.DTOCreator.sheetToDTO;
+
 public class EngineImpl implements Engine, Serializable {
     private Sheet sheet = null;
-    private final SheetLoader sheetLoader = new SheetLoader();
-    private final Map<Integer, SheetDTO> availableVersions = new HashMap<>();
+    private  final SheetLoader sheetLoader = new SheetLoader();
+    private final Map<Integer,SheetDTO> availableVersions = new HashMap<>();
 
     @Override
-    public void loadSheetFile(String filePath) throws JAXBException {
+    public SheetDTO loadSheetFile(String filePath) throws JAXBException {
         sheetLoader.loadSheetFile(filePath);
         this.sheet = sheetLoader.getSheet();
         availableVersions.clear();
-        availableVersions.put(sheet.getVersion(), DTOCreator.sheetToDTO(sheet));
+        availableVersions.put(sheet.getVersion(), sheetToDTO(sheet));
+        return DTOCreator.sheetToDTO(sheet);
     }
 
     @Override
@@ -31,7 +34,7 @@ public class EngineImpl implements Engine, Serializable {
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
-        return DTOCreator.sheetToDTO(sheet);
+        return sheetToDTO(sheet);
     }
 
     @Override
@@ -40,7 +43,7 @@ public class EngineImpl implements Engine, Serializable {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
         Cell originalCell = sheet.getCell(cellId);
-        return originalCell != null ? DTOCreator.cellToDTO(originalCell) : null;
+        return originalCell != null? DTOCreator.cellToDTO(originalCell): null;
     }
 
     @Override
@@ -49,22 +52,23 @@ public class EngineImpl implements Engine, Serializable {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
         try {
-            Sheet newSheet = sheet.setCell(cellId, cellValue);
-            if (newSheet != sheet) {
-                sheet = newSheet;
-                sheet.incrementVersion();
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue + " because: "
-                    + e.getMessage() + "\n");
+                Sheet newSheet = sheet.setCell(cellId, cellValue);
+                if (newSheet != sheet){
+                    sheet = newSheet;
+                    sheet.incrementVersion();}
         }
-        SheetDTO newSheet = DTOCreator.sheetToDTO(sheet);
-        availableVersions.put(newSheet.getCurrVersion(), newSheet);
+
+        catch (Exception e) {
+            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue + " because: "
+                    + e.getMessage() + "\n" );
+        }
+        SheetDTO newSheet = sheetToDTO(sheet);
+        availableVersions.put(newSheet.getCurrVersion(),newSheet);
     }
 
     @Override
-    public Map<Integer, Integer> showVersionTable() {
-        if (availableVersions.isEmpty()) {
+    public Map<Integer,Integer> showVersionTable() {
+        if(availableVersions.isEmpty()){
             throw new IllegalStateException("No versions were loaded.");
         }
         return VersionShower.getVersionsToChooseFrom(availableVersions.values());
@@ -97,16 +101,11 @@ public class EngineImpl implements Engine, Serializable {
                              new FileInputStream(fileName))) {
             Engine engine = (EngineImpl) in.readObject();
             return engine;
-        } catch (IOException e) {
+        }catch (IOException e){
             throw e;
 
-        } catch (ClassNotFoundException e) {
+        }catch (ClassNotFoundException e) {
             throw e;
         }
-    }
-
-    @Override
-    public void addRange(String name, String cellsRange) throws IllegalArgumentException {
-        sheet.addRange(name, cellsRange);
     }
 }

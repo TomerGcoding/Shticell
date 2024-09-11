@@ -12,6 +12,10 @@ import com.shticell.engine.cell.api.Cell;
 import com.shticell.engine.expression.parser.FunctionParser;
 import com.shticell.engine.sheet.coordinate.CoordinateFactory;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 //import engine.sheet.utils.FunctionParser;
 
 import java.io.Serializable;
@@ -64,9 +68,8 @@ public class CellImpl implements Cell, Serializable {
         return version;
     }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
+    public void setVersion(int version) {this.version = version;}
+
 
     @Override
     public List<Cell> getDependsOn() {

@@ -1,4 +1,4 @@
-package com.shticell.ui.utils;
+package com.shticell.ui.console.utils;
 
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
