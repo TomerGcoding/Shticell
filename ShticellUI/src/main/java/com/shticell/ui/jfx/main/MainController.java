@@ -5,9 +5,11 @@ import com.shticell.engine.EngineImpl;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -22,6 +24,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainController {
+
+    @FXML
+    private ProgressBar progressBar;
+
+    @FXML
+    private Label progressLabel;
 
     @FXML
     private Label chosenFileFullPathLabel;
@@ -69,29 +77,102 @@ public class MainController {
         });
     }
 
-
     @FXML
     public void loadXMLFile(ActionEvent event) {
-        try {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open XML file");
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML files", "*.xml"));
-            File file = fileChooser.showOpenDialog(null);
-            uiModel.fullPathProperty().setValue(file.getAbsolutePath());
-            SheetDTO sheetDTO = engine.loadSheetFile(file.getAbsolutePath());
-            uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
-            versionSelectorComboBox.getItems().clear();
-            versionSelectorComboBox.getItems().add(engine.showSheet().getCurrVersion());
-            uiModel.isFileSelectedProperty().setValue(true);
-            createSheetGridPane(sheetDTO);
-        }catch (Exception e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText(null);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open XML file");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML files", "*.xml"));
+        File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            chosenFileFullPathLabel.setVisible(false);
+            progressBar.setVisible(true);
+            progressBar.setManaged(true);
+            progressLabel.setVisible(true);
+            progressLabel.setManaged(true);
+
+            Task<SheetDTO> loadTask = new Task<SheetDTO>() {
+                protected SheetDTO call() throws Exception {
+                    updateMessage("Fetching file...");
+                    updateProgress(0.2, 1);
+                    Thread.sleep(1000); // Simulating some work
+
+                    updateMessage("Loading sheet data...");
+                    updateProgress(0.6, 1);
+                    SheetDTO sheetDTO = engine.loadSheetFile(file.getAbsolutePath());
+                    Thread.sleep(1000); // Simulating some work
+
+                    updateMessage("Creating sheet grid...");
+                    updateProgress(0.8, 1);
+                    Thread.sleep(1000); // Simulating some work
+
+                    updateMessage("Sheet loaded successfully!");
+                    updateProgress(1, 1);
+                    return sheetDTO;
+                }
+            };
+            loadTask.setOnSucceeded(e -> {
+                SheetDTO sheetDTO = loadTask.getValue();
+                Platform.runLater(() -> {
+                    progressBar.setVisible(false);
+                    progressBar.setManaged(false);
+                    progressLabel.setVisible(false);
+                    progressLabel.setManaged(false);
+                    chosenFileFullPathLabel.setVisible(true);
+                    uiModel.fullPathProperty().setValue(file.getAbsolutePath());
+                    uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
+                    versionSelectorComboBox.getItems().clear();
+                    versionSelectorComboBox.getItems().add(engine.showSheet().getCurrVersion());
+                    uiModel.isFileSelectedProperty().setValue(true);
+                    createSheetGridPane(sheetDTO);
+                });
+            });
+            loadTask.setOnFailed(e -> {
+                Platform.runLater(() -> {
+                    progressBar.setVisible(false);
+                    progressBar.setManaged(false);
+                    progressLabel.setVisible(false);
+                    progressLabel.setManaged(false);
+                    chosenFileFullPathLabel.setVisible(true);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText(loadTask.getException().getMessage());
+                    alert.showAndWait();
+                });
+            });
+            progressBar.progressProperty().bind(loadTask.progressProperty());
+            progressLabel.textProperty().bind(loadTask.messageProperty());
+
+            Thread loadThread = new Thread(loadTask);
+            loadThread.setDaemon(true);
+            loadThread.start();
         }
     }
+
+
+
+//    @FXML
+//    public void loadXMLFile(ActionEvent event) {
+//        try {
+//            FileChooser fileChooser = new FileChooser();
+//            fileChooser.setTitle("Open XML file");
+//            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML files", "*.xml"));
+//            File file = fileChooser.showOpenDialog(null);
+//            uiModel.fullPathProperty().setValue(file.getAbsolutePath());
+//            SheetDTO sheetDTO = engine.loadSheetFile(file.getAbsolutePath());
+//            uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
+//            versionSelectorComboBox.getItems().clear();
+//            versionSelectorComboBox.getItems().add(engine.showSheet().getCurrVersion());
+//            uiModel.isFileSelectedProperty().setValue(true);
+//            createSheetGridPane(sheetDTO);
+//        }catch (Exception e){
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("Error");
+//            alert.setHeaderText(null);
+//            alert.setContentText(e.getMessage());
+//            alert.showAndWait();
+//        }
+//    }
 
     @FXML
     public void updateSelectedCellValue(ActionEvent event) {
