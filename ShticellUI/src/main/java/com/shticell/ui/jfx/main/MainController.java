@@ -7,7 +7,6 @@ import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -52,14 +51,24 @@ public class MainController {
 
     private Map<String,Label> cellIDtoLabel = new HashMap<>();
 
-    private ObjectProperty<Label> selectedCellLabel;
+    private ObjectProperty<Label> selectedCell;
 
     @FXML
     private void initialize() {
         uiModel = new UIModel(chosenFileFullPathLabel, sheetTab,updateSelectedCellValueButton,sheetGridPane,currentCellLabel,selectedCellOriginalValueTextField,
                 currentCellVersionLabel);
-        selectedCellLabel = new SimpleObjectProperty<>();
+        chosenFileFullPathLabel.setId("file-path");
+        selectedCell = new SimpleObjectProperty<>();
+        selectedCell.addListener((observable, oldValue, newValue) -> {
+            if(oldValue != null) {
+                oldValue.setId(null);
+            }
+            if(newValue != null) {
+                newValue.setId("selected-cell");
+            }
+        });
     }
+
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
@@ -93,14 +102,13 @@ public class MainController {
             CellDTO updatedCell = updatedSheet.getCell(CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[0],
                     CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[1]);
             uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
+            uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
             uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
 
             // Update the labels of influenced cells
             for (CellDTO influencedCell : updatedCell.getInfluencingOn()) {
-                String influencedCellId = CoordinateFormatter.indexToCellId(influencedCell.getCoordinate().getRow(),
-                        influencedCell.getCoordinate().getColumn());
+                String influencedCellId = influencedCell.getId();
                 uiModel.cellIdProperty(influencedCellId).setValue(influencedCell.getEffectiveValue().toString());
-//                uiModel.cellVersionProperty(influencedCellId).setValue(influencedCell.getVersion());
             }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -110,6 +118,7 @@ public class MainController {
             alert.showAndWait();
         }
     }
+
     private void addColumnAndRowConstraints(int numColumns, int colWidth,int numRows,int rowHeight) {
         // Constraints for columns and rows
         for (int i = 0; i <= numColumns; i++) {
@@ -143,6 +152,7 @@ public class MainController {
         for (int row = 1; row <= numRows; row++) {
             Label label = new Label(String.valueOf(row));
             label.setPrefHeight(rowHeight);
+            label.setPrefWidth(20);
             label.getStyleClass().add("header");;
             sheetGridPane.add(label, 0, row); // Adding to the first column (column 0)
         }
@@ -163,26 +173,27 @@ public class MainController {
                 label.setPrefHeight(rowHeight);
                 label.setPrefWidth(colWidth);
                 label.getStyleClass().add("cell");
-                label.setOnMouseClicked(event -> {
-                    uiModel.selectedCellIdProperty().setValue(cellID);
-                    uiModel.selectedCellOriginalValueProperty().setValue(cellDTO == null ? "" : cellDTO.getOriginalValue());
-                    uiModel.selectedCellVersionProperty().setValue(cellDTO == null ? 1 : cellDTO.getVersion());
-                    if (selectedCellLabel.get() != null) {
-                        selectedCellLabel.get().setId("");
-                        resetCellBorders(); // Reset the borders of previously highlighted cells
-                    }
-                    selectedCellLabel.setValue(label);
-                    selectedCellLabel.get().setId("selected-cell");
-                    highlightDependenciesAndInfluences(cellDTO); // Highlight the borders of dependencies and influences
-                });
+                addMouseClickEventForCell(cellID,label);
                 sheetGridPane.add(label, col, row);
             }
         }
     }
 
-    public ObjectProperty<Label> selectedCellLabelProperty() {
-        return selectedCellLabel;
+    private void addMouseClickEventForCell(String cellID, Label label) {
+        label.setOnMouseClicked(event->{
+            resetCellBorders();
+            selectedCell.set(label);
+            int cellRow = CoordinateFormatter.cellIdToIndex(cellID)[0];
+            int cellCol = CoordinateFormatter.cellIdToIndex(cellID)[1];
+            SheetDTO sheetDTO = engine.showSheet();
+            CellDTO cell = sheetDTO.getCell(cellRow, cellCol);
+            uiModel.selectedCellOriginalValueProperty().set(cell == null?"": cell.getOriginalValue());
+            uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
+            uiModel.selectedCellIdProperty().set(cellID);
+            highlightDependenciesAndInfluences(cell);
+        });
     }
+
 
     private void createSheetGridPane(SheetDTO sheet) {
         sheetGridPane = new GridPane();
@@ -241,5 +252,4 @@ public class MainController {
             label.getStyleClass().removeAll("dependency-cell", "influence-cell");
         }
     }
-
 }
