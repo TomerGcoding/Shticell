@@ -23,3 +23,10 @@
     -fx-border-color: lightgreen;
     -fx-border-width: 2px;
 }
+
+#file-path {
+    -fx-text-fill: blue;
+    -fx-font-family: "Arial";
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
