@@ -156,16 +156,32 @@ public enum FunctionParser {
 
             return new SubExpression(source, start, end);
         }
+    },
+    SUM {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 1, "SUM");
+            String rangeName = arguments.get(0).trim();
+            return new SumExpression(rangeName, sheet);
+        }
+    },
+    AVERAGE {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 1, "AVERAGE");
+            String rangeName = arguments.get(0).trim();
+            return new AverageExpression(rangeName, sheet);
+        }
     };
 
     abstract public Expression parse(List<String> arguments, Sheet sheet);
 
     public static Expression parseExpression(String input, Sheet sheet) {
         if (input.startsWith("{") && input.endsWith("}")) {
-                String functionContent = input.substring(1, input.length() - 1);
-                List<String> topLevelParts = parseMainParts(functionContent);
-                String functionName = topLevelParts.getFirst().trim().toUpperCase();
-                topLevelParts.removeFirst();
+            String functionContent = input.substring(1, input.length() - 1);
+            List<String> topLevelParts = parseMainParts(functionContent);
+            String functionName = topLevelParts.getFirst().trim().toUpperCase();
+            topLevelParts.removeFirst();
             try {
                 return FunctionParser.valueOf(functionName).parse(topLevelParts, sheet);
             }
@@ -236,11 +252,4 @@ public enum FunctionParser {
         }
     }
 
-    public static void main(String[] args) {
-        // Test cases for parsing expressions
-        String input = "{MOD, 8, 4}";
-        Expression expression = parseExpression(input, null);
-        EffectiveValue result = expression.eval();
-        System.out.println("Result: " + result.getValue() + " of type " + result.getCellType());
-    }
 }

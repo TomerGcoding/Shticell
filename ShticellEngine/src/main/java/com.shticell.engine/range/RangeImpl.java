@@ -1,16 +1,20 @@
 package com.shticell.engine.range;
 
 import com.shticell.engine.cell.api.Cell;
+import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.cell.impl.CellImpl;
+import com.shticell.engine.cell.impl.CellType;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.sheet.coordinate.CoordinateFactory;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class RangeImpl implements Range {
+public class RangeImpl implements Range, Serializable {
 
     private final String startCellId;
     private final String endCellId;
@@ -67,12 +71,21 @@ public class RangeImpl implements Range {
 
     @Override
     public Double calculateSum() {
-        Double result;
+        Double result = 0.0;
         for (Cell cell : cellsInRange) {
-            result = cell.getEffectiveValue().extractValueWithExpectation(Double.class);
-
+            if(cell.getEffectiveValue().getCellType().equals(CellType.NUMERIC))
+                 result += cell.getEffectiveValue().extractValueWithExpectation(Double.class);
         }
+        return result;
+    }
 
-        return 0.0;
+
+    @Override
+    public List<EffectiveValue> getRangeValues() {
+        List <EffectiveValue> values = new ArrayList<>();
+        for(Cell cell : cellsInRange){
+            values.add(cell.getEffectiveValue());
+        }
+        return values;
     }
 }

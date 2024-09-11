@@ -38,4 +38,9 @@ public class RefExpression implements Expression {
 
     public String getRefCellId () { return refCellId; }
 
+    @Override
+    public boolean isDepndsOnSomeCell() {
+        return true;
+    }
+
 }

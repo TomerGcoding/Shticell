@@ -1,5 +1,6 @@
 package com.shticell.engine.sheet.impl;
 
+import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.range.Range;
 import com.shticell.engine.range.RangeImpl;
 import com.shticell.engine.sheet.api.Sheet;
@@ -122,7 +123,7 @@ public class SheetImpl implements Sheet, Serializable {
                 .filter(Cell::calculateEffectiveValue) // Calculate the effective value in topological order
                 .collect(Collectors.toList());
         cellsThatHaveChanged.add(newCell);
-
+        System.out.println("");
         int newVersion = newSheetVersion.increaseVersion();
         cellsThatHaveChanged.forEach(cell -> cell.setVersion(newVersion));
         return newSheetVersion;
@@ -210,4 +211,16 @@ public class SheetImpl implements Sheet, Serializable {
         }
     }
 
+    @Override
+    public List<EffectiveValue> getRangeValues(String rangeName) {
+        if (!activeRanges.containsKey(rangeName)) {
+            throw new IllegalArgumentException("Invalid range name: " + rangeName);
+        }
+        return activeRanges.get(rangeName).getRangeValues();
+    }
+
+    @Override
+    public Range getRange(String rangeName) {
+        return activeRanges.get(rangeName);
+    }
 }

@@ -10,4 +10,8 @@ public abstract class StringExpression implements Expression {
     public CellType getFunctionResultType () {return CellType.STRING; }
 
     public abstract List<Expression> getExpressions();
+    @Override
+    public boolean isDepndsOnSomeCell() {
+        return false;
+    }
 }

@@ -34,6 +34,7 @@ public class ConsoleUI {
                 break;
             }// This should ideally be handled as a MenuItem action
             mainMenu.executeOption(choice);
+            createNewRange();
         }
     }
 
@@ -83,7 +84,6 @@ public class ConsoleUI {
         try {
             SheetDTO result = engine.showSheet();
             SheetPrinter.printSheet(result);
-
         }
         catch (IllegalStateException e){
             System.out.println("Error showing sheet: " + e.getMessage());
@@ -163,7 +163,6 @@ public class ConsoleUI {
         }catch (IllegalStateException e){
             System.out.println("Error updating cell: " + e.getMessage());
         }
-
     }
 
     private void handleOption5() {
@@ -242,6 +241,17 @@ public class ConsoleUI {
             return true;
         }
         return false;
+    }
+
+    private void createNewRange(){
+        try {
+            engine.addRange("1st range!", "C3..C5");
+            System.out.println("Range created successfully");
+
+        }
+        catch (IllegalArgumentException e) {
+            System.out.println("Error creating range: " + e.getMessage());
+        }
     }
 
 }

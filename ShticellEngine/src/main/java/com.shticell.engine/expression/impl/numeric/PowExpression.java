@@ -42,4 +42,5 @@ public class PowExpression extends NumericExpression {
         expressions.add(right);
         return expressions;
     }
+
 }

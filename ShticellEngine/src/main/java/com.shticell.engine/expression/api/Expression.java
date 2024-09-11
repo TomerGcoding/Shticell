@@ -7,4 +7,6 @@ import com.shticell.engine.cell.api.EffectiveValue;
 public interface Expression {
     EffectiveValue eval();
     CellType getFunctionResultType();
+
+    boolean isDepndsOnSomeCell();
 }

@@ -1,9 +1,12 @@
 package com.shticell.engine.sheet.api;
 
 import com.shticell.engine.cell.api.Cell;
+import com.shticell.engine.cell.api.EffectiveValue;
+import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.sheet.impl.SheetProperties;
 
+import java.util.List;
 import java.util.Map;
 
 public interface Sheet {
@@ -23,4 +26,8 @@ public interface Sheet {
 
     void addRange(String name, String cellsRange);
     void addCell(Coordinate coordinate, Cell cell);
+
+    List<EffectiveValue> getRangeValues(String rangeName);
+
+    Range getRange(String rangeName);
 }

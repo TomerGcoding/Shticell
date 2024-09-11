@@ -1,8 +1,7 @@
 package com.shticell.engine.cell.api;
 
 import com.shticell.engine.sheet.coordinate.Coordinate;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
+
 
 import java.util.List;
 

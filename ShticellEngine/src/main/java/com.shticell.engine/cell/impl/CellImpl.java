@@ -4,6 +4,7 @@ import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.expression.api.Expression;
 import com.shticell.engine.expression.impl.IdentityExpression;
 import com.shticell.engine.expression.impl.numeric.NumericExpression;
+import com.shticell.engine.expression.impl.numeric.*;
 import com.shticell.engine.expression.impl.ref.RefExpression;
 import com.shticell.engine.expression.impl.string.StringExpression;
 import com.shticell.engine.sheet.api.Sheet;
@@ -102,39 +103,58 @@ public class CellImpl implements Cell, Serializable {
     }
 
     private void collectDependenciesAndInfluences(Expression expression) {
-        if (expression instanceof RefExpression) {
-            String refCellId = ((RefExpression) expression).getRefCellId();
-
-            Cell refCell = sheet.getCell(refCellId);
-            if (refCell != null) {
-                if (!refCell.getInfluencingOn().contains(this)) {
-                    refCell.addInfluence(this);
-                    addDependency((refCell));
-
-                    // this.addDependency(refCell);
-                }
+        if (expression.isDepndsOnSomeCell()) {
+            if (expression instanceof RefExpression) {
+                addDependencyForRefExpression(expression);
+            } else if (expression instanceof SumExpression) {
+                addDependencyForSumExpression(expression);
+            } else if (expression instanceof AverageExpression) {
+                addDependencyForAverageExpression(expression);
             }
-        }
-        else {
-            if(expression instanceof NumericExpression) {
+        } else {
+            if (expression instanceof NumericExpression) {
                 List<Expression> expressions = ((NumericExpression) expression).getExpressions();
-                for(Expression e : expressions) {
+                for (Expression e : expressions) {
                     collectDependenciesAndInfluences(e);
                 }
             }
-            if(expression instanceof StringExpression) {
+            if (expression instanceof StringExpression) {
                 List<Expression> expressions = ((StringExpression) expression).getExpressions();
-                for(Expression e : expressions) {
+                for (Expression e : expressions) {
                     collectDependenciesAndInfluences(e);
                 }
             }
         }
     }
 
+    private void addDependencyForRefExpression(Expression expression) {
+        String refCellId = ((RefExpression) expression).getRefCellId();
+        Cell refCell = sheet.getCell(refCellId);
+        if (refCell != null) {
+            if (!refCell.getInfluencingOn().contains(this)) {
+                refCell.addInfluence(this);
+                addDependency((refCell));
+            }
+        }
+    }
+
+    private void addDependencyForSumExpression(Expression expression) {
+        List<Cell> cells = ((SumExpression) expression).getRange().getCells();
+        for (Cell cell : cells) {
+            addDependency(cell);
+        }
+    }
+    private void addDependencyForAverageExpression(Expression expression) {
+        List<Cell> cells = ((AverageExpression) expression).getRange().getCells();
+        for (Cell cell : cells) {
+            addDependency(cell);
+        }
+    }
     @Override
     public void addDependency(Cell cell) {
         if (cell != null && !cell.equals(this) && !isCellInList(cell, dependsOn)) {
             dependsOn.add(cell);
+            cell.addInfluence(this);
         }
     }
 

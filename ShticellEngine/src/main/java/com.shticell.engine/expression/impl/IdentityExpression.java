@@ -22,4 +22,9 @@ public class IdentityExpression implements Expression {
 
     @Override
     public CellType getFunctionResultType() {return type;}
+
+    @Override
+    public boolean isDepndsOnSomeCell() {
+        return false;
+    }
 }
