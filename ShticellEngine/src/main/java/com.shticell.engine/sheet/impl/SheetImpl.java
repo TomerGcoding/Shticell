@@ -191,7 +191,6 @@ public class SheetImpl implements Sheet, Serializable {
         activeRanges.put(name, range);  // Store the range in activeRanges
     }
 
-    // Add a method to add a cell to the sheet
     public void addCell(Coordinate coordinate, Cell cell) {
         activeCells.put(coordinate, cell);
     }

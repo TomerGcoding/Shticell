@@ -108,4 +108,12 @@ public class EngineImpl implements Engine, Serializable {
             throw e;
         }
     }
+
+    @Override
+    public void addRange(String name, String cellsRange) {
+        if (sheet == null) {
+            throw new IllegalStateException("No sheet is currently loaded.");
+        }
+        sheet.addRange(name, cellsRange);
+    }
 }

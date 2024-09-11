@@ -58,24 +58,6 @@ public class RangeImpl implements Range {
         return cellsInRange;
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Range range = (RangeImpl) o;
-//        return Objects.equals(startCellId, range.startCellId) &&
-//                Objects.equals(endCellId, range.endCellId);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(startCellId, endCellId);
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return startCellId + ".." + endCellId;
-//    }
     @Override
     public Double calculateAverage() {
         if (!cellsInRange.isEmpty())
@@ -87,6 +69,7 @@ public class RangeImpl implements Range {
     public Double calculateSum() {
         Double result;
         for (Cell cell : cellsInRange) {
+            result = cell.getEffectiveValue().extractValueWithExpectation(Double.class);
 
         }
 
