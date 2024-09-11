@@ -26,35 +26,27 @@ import java.io.File;
 import java.util.List;
 
 
-//public class Main extends Application {
-////            public static void main(String[] args) {
-////            Engine engine = new EngineImpl();
-////            ConsoleUI ui = new ConsoleUI(engine);
-////            ui.start();
-////        }
-//
-//    @Override
-//    public void start(Stage primaryStage) throws Exception {
-//        primaryStage.setTitle("Hello There in FXML");
-//
-//        Parent load = FXMLLoader.load(getClass().getResource("jfx/main/main.fxml"));
-//        Scene scene = new Scene(load);
-//        primaryStage.setScene(scene);
-//        primaryStage.show();
-//    }
-//
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
-//}
+public class Main extends Application {
+//            public static void main(String[] args) {
+//            Engine engine = new EngineImpl();
+//            ConsoleUI ui = new ConsoleUI(engine);
+//            ui.start();
+//        }
 
-public class Main {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle("Hello There in FXML");
+
+        Parent load = FXMLLoader.load(getClass().getResource("jfx/main/main.fxml"));
+        Scene scene = new Scene(load);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
     public static void main(String[] args) {
-
-        Engine engine = new EngineImpl();
-        ConsoleUI ui = new ConsoleUI(engine);
-        ui.start();
+        launch(args);
     }
 }
+
 
 

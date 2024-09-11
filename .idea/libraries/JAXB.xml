@@ -4,10 +4,7 @@
       <root url="file://$PROJECT_DIR$/lib/jaxb-ri-4.0.5/lib" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/lib/jaxb-ri-4.0.5/lib" />
-    </SOURCES>
+    <SOURCES />
     <jarDirectory url="file://$PROJECT_DIR$/lib/jaxb-ri-4.0.5/lib" recursive="false" />
-    <jarDirectory url="file://$PROJECT_DIR$/lib/jaxb-ri-4.0.5/lib" recursive="false" type="SOURCES" />
   </library>
 </component>
