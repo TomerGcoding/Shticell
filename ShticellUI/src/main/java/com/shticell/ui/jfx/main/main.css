@@ -1,0 +1,25 @@
+.cell {
+    -fx-border-color: lightgray;
+    -fx-border-width: 0.5px;
+}
+
+#selected-cell {
+    -fx-border-color: green;
+    -fx-border-width: 2px;
+}
+
+.header{
+    -fx-border-width: 1px;
+    -fx-border-color: black;
+    -fx-background-color: lightgrey;
+    -fx-alignment: center;
+}
+.dependency-cell {
+    -fx-border-color: lightblue;
+    -fx-border-width: 2px;
+}
+
+.influence-cell {
+    -fx-border-color: lightgreen;
+    -fx-border-width: 2px;
+}
