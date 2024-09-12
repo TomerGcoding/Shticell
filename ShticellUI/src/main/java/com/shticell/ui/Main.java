@@ -38,6 +38,7 @@ public class Main extends Application {
         primaryStage.setTitle("Hello There in FXML");
 
         Parent load = FXMLLoader.load(getClass().getResource("jfx/main/main.fxml"));
+        load.getStyleClass().add("shticell");
         Scene scene = new Scene(load);
         primaryStage.setScene(scene);
         primaryStage.show();

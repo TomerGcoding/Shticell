@@ -5,18 +5,18 @@ import com.shticell.engine.EngineImpl;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.ui.jfx.version.VersionController;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -25,6 +25,14 @@ import java.util.Map;
 
 public class MainController {
 
+    @FXML
+    private BorderPane mainBorderPane;
+    @FXML
+    private Button changeStyleButton;
+    @FXML
+    private VersionController versionSelectorComponentController;
+    @FXML
+    private AnchorPane versionSelectorComponent;
     @FXML
     private ProgressBar progressBar;
 
@@ -48,8 +56,6 @@ public class MainController {
     private TabPane sheetTabPane;
     @FXML
     private Button updateSelectedCellValueButton;
-    @FXML
-    private ComboBox<Integer> versionSelectorComboBox;
 
     private Engine engine = new EngineImpl();
 
@@ -64,7 +70,7 @@ public class MainController {
     @FXML
     private void initialize() {
         uiModel = new UIModel(chosenFileFullPathLabel, sheetTab,updateSelectedCellValueButton,sheetGridPane,currentCellLabel,selectedCellOriginalValueTextField,
-                currentCellVersionLabel);
+                currentCellVersionLabel,versionSelectorComponent);
         chosenFileFullPathLabel.setId("file-path");
         selectedCell = new SimpleObjectProperty<>();
         selectedCell.addListener((observable, oldValue, newValue) -> {
@@ -75,7 +81,9 @@ public class MainController {
                 newValue.setId("selected-cell");
             }
         });
+        versionSelectorComponentController.setEngine(engine);
     }
+
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
@@ -89,6 +97,7 @@ public class MainController {
             progressBar.setManaged(true);
             progressLabel.setVisible(true);
             progressLabel.setManaged(true);
+
 
             Task<SheetDTO> loadTask = new Task<SheetDTO>() {
                 protected SheetDTO call() throws Exception {
@@ -120,8 +129,8 @@ public class MainController {
                     chosenFileFullPathLabel.setVisible(true);
                     uiModel.fullPathProperty().setValue(file.getAbsolutePath());
                     uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
-                    versionSelectorComboBox.getItems().clear();
-                    versionSelectorComboBox.getItems().add(engine.showSheet().getCurrVersion());
+                    versionSelectorComponentController.clearAllVersions();
+                    versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
                     uiModel.isFileSelectedProperty().setValue(true);
                     createSheetGridPane(sheetDTO);
                 });
@@ -150,30 +159,6 @@ public class MainController {
     }
 
 
-
-//    @FXML
-//    public void loadXMLFile(ActionEvent event) {
-//        try {
-//            FileChooser fileChooser = new FileChooser();
-//            fileChooser.setTitle("Open XML file");
-//            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML files", "*.xml"));
-//            File file = fileChooser.showOpenDialog(null);
-//            uiModel.fullPathProperty().setValue(file.getAbsolutePath());
-//            SheetDTO sheetDTO = engine.loadSheetFile(file.getAbsolutePath());
-//            uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
-//            versionSelectorComboBox.getItems().clear();
-//            versionSelectorComboBox.getItems().add(engine.showSheet().getCurrVersion());
-//            uiModel.isFileSelectedProperty().setValue(true);
-//            createSheetGridPane(sheetDTO);
-//        }catch (Exception e){
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Error");
-//            alert.setHeaderText(null);
-//            alert.setContentText(e.getMessage());
-//            alert.showAndWait();
-//        }
-//    }
-
     @FXML
     public void updateSelectedCellValue(ActionEvent event) {
         try {
@@ -181,7 +166,7 @@ public class MainController {
                 throw new IllegalStateException("Please select a cell to update.");
             }
             engine.setCell(currentCellLabel.getText(), selectedCellOriginalValueTextField.getText());
-            versionSelectorComboBox.getItems().add(engine.showSheet().getCurrVersion());
+            versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
             SheetDTO updatedSheet = engine.showSheet();
             CellDTO updatedCell = updatedSheet.getCell(CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[0],
                     CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[1]);
