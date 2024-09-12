@@ -135,7 +135,7 @@ public class MainController {
                     chosenFileFullPathLabel.setVisible(true);
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
-                    alert.setHeaderText(null);
+                    alert.setHeaderText("Failed to load file:");
                     alert.setContentText(loadTask.getException().getMessage());
                     alert.showAndWait();
                 });
@@ -177,6 +177,9 @@ public class MainController {
     @FXML
     public void updateSelectedCellValue(ActionEvent event) {
         try {
+            if (selectedCell.get()==null) {
+                throw new IllegalStateException("Please select a cell to update.");
+            }
             engine.setCell(currentCellLabel.getText(), selectedCellOriginalValueTextField.getText());
             versionSelectorComboBox.getItems().add(engine.showSheet().getCurrVersion());
             SheetDTO updatedSheet = engine.showSheet();
@@ -194,7 +197,7 @@ public class MainController {
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
-            alert.setHeaderText(null);
+            alert.setHeaderText("Failed to update Cell:");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
