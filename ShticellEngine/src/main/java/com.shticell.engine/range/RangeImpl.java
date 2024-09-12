@@ -19,14 +19,17 @@ public class RangeImpl implements Range, Serializable {
     private final String startCellId;
     private final String endCellId;
     private final List<Cell> cellsInRange;
+    private final String name;
+    private List<String> influenceOnCells = new ArrayList<>();
 
-    public RangeImpl(String startCellId, String endCellId, Sheet sheet) {
+    public RangeImpl(String name, String startCellId, String endCellId, Sheet sheet) {
+        this.name = name;
         this.startCellId = startCellId;
         this.endCellId = endCellId;
         this.cellsInRange = generateCells(sheet);
     }
 
-    // Generates a list of cells in the range
+
     private List<Cell> generateCells(Sheet sheet) {
         int[] startIndex = CoordinateFormatter.cellIdToIndex(startCellId);
         int[] endIndex = CoordinateFormatter.cellIdToIndex(endCellId);
@@ -57,7 +60,7 @@ public class RangeImpl implements Range, Serializable {
         return cellsInRange;
     }
 
-    // Get the cells in the range
+    @Override
     public List<Cell> getCells() {
         return cellsInRange;
     }
@@ -87,5 +90,24 @@ public class RangeImpl implements Range, Serializable {
             values.add(cell.getEffectiveValue());
         }
         return values;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void addInfluence(String cellId) {
+        influenceOnCells.add(cellId);
+    }
+
+    @Override
+    public void removeInfluence(String cellId) {
+        influenceOnCells.remove(cellId);;
+    }
+     @Override
+    public List<String> getInfluenceOnCells() {
+        return influenceOnCells;
     }
 }

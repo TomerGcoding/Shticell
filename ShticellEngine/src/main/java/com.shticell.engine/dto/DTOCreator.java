@@ -1,5 +1,6 @@
 package com.shticell.engine.dto;
 
+import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.cell.api.Cell;
 import com.shticell.engine.cell.api.EffectiveValue;
@@ -72,5 +73,13 @@ public class DTOCreator {
                 sheet.getVersion(),
                 sheet.getSheetName(),
                 sheet.getProperties());
+    }
+
+    public static RangeDTO rangeToDTO(Range range) {
+        List<CellDTO> cellDTOList = new ArrayList<>();
+        for (Cell cell : range.getCells()) {
+            cellDTOList.add(cellToDTO(cell));
+        }
+        return new RangeDTO(range.getName(), cellDTOList);
     }
 }
