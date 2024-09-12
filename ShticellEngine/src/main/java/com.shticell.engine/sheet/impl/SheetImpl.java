@@ -1,6 +1,7 @@
 package com.shticell.engine.sheet.impl;
 
 import com.shticell.engine.cell.api.EffectiveValue;
+import com.shticell.engine.dto.RangeDTO;
 import com.shticell.engine.range.Range;
 import com.shticell.engine.range.RangeImpl;
 import com.shticell.engine.sheet.api.Sheet;
@@ -80,7 +81,16 @@ public class SheetImpl implements Sheet, Serializable {
     @Override
     public Sheet setCell(String cellId, String value) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
-        return updateCellValueAndCalculate(idx[0], idx[1], value);
+        SheetImpl newSheet = updateCellValueAndCalculate(idx[0], idx[1], value);
+        newSheet.updateRangesLists(cellId, value);
+        return newSheet;
+    }
+
+    private void updateRangesLists(String cellId, String value) {
+        for (Range range : activeRanges.values()) {
+            if (range.getInfluenceOnCells().contains(cellId))
+                range.removeInfluence(cellId);
+        }
     }
 
 
@@ -101,7 +111,7 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public Sheet updateCellValueAndCalculate(int row, int column, String value) {
+    public SheetImpl updateCellValueAndCalculate(int row, int column, String value) {
         Cell originCell = getCell(row, column);
 
         if (originCell != null) {
@@ -177,19 +187,19 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public void addRange(String name, String cellsRange) throws IllegalArgumentException {
+    public Range addRange(String name, String cellsRange) throws IllegalArgumentException {
         if (activeRanges.containsKey(name)) {
             throw new IllegalArgumentException("Invalid name: A range with the name '" + name + "' already exists.");
         }
 
-        // Parse the range
         String[] rangeParts = cellsRange.split("\\.\\.");
         if (rangeParts.length != 2) {
             throw new IllegalArgumentException("Invalid range format: " + cellsRange);
         }
 
-        Range range = new RangeImpl(rangeParts[0], rangeParts[1], this);
-        activeRanges.put(name, range);  // Store the range in activeRanges
+        Range range = new RangeImpl(name, rangeParts[0], rangeParts[1], this);
+        activeRanges.put(name, range);
+        return range;
     }
 
     public void addCell(Coordinate coordinate, Cell cell) {
@@ -222,5 +232,18 @@ public class SheetImpl implements Sheet, Serializable {
     @Override
     public Range getRange(String rangeName) {
         return activeRanges.get(rangeName);
+    }
+
+    @Override
+    public void removeRange(String name) {
+        Range rangeToDelete = activeRanges.get(name);
+        if (rangeToDelete == null) {
+            throw new IllegalArgumentException("Invalid range name: " + name);
+        }
+        if (!rangeToDelete.getInfluenceOnCells().isEmpty()) {
+            throw new IllegalArgumentException("Range is in use and cannot be deleted.");
+        }
+        else
+            activeRanges.remove(name);
     }
 }

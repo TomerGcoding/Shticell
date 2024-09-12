@@ -5,19 +5,26 @@ import com.shticell.engine.EngineImpl;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.ui.jfx.range.RangeController;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.FileChooser;
 
+
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +49,8 @@ public class MainController {
     private Button updateSelectedCellValueButton;
     @FXML
     private ComboBox<Integer> versionSelectorComboBox;
+    @FXML
+    private BorderPane mainBorderPane;
 
     private Engine engine = new EngineImpl();
 
@@ -52,6 +61,8 @@ public class MainController {
     private Map<String,Label> cellIDtoLabel = new HashMap<>();
 
     private ObjectProperty<Label> selectedCell;
+
+    private RangeController rangeController;
 
     @FXML
     private void initialize() {
@@ -67,6 +78,16 @@ public class MainController {
                 newValue.setId("selected-cell");
             }
         });
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+            Parent rangeView = loader.load();
+            mainBorderPane.setRight(rangeView);
+            rangeController = loader.getController();
+            rangeController.setEngine(engine);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
@@ -194,7 +215,6 @@ public class MainController {
         });
     }
 
-
     private void createSheetGridPane(SheetDTO sheet) {
         sheetGridPane = new GridPane();
         sheetGridPane.setAlignment(Pos.CENTER);
@@ -247,9 +267,17 @@ public class MainController {
             }
         }
     }
+
     private void resetCellBorders() {
         for (Label label : cellIDtoLabel.values()) {
             label.getStyleClass().removeAll("dependency-cell", "influence-cell");
         }
+    }
+
+    private void createRangeController() {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
+        RangeController rangeController = (RangeController)loader.getController();
+
     }
 }

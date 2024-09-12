@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <STL-Sheet name="Car Insurance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="shtisel-v1.xsd">
 	<STL-Layout rows="7" columns="7">
-		<STL-Size column-width-units="50" rows-height-units="20"/>
+		<STL-Size column-width-units="100" rows-height-units="30"/>
 	</STL-Layout>
 	<STL-Cells>
 		<STL-Cell row="4" column="B">

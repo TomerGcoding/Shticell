@@ -1,6 +1,7 @@
 package com.shticell.engine;
 
 import com.shticell.engine.dto.CellDTO;
+import com.shticell.engine.dto.RangeDTO;
 import com.shticell.engine.dto.SheetDTO;
 import jakarta.xml.bind.JAXBException;
 
@@ -26,5 +27,7 @@ public interface Engine {
 
     Engine readEngineFromFile(String fileName) throws IOException, ClassNotFoundException;
 
-    void addRange(String name, String cellsRange);
+    RangeDTO addRange(String name, String cellsRange);
+
+    void removeRange(String name);
 }

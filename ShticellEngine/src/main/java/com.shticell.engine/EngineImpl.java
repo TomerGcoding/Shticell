@@ -1,7 +1,9 @@
 package com.shticell.engine;
 
 import com.shticell.engine.dto.CellDTO;
+import com.shticell.engine.dto.RangeDTO;
 import com.shticell.engine.dto.SheetDTO;
+import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.dto.DTOCreator;
 import com.shticell.engine.cell.api.Cell;
@@ -13,6 +15,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.shticell.engine.dto.DTOCreator.rangeToDTO;
 import static com.shticell.engine.dto.DTOCreator.sheetToDTO;
 
 public class EngineImpl implements Engine, Serializable {
@@ -110,10 +113,19 @@ public class EngineImpl implements Engine, Serializable {
     }
 
     @Override
-    public void addRange(String name, String cellsRange) {
+    public RangeDTO addRange(String name, String cellsRange) {
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
-        sheet.addRange(name, cellsRange);
+        Range newRange = sheet.addRange(name, cellsRange);
+        return rangeToDTO(newRange);
+    }
+
+    @Override
+    public void removeRange(String name) {
+        if (sheet == null) {
+            throw new IllegalStateException("No sheet is currently loaded.");
+        }
+        sheet.removeRange(name);
     }
 }
