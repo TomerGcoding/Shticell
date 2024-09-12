@@ -26,7 +26,7 @@ public class EngineImpl implements Engine, Serializable {
         this.sheet = sheetLoader.getSheet();
         availableVersions.clear();
         availableVersions.put(sheet.getVersion(), sheetToDTO(sheet));
-        return DTOCreator.sheetToDTO(sheet);
+        return sheetToDTO(sheet);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class EngineImpl implements Engine, Serializable {
         }
 
         catch (Exception e) {
-            throw new IllegalArgumentException("\nFailed to update cell: " + cellId + " with the value: " + cellValue + " because: "
+            throw new IllegalArgumentException("Cell "+ cellId + " can't be updated with the value " + cellValue + " because "
                     + e.getMessage() + "\n" );
         }
         SheetDTO newSheet = sheetToDTO(sheet);
