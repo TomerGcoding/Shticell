@@ -97,6 +97,8 @@ public class MainController {
             progressBar.setManaged(true);
             progressLabel.setVisible(true);
             progressLabel.setManaged(true);
+            if (sheetGridPane != null)
+                sheetGridPane.setDisable(true);
 
 
             Task<SheetDTO> loadTask = new Task<SheetDTO>() {
@@ -129,6 +131,8 @@ public class MainController {
                     chosenFileFullPathLabel.setVisible(true);
                     uiModel.fullPathProperty().setValue(file.getAbsolutePath());
                     uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
+                    uiModel.selectedCellIdProperty().set("");
+                    uiModel.selectedCellVersionProperty().set(0);
                     versionSelectorComponentController.clearAllVersions();
                     versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
                     uiModel.isFileSelectedProperty().setValue(true);

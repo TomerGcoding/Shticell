@@ -3,7 +3,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane stylesheets="@../main/main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.version.VersionController">
+<AnchorPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.version.VersionController">
    <children>
       <ComboBox fx:id="versionSelectorComboBox" prefWidth="150.0" promptText="Version Selector" />
    </children>

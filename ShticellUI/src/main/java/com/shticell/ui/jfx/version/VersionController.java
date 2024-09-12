@@ -23,7 +23,11 @@ public class VersionController {
 
     @FXML
     private void initialize() {
-        versionSelectorComboBox.setOnAction(event -> showSelectedVersion());
+        versionSelectorComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                showSelectedVersion(newValue);
+            }
+        });
     }
 
     public void setEngine(Engine engine) {
@@ -38,10 +42,11 @@ public class VersionController {
         versionSelectorComboBox.getItems().clear();
     }
 
-    private void showSelectedVersion() {
-        int selectedVersion = versionSelectorComboBox.getSelectionModel().getSelectedItem();
-        SheetDTO sheetDTO = engine.showChosenVersion(selectedVersion);
-        showSheetPopup(sheetDTO);
+    private void showSelectedVersion(Integer selectedVersion) {
+        if (versionSelectorComboBox.getValue() != null) {
+            SheetDTO sheetDTO = engine.showChosenVersion(selectedVersion);
+            showSheetPopup(sheetDTO);
+        }
     }
 
     private void showSheetPopup(SheetDTO sheetDTO) {
@@ -54,7 +59,6 @@ public class VersionController {
         Scene scene = new Scene(gridPane);
         popupStage.setScene(scene);
         popupStage.showAndWait();
-        versionSelectorComboBox.getSelectionModel().select(engine.showSheet().getCurrVersion());
     }
 
     private GridPane createSheetGridPane(SheetDTO sheet) {
