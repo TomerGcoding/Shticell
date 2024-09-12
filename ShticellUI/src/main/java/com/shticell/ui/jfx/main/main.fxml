@@ -13,6 +13,10 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="563.0" prefWidth="757.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
+
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.StackPane?>
+
    <top>
       <VBox prefHeight="61.0" prefWidth="715.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
@@ -24,7 +28,11 @@
             <HBox prefHeight="81.0" prefWidth="874.0" spacing="10.0">
                <children>
                   <Button fx:id="loadXMLFileButton" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" />
-                  <Label fx:id="chosenFileFullPathLabel" prefHeight="24.0" prefWidth="638.0" text="No File Currently Loaded" />
+                  <StackPane>
+                     <Label fx:id="chosenFileFullPathLabel" prefHeight="24.0" prefWidth="638.0" text="No File Currently Loaded" />
+                     <ProgressBar fx:id="progressBar" prefWidth="400.0" progress="0.0" visible="false" managed="false" />
+                     <Label fx:id="progressLabel" text="" visible="false" managed="false" textFill="black"/>
+                  </StackPane>
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="793.0" spacing="5.0">

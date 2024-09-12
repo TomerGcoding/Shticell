@@ -1,6 +1,7 @@
 package com.shticell.engine.expression.parser;
 
 import com.shticell.engine.cell.api.EffectiveValue;
+import com.shticell.engine.exceptions.IllegalNumberOfArgumentsException;
 import com.shticell.engine.expression.api.Expression;
 import com.shticell.engine.expression.impl.IdentityExpression;
 import com.shticell.engine.expression.impl.numeric.*;
@@ -38,7 +39,6 @@ public enum FunctionParser {
             Expression left = parseExpression(arguments.get(0).trim(), sheet);
             Expression right = parseExpression(arguments.get(1).trim(), sheet);
 
-            validateArgumentTypes(List.of(left, right), CellType.NUMERIC, "PLUS");
 
             return new PlusExpression(left, right);
         }
@@ -51,7 +51,6 @@ public enum FunctionParser {
             Expression left = parseExpression(arguments.get(0).trim(), sheet);
             Expression right = parseExpression(arguments.get(1).trim(), sheet);
 
-            validateArgumentTypes(List.of(left, right), CellType.NUMERIC, "MINUS");
 
             return new MinusExpression(left, right);
         }
@@ -64,7 +63,6 @@ public enum FunctionParser {
             Expression left = parseExpression(arguments.get(0).trim(), sheet);
             Expression right = parseExpression(arguments.get(1).trim(), sheet);
 
-            validateArgumentTypes(List.of(left, right), CellType.NUMERIC, "TIMES");
 
             return new TimesExpression(left, right);
         }
@@ -77,7 +75,6 @@ public enum FunctionParser {
             Expression left = parseExpression(arguments.get(0).trim(), sheet);
             Expression right = parseExpression(arguments.get(1).trim(), sheet);
 
-            validateArgumentTypes(List.of(left, right), CellType.NUMERIC, "DIVIDE");
 
             return new DivideExpression(left, right);
         }
@@ -90,7 +87,6 @@ public enum FunctionParser {
             Expression left = parseExpression(arguments.get(0).trim(), sheet);
             Expression right = parseExpression(arguments.get(1).trim(), sheet);
 
-            validateArgumentTypes(List.of(left, right), CellType.NUMERIC, "POW");
 
             return new PowExpression(left, right);
         }
@@ -102,7 +98,6 @@ public enum FunctionParser {
 
             Expression arg = parseExpression(arguments.getFirst().trim(), sheet);
 
-            validateArgumentType(arg, CellType.NUMERIC, "ABS");
 
             return new AbsExpression(arg);
         }
@@ -115,7 +110,6 @@ public enum FunctionParser {
             Expression left = parseExpression(arguments.get(0).trim(), sheet);
             Expression right = parseExpression(arguments.get(1).trim(), sheet);
 
-            validateArgumentTypes(List.of(left, right), CellType.NUMERIC, "MOD");
 
             return new ModuloExpression(left, right);
         }
@@ -136,7 +130,6 @@ public enum FunctionParser {
             Expression left = parseExpression(arguments.get(0).trim(), sheet);
             Expression right = parseExpression(arguments.get(1).trim(), sheet);
 
-            validateArgumentTypes(List.of(left, right), CellType.STRING, "CONCAT");
 
             return new ConcatExpression(left, right);
         }
@@ -150,9 +143,6 @@ public enum FunctionParser {
             Expression start = parseExpression(arguments.get(1).trim(), sheet);
             Expression end = parseExpression(arguments.get(2).trim(), sheet);
 
-            if (!source.getFunctionResultType().equals(CellType.STRING) || !start.getFunctionResultType().equals(CellType.NUMERIC) || !end.getFunctionResultType().equals(CellType.NUMERIC)) {
-                throw new IllegalArgumentException("Invalid argument types for SUB function. Expected STRING, NUMERIC, NUMERIC but got " + source.getFunctionResultType() + ", " + start.getFunctionResultType() + ", " + end.getFunctionResultType());
-            }
 
             return new SubExpression(source, start, end);
         }
@@ -222,7 +212,7 @@ public enum FunctionParser {
 
     private static void validateArgumentCount(List<String> arguments, int expected, String functionName) {
         if (arguments.size() != expected) {
-            throw new IllegalArgumentException("Invalid number of arguments for " + functionName + " function. Expected " + expected + ", but got " + arguments.size());
+            throw new IllegalNumberOfArgumentsException("Invalid number of arguments for " + functionName + " function. Expected " + expected + ", but got " + arguments.size());
         }
     }
 
