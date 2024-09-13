@@ -2,6 +2,9 @@
     -fx-border-color: lightgray;
     -fx-border-width: 0.5px;
 }
+.shticell{
+
+}
 
 #selected-cell {
     -fx-border-color: green;

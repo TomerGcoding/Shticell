@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class UIModel {
     private StringProperty selectedCellOriginalValue;
 
     public UIModel(Label fileFullPathLabel, Tab sheetNameTab, Button updateSelectedCellValueButton, GridPane sheetGridPane,
-                   Label currentCellLabel, TextField selectedCellOriginalValueTextField,Label lastVersionUpdateLabel) {
+                   Label currentCellLabel, TextField selectedCellOriginalValueTextField, Label lastVersionUpdateLabel, AnchorPane versionSelectorComponent) {
         this.fullPath = new SimpleStringProperty( );
         this.name = new SimpleStringProperty( );
         this.isFileSelected = new SimpleBooleanProperty(false );
@@ -36,9 +37,11 @@ public class UIModel {
         fileFullPathLabel.textProperty().bind( this.fullPath );
         sheetNameTab.textProperty().bind( this.name );
         updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not());
+        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not() );
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
+
     }
 
     public void initializePropertiesForEachCell(GridPane sheetGridPane) {
