@@ -7,6 +7,7 @@ import com.shticell.engine.expression.impl.numeric.NumericExpression;
 import com.shticell.engine.expression.impl.numeric.*;
 import com.shticell.engine.expression.impl.ref.RefExpression;
 import com.shticell.engine.expression.impl.string.StringExpression;
+import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.cell.api.Cell;
@@ -63,14 +64,12 @@ public class CellImpl implements Cell, Serializable {
         return effectiveValue;
     }
 
-
     @Override
     public int getVersion() {
         return version;
     }
 
     public void setVersion(int version) {this.version = version;}
-
 
     @Override
     public List<Cell> getDependsOn() {
@@ -81,7 +80,6 @@ public class CellImpl implements Cell, Serializable {
     public List<Cell> getInfluencingOn() {
         return influencingOn;
     }
-
 
     @Override
     public boolean calculateEffectiveValue() {
@@ -106,8 +104,10 @@ public class CellImpl implements Cell, Serializable {
         if (expression.isDepndsOnSomeCell()) {
             if (expression instanceof RefExpression) {
                 addDependencyForRefExpression(expression);
+
             } else if (expression instanceof SumExpression) {
                 addDependencyForSumExpression(expression);
+
             } else if (expression instanceof AverageExpression) {
                 addDependencyForAverageExpression(expression);
             }
@@ -139,17 +139,23 @@ public class CellImpl implements Cell, Serializable {
     }
 
     private void addDependencyForSumExpression(Expression expression) {
-        List<Cell> cells = ((SumExpression) expression).getRange().getCells();
+        Range range = ((SumExpression) expression).getRange();
+        List<Cell> cells = range.getCells();
         for (Cell cell : cells) {
             addDependency(cell);
         }
+        range.addInfluence(this.ID);
     }
+
     private void addDependencyForAverageExpression(Expression expression) {
-        List<Cell> cells = ((AverageExpression) expression).getRange().getCells();
+        Range range = ((SumExpression) expression).getRange();
+        List<Cell> cells = range.getCells();
         for (Cell cell : cells) {
             addDependency(cell);
         }
+        range.addInfluence(this.ID);
     }
+
     @Override
     public void addDependency(Cell cell) {
         if (cell != null && !cell.equals(this) && !isCellInList(cell, dependsOn)) {

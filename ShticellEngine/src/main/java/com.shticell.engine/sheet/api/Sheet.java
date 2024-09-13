@@ -24,10 +24,13 @@ public interface Sheet {
     Sheet updateCellValueAndCalculate(int row, int column, String value);
     int increaseVersion();
 
-    void addRange(String name, String cellsRange);
+    Range addRange(String name, String cellsRange);
     void addCell(Coordinate coordinate, Cell cell);
 
     List<EffectiveValue> getRangeValues(String rangeName);
 
     Range getRange(String rangeName);
+
+    void removeRange(String name);
+
 }
