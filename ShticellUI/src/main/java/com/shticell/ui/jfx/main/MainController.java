@@ -94,15 +94,15 @@ public class MainController {
             }
         });
         versionSelectorComponentController.setEngine(engine);
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
-            Parent rangeView = loader.load();
-            mainBorderPane.setRight(rangeView);
-            rangeController = loader.getController();
-            rangeController.setEngine(engine);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+//            Parent rangeView = loader.load();
+//            mainBorderPane.setRight(rangeView);
+//            rangeController = loader.getController();
+//            rangeController.setEngine(engine);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -190,19 +190,22 @@ public class MainController {
             if (selectedCell.get()==null) {
                 throw new IllegalStateException("Please select a cell to update.");
             }
-            engine.setCell(currentCellLabel.getText(), selectedCellOriginalValueTextField.getText());
-            versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
-            SheetDTO updatedSheet = engine.showSheet();
-            CellDTO updatedCell = updatedSheet.getCell(CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[0],
-                    CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[1]);
-            uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
-            uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
-            uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
+            if(isCellChanged(currentCellLabel.getText())) {
 
-            // Update the labels of influenced cells
-            for (CellDTO influencedCell : updatedCell.getInfluencingOn()) {
-                String influencedCellId = influencedCell.getId();
-                uiModel.cellIdProperty(influencedCellId).setValue(influencedCell.getEffectiveValue().toString());
+                engine.setCell(currentCellLabel.getText(), selectedCellOriginalValueTextField.getText());
+                versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
+                SheetDTO updatedSheet = engine.showSheet();
+                CellDTO updatedCell = updatedSheet.getCell(CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[0],
+                        CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[1]);
+                uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
+                uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
+                uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
+
+                // Update the labels of influenced cells
+                for (CellDTO influencedCell : updatedCell.getInfluencingOn()) {
+                    String influencedCellId = influencedCell.getId();
+                    uiModel.cellIdProperty(influencedCellId).setValue(influencedCell.getEffectiveValue().toString());
+                }
             }
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -212,6 +215,19 @@ public class MainController {
             alert.showAndWait();
         }
     }
+    private boolean isCellChanged(String cellId){
+        CellDTO cell = engine.getCellInfo(cellId);
+        boolean changed = true;
+        if(cell == null) {
+            return true;
+        }
+        if (cell.getOriginalValue().equals(selectedCellOriginalValueTextField.getText().trim()))
+        {
+            changed = false;
+        }
+        return changed;
+    }
+
 
     private void addColumnAndRowConstraints(int numColumns, int colWidth,int numRows,int rowHeight) {
         // Constraints for columns and rows
