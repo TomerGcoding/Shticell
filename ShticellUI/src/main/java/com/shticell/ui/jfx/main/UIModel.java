@@ -38,6 +38,7 @@ public class UIModel {
         sheetNameTab.textProperty().bind( this.name );
         updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not());
         versionSelectorComponent.disableProperty().bind( this.isFileSelected.not() );
+        sheetGridPane.disableProperty().bind(this.isFileSelected.not());
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
