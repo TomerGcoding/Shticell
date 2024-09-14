@@ -233,12 +233,13 @@ public class SheetImpl implements Sheet, Serializable {
         if (!activeRanges.containsKey(rangeName)) {
             throw new IllegalArgumentException("Invalid range name: " + rangeName);
         }
-        return activeRanges.get(rangeName).getRangeValues();
+        return activeRanges.get(rangeName).getRangeValues(this
+        );
     }
 
     @Override
     public Range getRange(String rangeName) {
-        return activeRanges.get(rangeName);
+        return activeRanges.get(rangeName.toLowerCase());
     }
 
     @Override

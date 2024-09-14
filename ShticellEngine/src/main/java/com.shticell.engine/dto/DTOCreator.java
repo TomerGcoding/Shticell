@@ -78,9 +78,9 @@ public class DTOCreator {
                 sheet.getProperties());
     }
 
-    public static RangeDTO rangeToDTO(Range range) {
+    public static RangeDTO rangeToDTO(Range range, Sheet sheet) {
         List<CellDTO> cellDTOList = new ArrayList<>();
-        for (Cell cell : range.getCells()) {
+        for (Cell cell : range.generateCells(sheet)) {
             cellDTOList.add(cellToDTO(cell));
         }
         return new RangeDTO(range.getName(), cellDTOList);

@@ -22,12 +22,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainController {
@@ -59,17 +61,11 @@ public class MainController {
     private ComboBox<Integer> versionSelectorComboBox;
     @FXML
     private BorderPane mainBorderPane;
-
     private Engine engine = new EngineImpl();
-
     private UIModel uiModel;
-
     private GridPane sheetGridPane;
-
     private Map<String,Label> cellIDtoLabel = new HashMap<>();
-
     private ObjectProperty<Label> selectedCell;
-
     private RangeController rangeController;
 
     @FXML
@@ -92,6 +88,7 @@ public class MainController {
             mainBorderPane.setRight(rangeView);
             rangeController = loader.getController();
             rangeController.setEngine(engine);
+            rangeController.setMainController(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -295,6 +292,7 @@ public class MainController {
             uiModel.selectedCellOriginalValueProperty().set(cell == null?"": cell.getOriginalValue());
             uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
             uiModel.selectedCellIdProperty().set(cellID);
+            resetCellBorders();
             highlightDependenciesAndInfluences(cell);
         });
     }
@@ -352,16 +350,42 @@ public class MainController {
         }
     }
 
-    private void resetCellBorders() {
-        for (Label label : cellIDtoLabel.values()) {
-            label.getStyleClass().removeAll("dependency-cell", "influence-cell");
+//    private void resetCellBorders() {
+//        for (Label label : cellIDtoLabel.values()) {
+//            label.getStyleClass().removeAll("dependency-cell", "influence-cell");
+//        }
+//    }
+private void resetCellBorders() {
+    for (Label label : cellIDtoLabel.values()) {
+        label.setStyle("");
+        label.getStyleClass().removeAll("dependency-cell", "influence-cell");
+    }
+}
+//
+//    private void resetCellBorders() {
+//        for (Label label : cellIDtoLabel.values()) {
+//            label.setStyle("");  // Reset border style to default
+//        }
+//    }
+//
+//    private void createRangeController() {
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
+//        RangeController rangeController = (RangeController)loader.getController();
+//
+//    }
+
+    public void colorRangeCells(List<String> cellIds) {
+        // First reset the borders of all cells
+        resetCellBorders();
+
+        // Loop through the provided cell IDs and update their style
+        for (String cellId : cellIds) {
+            Label cellLabel = cellIDtoLabel.get(cellId);  // Get the label by its cell ID
+            if (cellLabel != null) {
+                cellLabel.setStyle("-fx-border-color: pink; -fx-border-width: 2px;");
+            }
         }
     }
 
-    private void createRangeController() {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
-        RangeController rangeController = (RangeController)loader.getController();
-
-    }
 }
