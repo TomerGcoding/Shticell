@@ -247,7 +247,7 @@ public class MainController {
             }
             label.setPrefWidth(colWidth);
             label.getStyleClass().add("header");
-            sheetGridPane.add(label, col, 0); // Adding to the first row (row 0)
+            sheetGridPane.add(label, col, 0);
         }
 
         // Adding row headers (1, 2, 3, ...)
@@ -256,7 +256,7 @@ public class MainController {
             label.setPrefHeight(rowHeight);
             label.setPrefWidth(20);
             label.getStyleClass().add("header");;
-            sheetGridPane.add(label, 0, row); // Adding to the first column (column 0)
+            sheetGridPane.add(label, 0, row);
         }
     }
 
