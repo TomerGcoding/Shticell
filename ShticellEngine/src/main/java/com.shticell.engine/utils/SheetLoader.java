@@ -4,6 +4,7 @@ import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.engine.sheet.impl.SheetImpl;
 import jaxb.schema.generated.STLCell;
+import jaxb.schema.generated.STLRange;
 import jaxb.schema.generated.STLSheet;
 
 import jakarta.xml.bind.JAXBContext;
@@ -70,6 +71,7 @@ public class SheetLoader implements Serializable {
         int rowHeight = stlSheet.getSTLLayout().getSTLSize().getRowsHeightUnits();
         sheet = new SheetImpl(sheetName, rows, columns, rowHeight, columnWidth);
 
+        populateSheetWithRanges(stlSheet,rows,columns);
         populateSheetWithCells(stlSheet, rows, columns);
     }
 
@@ -82,17 +84,33 @@ public class SheetLoader implements Serializable {
         }
     }
 
-    private void populateSheetWithCells(STLSheet stlSheet, int rows, int columns) {
-        for (STLCell cell : stlSheet.getSTLCells().getSTLCell()) {
-            int row = cell.getRow() - 1;
-            int column = CoordinateFormatter.getColumnIndex(cell.getColumn());
-
-            validateCellCoordinates(row, column, rows, columns);
-
-            String value = cell.getSTLOriginalValue();
-            this.sheet = sheet.setCell(row, column, value);
+    private void populateSheetWithRanges(STLSheet stlSheet, int rows, int columns) {
+        if (stlSheet.getSTLRanges()!= null) {
+            for (STLRange range : stlSheet.getSTLRanges().getSTLRange()) {
+                String startCellId = range.getSTLBoundaries().getFrom();
+                String endCellId = range.getSTLBoundaries().getTo();
+                int[] startCellNumericCoord = CoordinateFormatter.cellIdToIndex(startCellId);
+                validateCellCoordinates(startCellNumericCoord[0], startCellNumericCoord[1], rows, columns);
+                int[] endCellNumericCoord = CoordinateFormatter.cellIdToIndex(endCellId);
+                validateCellCoordinates(endCellNumericCoord[0], endCellNumericCoord[1], rows, columns);
+                this.sheet.addRange(range.getName(), startCellId + ".." + endCellId);
+            }
         }
-        sheet.incrementVersion();
+    }
+
+    private void populateSheetWithCells(STLSheet stlSheet, int rows, int columns) {
+        if ((stlSheet.getSTLCells()!=null)) {
+            for (STLCell cell : stlSheet.getSTLCells().getSTLCell()) {
+                int row = cell.getRow() - 1;
+                int column = CoordinateFormatter.getColumnIndex(cell.getColumn());
+
+                validateCellCoordinates(row, column, rows, columns);
+
+                String value = cell.getSTLOriginalValue();
+                this.sheet = sheet.setCell(row, column, value);
+            }
+            sheet.incrementVersion();
+        }
     }
 
     private void validateCellCoordinates(int row, int column, int rows, int columns) {
