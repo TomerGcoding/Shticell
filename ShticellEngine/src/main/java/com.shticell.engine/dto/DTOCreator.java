@@ -14,6 +14,9 @@ import java.util.Map;
 public class DTOCreator {
 
     public static EffectiveValueDTO effectiveValueToDTO(EffectiveValue effectiveValue) {
+        if (effectiveValue == null) {
+            return null;
+        }
         return new EffectiveValueDTO(effectiveValue.getCellType(), effectiveValue.getValue());
     }
 

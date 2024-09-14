@@ -39,11 +39,20 @@ public class RangeController {
 
     @FXML
     void addNewRange(ActionEvent event) {
-        String rangeName =  insertNameTextField.getText();
-        String rangeCells = insertRangeTextField.getText();
-        RangeDTO rangeDTO = engine.addRange(rangeName, rangeCells);
-        Label newLabel = new Label(rangeDTO.getName());
-        vboxInsideTitledPane.getChildren().add(newLabel);
+        try {
+            String rangeName = insertNameTextField.getText();
+            String rangeCells = insertRangeTextField.getText();
+            RangeDTO rangeDTO = engine.addRange(rangeName, rangeCells);
+            Label newLabel = new Label(rangeDTO.getName());
+            vboxInsideTitledPane.getChildren().add(newLabel);
+        }
+        catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while adding new range");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
 
     }
     @FXML
