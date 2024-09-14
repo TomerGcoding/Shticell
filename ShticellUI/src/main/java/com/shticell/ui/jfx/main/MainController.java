@@ -121,7 +121,7 @@ public class MainController {
             progressBar.setManaged(true);
             progressLabel.setVisible(true);
             progressLabel.setManaged(true);
-
+            uiModel.isLoadingProperty().set(true);
             Task<SheetDTO> loadTask = new Task<SheetDTO>() {
                 protected SheetDTO call() throws Exception {
                     updateMessage("Fetching file...");
@@ -150,9 +150,11 @@ public class MainController {
                     progressLabel.setVisible(false);
                     progressLabel.setManaged(false);
                     chosenFileFullPathLabel.setVisible(true);
+                    uiModel.isLoadingProperty().set(false);
                     uiModel.fullPathProperty().setValue(file.getAbsolutePath());
                     uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
-                    uiModel.selectedCellIdProperty().set("");
+                    uiModel.selectedCellIdProperty().set(null);
+                    uiModel.selectedCellOriginalValueProperty().set(null);
                     uiModel.selectedCellVersionProperty().set(0);
                     versionSelectorComponentController.clearAllVersions();
                     versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
@@ -168,6 +170,7 @@ public class MainController {
                     progressLabel.setVisible(false);
                     progressLabel.setManaged(false);
                     chosenFileFullPathLabel.setVisible(true);
+                    uiModel.isLoadingProperty().set(false);
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
                     alert.setHeaderText("Failed to load file:");

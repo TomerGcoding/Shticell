@@ -19,6 +19,7 @@ public class UIModel {
     private final BooleanProperty isFileSelected;
     private final IntegerProperty columnWidth;
     private final IntegerProperty rowHeight;
+    private final BooleanProperty isLoading;
     private IntegerProperty selectedCellVersion;
     private Map<String,StringProperty> cellIdtoCellValue;
     private StringProperty selectedCellId;
@@ -34,11 +35,13 @@ public class UIModel {
         this.selectedCellId = new SimpleStringProperty( );
         this.selectedCellOriginalValue = new SimpleStringProperty( );
         this.selectedCellVersion = new SimpleIntegerProperty();
+        this.isLoading = new SimpleBooleanProperty( false );
         fileFullPathLabel.textProperty().bind( this.fullPath );
         sheetNameTab.textProperty().bind( this.name );
-        updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not());
-        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not() );
-        sheetGridPane.disableProperty().bind(this.isFileSelected.not());
+        updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+        selectedCellOriginalValueTextField.disableProperty().bind(this.isLoading);
+        sheetNameTab.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
@@ -54,6 +57,9 @@ public class UIModel {
                 cellIdtoCellValue.put(cellID,new SimpleStringProperty(""));
             }
         }
+    }
+    public BooleanProperty isLoadingProperty() {
+        return isLoading;
     }
 
     public IntegerProperty selectedCellVersionProperty() {

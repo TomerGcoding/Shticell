@@ -36,6 +36,8 @@ public class SheetGridManager {
 
     public void createSheetGridPane(SheetDTO sheet) {
         sheetGridPane.getChildren().clear();
+        sheetGridPane.getColumnConstraints().clear();
+        sheetGridPane.getRowConstraints().clear();
         sheetGridPane.setAlignment(Pos.CENTER);
         sheetGridPane.addColumn(0);
         sheetGridPane.addRow(0);
