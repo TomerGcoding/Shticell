@@ -5,31 +5,24 @@ import com.shticell.engine.EngineImpl;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.ui.jfx.sheet.SheetGridManager;
 import com.shticell.ui.jfx.version.VersionController;
 import com.shticell.ui.jfx.range.RangeController;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.StringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.FileChooser;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,9 +1,11 @@
-package com.shticell.ui.jfx.main;
+package com.shticell.ui.jfx.sheet;
 
 import com.shticell.engine.Engine;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.ui.jfx.main.MainController;
+import com.shticell.ui.jfx.main.UIModel;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,9 +15,11 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class SheetGridManager {
     private MainController mainController;
@@ -38,9 +42,8 @@ public class SheetGridManager {
         sheetGridPane.getChildren().clear();
         sheetGridPane.getColumnConstraints().clear();
         sheetGridPane.getRowConstraints().clear();
-        sheetGridPane.setAlignment(Pos.CENTER);
-        sheetGridPane.addColumn(0);
-        sheetGridPane.addRow(0);
+//        sheetGridPane.addColumn(0);
+//        sheetGridPane.addRow(0);
 
         int numRows = sheet.getProperties().getNumRows();
         int numColumns = sheet.getProperties().getNumCols();
@@ -115,9 +118,12 @@ public class SheetGridManager {
                     currentCellProperty.set(cellDTO.getEffectiveValue().toString());
                 }
                 cellIDtoLabel.put(cellID, label);
+                label.setAlignment(Pos.CENTER);
                 label.setPrefHeight(rowHeight);
                 label.setPrefWidth(colWidth);
                 label.getStyleClass().add("cell");
+                ContextMenu contextMenu = contextMenuFactory.createCellContextMenu(label);
+                label.setContextMenu(contextMenu);
                 mainController.addMouseClickEventForCell(cellID, label);
                 sheetGridPane.add(label, col, row);
             }
@@ -205,7 +211,6 @@ public class SheetGridManager {
         sheetGridPane.requestLayout();
     }
 
-
     public void setRowHeight(int rowIndex, double height) {
         // Ensure the row constraints list is large enough
         while (sheetGridPane.getRowConstraints().size() <= rowIndex) {
@@ -235,4 +240,10 @@ public class SheetGridManager {
         // Refresh the layout
         sheetGridPane.requestLayout();
     }
+
+
+
 }
+
+
+
