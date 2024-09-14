@@ -18,10 +18,12 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class SheetGridManager {
+
     private MainController mainController;
     private ContextMenuFactory contextMenuFactory;
     private GridPane sheetGridPane;
@@ -31,6 +33,7 @@ public class SheetGridManager {
 
     public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, Engine engine, MainController mainController) {
         this.sheetGridPane = sheetGridPane;
+        this.sheetGridPane.getStylesheets().add(getClass().getResource("sheet1.css").toExternalForm());
         this.uiModel = uiModel;
         this.engine = engine;
         this.cellIDtoLabel = new HashMap<String, Label>();
@@ -242,7 +245,11 @@ public class SheetGridManager {
     }
 
 
-
+    public void setSheetStyle(int styleNumber) {
+        String stylesheet = String.format("sheet%d.css", styleNumber);
+        this.sheetGridPane.getStylesheets().clear();
+        this.sheetGridPane.getStylesheets().add(getClass().getResource(stylesheet).toExternalForm());
+    }
 }
 
 

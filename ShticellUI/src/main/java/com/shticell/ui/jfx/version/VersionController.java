@@ -55,7 +55,7 @@ public class VersionController {
         popupStage.setTitle("Sheet Version " + sheetDTO.getCurrVersion());
 
         GridPane gridPane = createSheetGridPane(sheetDTO);
-        gridPane.getStylesheets().add(getClass().getResource("/com/shticell/ui/jfx/main/main.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("/com/shticell/ui/jfx/sheet/sheet1.css").toExternalForm());
         Scene scene = new Scene(gridPane);
         popupStage.setScene(scene);
         popupStage.showAndWait();

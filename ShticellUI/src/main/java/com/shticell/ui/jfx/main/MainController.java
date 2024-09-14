@@ -31,7 +31,7 @@ public class MainController {
     @FXML
     private BorderPane mainBorderPane;
     @FXML
-    private Button changeStyleButton;
+    private ComboBox<Integer> changeStyleComboBox;
     @FXML
     private VersionController versionSelectorComponentController;
     @FXML
@@ -90,6 +90,12 @@ public class MainController {
             }
         });
         versionSelectorComponentController.setEngine(engine);
+        changeStyleComboBox.getItems().addAll(1,2,3);
+        changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != null) {
+                changeShticellStyle(newValue);
+            }
+        });
 //        try {
 //            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
 //            Parent rangeView = loader.load();
@@ -212,6 +218,7 @@ public class MainController {
             alert.showAndWait();
         }
     }
+
     private boolean isCellChanged(String cellId){
         CellDTO cell = engine.getCellInfo(cellId);
         boolean changed = true;
@@ -239,6 +246,19 @@ public class MainController {
             uiModel.selectedCellIdProperty().set(cellID);
             gridManager.highlightDependenciesAndInfluences(cell);
         });
+    }
+
+    private void changeShticellStyle(int selectedStyle) {
+        applyStyles(selectedStyle);
+    }
+
+    private void applyStyles(int styleNumber) {
+        String mainStylesheet = String.format("main%d.css", styleNumber);
+
+        mainBorderPane.getStylesheets().clear();
+        mainBorderPane.getStylesheets().add(getClass().getResource(mainStylesheet).toExternalForm());
+
+        gridManager.setSheetStyle(styleNumber);
     }
 
     private void createRangeController() {
