@@ -350,23 +350,13 @@ public class MainController {
         }
     }
 
-//    private void resetCellBorders() {
-//        for (Label label : cellIDtoLabel.values()) {
-//            label.getStyleClass().removeAll("dependency-cell", "influence-cell");
-//        }
-//    }
 private void resetCellBorders() {
     for (Label label : cellIDtoLabel.values()) {
         label.setStyle("");
         label.getStyleClass().removeAll("dependency-cell", "influence-cell");
     }
 }
-//
-//    private void resetCellBorders() {
-//        for (Label label : cellIDtoLabel.values()) {
-//            label.setStyle("");  // Reset border style to default
-//        }
-//    }
+
 //
 //    private void createRangeController() {
 //        FXMLLoader loader = new FXMLLoader();
@@ -376,10 +366,8 @@ private void resetCellBorders() {
 //    }
 
     public void colorRangeCells(List<String> cellIds) {
-        // First reset the borders of all cells
         resetCellBorders();
 
-        // Loop through the provided cell IDs and update their style
         for (String cellId : cellIds) {
             Label cellLabel = cellIDtoLabel.get(cellId);  // Get the label by its cell ID
             if (cellLabel != null) {
