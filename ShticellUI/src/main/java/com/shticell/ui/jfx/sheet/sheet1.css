@@ -2,9 +2,6 @@
     -fx-border-color: lightgray;
     -fx-border-width: 0.5px;
 }
-.shticell{
-
-}
 
 #selected-cell {
     -fx-border-color: green;
@@ -12,9 +9,10 @@
 }
 
 .header{
-    -fx-border-width: 1px;
-    -fx-border-color: black;
-    -fx-background-color: lightgrey;
+    -fx-border-width: 0.5px;
+    -fx-border-color: lightgray;
+    -fx-background-color: green;
+    -fx-text-fill: white ;
     -fx-alignment: center;
 }
 .dependency-cell {
@@ -25,11 +23,4 @@
 .influence-cell {
     -fx-border-color: lightgreen;
     -fx-border-width: 2px;
-}
-
-#file-path {
-    -fx-text-fill: blue;
-    -fx-font-family: "Arial";
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
 }

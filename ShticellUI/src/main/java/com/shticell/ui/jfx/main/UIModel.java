@@ -17,8 +17,7 @@ public class UIModel {
     private final StringProperty fullPath;
     private final StringProperty name;
     private final BooleanProperty isFileSelected;
-    private final IntegerProperty columnWidth;
-    private final IntegerProperty rowHeight;
+    private final BooleanProperty isLoading;
     private IntegerProperty selectedCellVersion;
     private Map<String,StringProperty> cellIdtoCellValue;
     private StringProperty selectedCellId;
@@ -29,15 +28,16 @@ public class UIModel {
         this.fullPath = new SimpleStringProperty( );
         this.name = new SimpleStringProperty( );
         this.isFileSelected = new SimpleBooleanProperty(false );
-        this.columnWidth = new SimpleIntegerProperty( );
-        this.rowHeight = new SimpleIntegerProperty( );
         this.selectedCellId = new SimpleStringProperty( );
         this.selectedCellOriginalValue = new SimpleStringProperty( );
         this.selectedCellVersion = new SimpleIntegerProperty();
+        this.isLoading = new SimpleBooleanProperty( false );
         fileFullPathLabel.textProperty().bind( this.fullPath );
         sheetNameTab.textProperty().bind( this.name );
-        updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not());
-        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not() );
+        updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+        selectedCellOriginalValueTextField.disableProperty().bind(this.isLoading);
+        sheetNameTab.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
@@ -53,6 +53,9 @@ public class UIModel {
                 cellIdtoCellValue.put(cellID,new SimpleStringProperty(""));
             }
         }
+    }
+    public BooleanProperty isLoadingProperty() {
+        return isLoading;
     }
 
     public IntegerProperty selectedCellVersionProperty() {
@@ -79,12 +82,6 @@ public class UIModel {
     }
     public BooleanProperty isFileSelectedProperty( ) {
         return this.isFileSelected;
-    }
-    public IntegerProperty columnWidthProperty( ) {
-        return this.columnWidth;
-    }
-    public IntegerProperty rowHeightProperty( ) {
-        return this.rowHeight;
     }
 
 }

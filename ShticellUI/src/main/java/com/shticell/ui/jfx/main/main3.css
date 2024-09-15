@@ -1,0 +1,39 @@
+.root {
+    -fx-font-family: "Roboto", sans-serif;
+    -fx-background-color: #FF98;
+}
+
+#file-path {
+    -fx-text-fill: #FF9800;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 10px;
+    -fx-background-color: #2C2C2C;
+    -fx-background-radius: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,152,0,0.4), 10, 0, 0, 0);
+}
+
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 25px;
+    -fx-effect: dropshadow(three-pass-box, rgba(76,175,80,0.5), 10, 0, 0, 0);
+}
+
+.button:hover {
+    -fx-background-color: #45a049;
+}
+
+.text-field {
+    -fx-background-color: #2C2C2C;
+    -fx-text-fill: white;
+    -fx-border-color: #4CAF50;
+    -fx-border-radius: 5px;
+    -fx-padding: 5px;
+}
+
+.text-field:focused {
+    -fx-border-color: #FF9800;
+}
