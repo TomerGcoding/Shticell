@@ -30,4 +30,6 @@ public interface Engine {
     RangeDTO addRange(String name, String cellsRange);
 
     void removeRange(String name);
+
+    SheetDTO sortSheet(String rangeToSort,String columnsToSortBy);
 }

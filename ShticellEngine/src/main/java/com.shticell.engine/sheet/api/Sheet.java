@@ -4,6 +4,7 @@ import com.shticell.engine.cell.api.Cell;
 import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.coordinate.Coordinate;
+import com.shticell.engine.sheet.impl.SheetImpl;
 import com.shticell.engine.sheet.impl.SheetProperties;
 
 import java.util.List;
@@ -23,7 +24,7 @@ public interface Sheet {
     void incrementVersion();
     Sheet updateCellValueAndCalculate(int row, int column, String value);
     int increaseVersion();
-
+    SheetImpl copySheet();
     Range addRange(String name, String cellsRange);
     void addCell(Coordinate coordinate, Cell cell);
 

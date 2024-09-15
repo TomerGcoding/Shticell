@@ -208,8 +208,8 @@ public class SheetImpl implements Sheet, Serializable {
         activeCells.put(coordinate, cell);
     }
 
-
-    private SheetImpl copySheet() {
+    @Override
+    public SheetImpl copySheet() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);

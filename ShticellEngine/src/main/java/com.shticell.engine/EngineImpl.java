@@ -8,11 +8,13 @@ import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.dto.DTOCreator;
 import com.shticell.engine.cell.api.Cell;
 import com.shticell.engine.utils.SheetLoader;
+import com.shticell.engine.utils.SheetSorter;
 import com.shticell.engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.shticell.engine.dto.DTOCreator.rangeToDTO;
@@ -127,5 +129,14 @@ public class EngineImpl implements Engine, Serializable {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
         sheet.removeRange(name);
+    }
+
+    @Override
+    public SheetDTO sortSheet(String rangeToSort,String columnsToSortBy){
+        if (sheet == null) {
+            throw new IllegalStateException("No sheet is currently loaded.");
+        }
+        SheetSorter sorter = new SheetSorter(sheet,rangeToSort,columnsToSortBy);
+        return sorter.sort();
     }
 }
