@@ -19,13 +19,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
-
-
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 public class MainController {
 
     @FXML
@@ -60,18 +60,18 @@ public class MainController {
     @FXML
     private Button updateSelectedCellValueButton;
 
+    @FXML
+    private ComboBox<Integer> versionSelectorComboBox;
+    @FXML
+    private BorderPane mainBorderPane;
+
     private Engine engine = new EngineImpl();
-
     private UIModel uiModel;
-
+    private GridPane sheetGridPane;
     private GridPane sheetGridPane=new GridPane();
-
     private SheetGridManager gridManager;
-
     private Map<String,Label> cellIDtoLabel = new HashMap<>();
-
     private ObjectProperty<Label> selectedCell;
-
     private RangeController rangeController;
 
     @FXML
@@ -89,6 +89,18 @@ public class MainController {
                 newValue.setId("selected-cell");
             }
         });
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+            Parent rangeView = loader.load();
+            mainBorderPane.setRight(rangeView);
+            rangeController = loader.getController();
+            rangeController.setEngine(engine);
+            rangeController.setMainController(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         versionSelectorComponentController.setEngine(engine);
         changeStyleComboBox.getItems().addAll(1,2,3);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -105,6 +117,7 @@ public class MainController {
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+
     }
 
 
@@ -219,6 +232,44 @@ public class MainController {
         }
     }
 
+
+    private void addColumnAndRowConstraints(int numColumns, int colWidth,int numRows,int rowHeight) {
+        // Constraints for columns and rows
+        for (int i = 0; i <= numColumns; i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPrefWidth(colWidth); // width of each column
+            sheetGridPane.getColumnConstraints().add(colConst);
+        }
+
+        for (int i = 0; i <= numRows; i++) {
+            RowConstraints rowConst = new RowConstraints();
+            rowConst.setPrefHeight(rowHeight); // height of each row
+            sheetGridPane.getRowConstraints().add(rowConst);
+        }
+        sheetGridPane.getColumnConstraints().get(0).setPrefWidth(20);
+    }
+
+    private void addColumnsAndRowHeaders(int numColumns, int colWidth,int numRows,int rowHeight) {
+        // Adding column headers (A, B, C, ...)
+        for (int col = 0; col <= numColumns; col++) {
+            String colLabel = getColumnName(col);
+            Label label = new Label("");
+            if(col != 0) {
+                label.setText(colLabel);
+            }
+            label.setPrefWidth(colWidth);
+            label.getStyleClass().add("header");
+            sheetGridPane.add(label, col, 0);
+        }
+
+        // Adding row headers (1, 2, 3, ...)
+        for (int row = 1; row <= numRows; row++) {
+            Label label = new Label(String.valueOf(row));
+            label.setPrefHeight(rowHeight);
+            label.setPrefWidth(20);
+            label.getStyleClass().add("header");;
+            sheetGridPane.add(label, 0, row);
+
     private boolean isCellChanged(String cellId){
         CellDTO cell = engine.getCellInfo(cellId);
         boolean changed = true;
@@ -244,7 +295,12 @@ public class MainController {
             uiModel.selectedCellOriginalValueProperty().set(cell == null?"": cell.getOriginalValue());
             uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
             uiModel.selectedCellIdProperty().set(cellID);
+
+            resetCellBorders();
+            highlightDependenciesAndInfluences(cell);
+
             gridManager.highlightDependenciesAndInfluences(cell);
+
         });
     }
 
@@ -258,13 +314,32 @@ public class MainController {
         mainBorderPane.getStylesheets().clear();
         mainBorderPane.getStylesheets().add(getClass().getResource(mainStylesheet).toExternalForm());
 
+
+private void resetCellBorders() {
+    for (Label label : cellIDtoLabel.values()) {
+        label.setStyle("");
+        label.getStyleClass().removeAll("dependency-cell", "influence-cell");
         gridManager.setSheetStyle(styleNumber);
     }
+}
 
-    private void createRangeController() {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
-        RangeController rangeController = (RangeController)loader.getController();
+//
+//    private void createRangeController() {
+//        FXMLLoader loader = new FXMLLoader();
+//        loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
+//        RangeController rangeController = (RangeController)loader.getController();
+//
+//    }
 
+    public void colorRangeCells(List<String> cellIds) {
+        resetCellBorders();
+
+        for (String cellId : cellIds) {
+            Label cellLabel = cellIDtoLabel.get(cellId);  // Get the label by its cell ID
+            if (cellLabel != null) {
+                cellLabel.setStyle("-fx-border-color: pink; -fx-border-width: 2px;");
+            }
+        }
     }
+
 }

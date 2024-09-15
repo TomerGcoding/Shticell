@@ -6,8 +6,6 @@ import com.sun.codemodel.JForEach;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.shticell.engine.dto.DTOCreator.cellToDTO;
-
 public class RangeDTO {
     private final String name;
     private final List<CellDTO> cells;
@@ -26,4 +24,11 @@ public class RangeDTO {
     }
 
 
+    public List<String> getCellIds() {
+        List <String> cellIds = new ArrayList<>();
+        for(CellDTO cell: cells){
+            cellIds.add(cell.getId());
+        }
+        return cellIds;
+    }
 }

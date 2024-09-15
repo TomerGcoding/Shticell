@@ -14,6 +14,9 @@ import java.util.Map;
 public class DTOCreator {
 
     public static EffectiveValueDTO effectiveValueToDTO(EffectiveValue effectiveValue) {
+        if (effectiveValue == null) {
+            return null;
+        }
         return new EffectiveValueDTO(effectiveValue.getCellType(), effectiveValue.getValue());
     }
 
@@ -75,9 +78,9 @@ public class DTOCreator {
                 sheet.getProperties());
     }
 
-    public static RangeDTO rangeToDTO(Range range) {
+    public static RangeDTO rangeToDTO(Range range, Sheet sheet) {
         List<CellDTO> cellDTOList = new ArrayList<>();
-        for (Cell cell : range.getCells()) {
+        for (Cell cell : range.generateCells(sheet)) {
             cellDTOList.add(cellToDTO(cell));
         }
         return new RangeDTO(range.getName(), cellDTOList);
