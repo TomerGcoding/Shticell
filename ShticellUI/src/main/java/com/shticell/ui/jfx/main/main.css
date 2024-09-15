@@ -3,6 +3,7 @@
     -fx-border-width: 0.5px;
 }
 
+
 #selected-cell {
     -fx-border-color: green;
     -fx-border-width: 2px;
