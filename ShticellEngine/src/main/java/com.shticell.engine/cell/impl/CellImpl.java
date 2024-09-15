@@ -148,16 +148,19 @@ public class CellImpl implements Cell, Serializable {
             refCell.addInfluence(this);
         }
         range.addInfluence(this.ID);
+
     }
 
     private void addDependencyForAverageExpression(Expression expression) {
         Range range = ((AverageExpression) expression).getRange();
+
         List<Cell> cells = range.generateCells(sheet);
         for (Cell refCell : cells) {
             addDependency(refCell);
             refCell.addInfluence(this);
-        }
+
         range.addInfluence(this.ID);
+
     }
 
     @Override

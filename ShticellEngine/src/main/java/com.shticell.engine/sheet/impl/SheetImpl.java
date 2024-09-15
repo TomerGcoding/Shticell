@@ -75,7 +75,9 @@ public class SheetImpl implements Sheet, Serializable {
         if (!properties.isCoordinateLegal(coordinate)) {
             throw new IllegalArgumentException("Invalid coordinate");
         }
-            return updateCellValueAndCalculate(row, column, value);
+        SheetImpl newSheet = updateCellValueAndCalculate(row, column, value);
+        newSheet.updateRangesLists(CoordinateFormatter.indexToCellId(row, column),value);
+        return newSheet;
     }
 
     @Override
