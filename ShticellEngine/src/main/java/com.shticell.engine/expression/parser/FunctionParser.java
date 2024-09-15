@@ -170,6 +170,18 @@ public enum FunctionParser {
 //            return new EqualsExpression(left, right);
 //        }
 //    },
+    PERCENT {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "PERCENT");
+
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new PercentExpression(left, right);
+        }
+},
+
     NOT {
         @Override
         public Expression parse(List<String> arguments, Sheet sheet) {

@@ -143,8 +143,9 @@ public class CellImpl implements Cell, Serializable {
     private void addDependencyForSumExpression(Expression expression) {
         Range range = ((SumExpression) expression).getRange();
         List<Cell> cells = range.generateCells(sheet);
-        for (Cell cell : cells) {
-            addDependency(cell);
+        for (Cell refCell : cells) {
+            addDependency(refCell);
+            refCell.addInfluence(this);
         }
         range.addInfluence(this.ID);
     }
@@ -152,8 +153,9 @@ public class CellImpl implements Cell, Serializable {
     private void addDependencyForAverageExpression(Expression expression) {
         Range range = ((AverageExpression) expression).getRange();
         List<Cell> cells = range.generateCells(sheet);
-        for (Cell cell : cells) {
-            addDependency(cell);
+        for (Cell refCell : cells) {
+            addDependency(refCell);
+            refCell.addInfluence(this);
         }
         range.addInfluence(this.ID);
     }
