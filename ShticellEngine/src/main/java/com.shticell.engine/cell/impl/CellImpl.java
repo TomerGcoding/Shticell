@@ -42,7 +42,6 @@ public class CellImpl implements Cell, Serializable {
         this.version = version;
         this.dependsOn = new ArrayList<>();
         this.influencingOn = new ArrayList<>();
-        effectiveValue = new EffectiveValueImpl(CellType.UNKNOWN, "");
     }
 
     @Override
@@ -106,8 +105,7 @@ public class CellImpl implements Cell, Serializable {
             if (expression instanceof RefExpression) {
                 addDependencyForRefExpression(expression);
 
-            } else if (expression instanceof
-                    SumExpression) {
+            } else if (expression instanceof SumExpression) {
                 addDependencyForSumExpression(expression);
 
             } else if (expression instanceof AverageExpression) {
@@ -142,10 +140,9 @@ public class CellImpl implements Cell, Serializable {
 
     private void addDependencyForSumExpression(Expression expression) {
         Range range = ((SumExpression) expression).getRange();
-        List<Cell> cells = range.generateCells(sheet);
-        for (Cell refCell : cells) {
-            addDependency(refCell);
-            refCell.addInfluence(this);
+        List<Cell> cells = range.getCells();
+        for (Cell cell : cells) {
+            addDependency(cell);
         }
         range.addInfluence(this.ID);
 
@@ -153,12 +150,10 @@ public class CellImpl implements Cell, Serializable {
 
     private void addDependencyForAverageExpression(Expression expression) {
         Range range = ((AverageExpression) expression).getRange();
-
-        List<Cell> cells = range.generateCells(sheet);
-        for (Cell refCell : cells) {
-            addDependency(refCell);
-            refCell.addInfluence(this);
-
+        List<Cell> cells = range.getCells();
+        for (Cell cell : cells) {
+            addDependency(cell);
+        }
         range.addInfluence(this.ID);
 
     }

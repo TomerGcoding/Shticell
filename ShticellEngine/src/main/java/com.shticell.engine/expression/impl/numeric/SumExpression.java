@@ -7,10 +7,9 @@ import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.cell.impl.CellType;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class SumExpression extends NumericExpression {
+public class SumExpression implements Expression {
     private final String rangeName;
     private final Sheet sheet;
 
@@ -22,10 +21,7 @@ public class SumExpression extends NumericExpression {
     @Override
     public EffectiveValue eval() {
         Range range = sheet.getRange(rangeName);
-        if (range == null) {
-            throw new IllegalArgumentException("Range not found: " + rangeName);
-        }
-        List<EffectiveValue> values = range.getRangeValues(sheet);
+        List<EffectiveValue> values = range.getRangeValues();
         double sum = values.stream()
                 .filter(value -> value.getCellType() == CellType.NUMERIC)
                 .mapToDouble(value -> (Double) value.getValue())
@@ -33,22 +29,18 @@ public class SumExpression extends NumericExpression {
         return new EffectiveValueImpl(CellType.NUMERIC, sum);
     }
 
-
     @Override
-    public List<Expression> getExpressions() {
-        List<Expression> expressions = new ArrayList<>();
-        expressions.add(this);
-        return expressions;
+    public CellType getFunctionResultType() {
+        return CellType.NUMERIC;
     }
-
     @Override
     public boolean isDepndsOnSomeCell() {
         return true;
     }
 
-   // public String getRangeName() {
-    // return rangeName;
-   // }
+    public String getRangeName() {
+        return rangeName;
+    }
 
     public Range getRange() {
         return sheet != null ? sheet.getRange(rangeName) : null;

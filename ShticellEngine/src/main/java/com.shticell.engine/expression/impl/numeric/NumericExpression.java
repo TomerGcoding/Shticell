@@ -3,7 +3,6 @@ package com.shticell.engine.expression.impl.numeric;
 import com.shticell.engine.expression.api.Expression;
 import com.shticell.engine.cell.impl.CellType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class NumericExpression implements Expression {
@@ -15,5 +14,4 @@ public abstract class NumericExpression implements Expression {
     public boolean isDepndsOnSomeCell() {
         return false;
     }
-
 }

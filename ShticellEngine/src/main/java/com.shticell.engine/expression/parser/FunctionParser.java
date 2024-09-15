@@ -4,8 +4,6 @@ import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.exceptions.IllegalNumberOfArgumentsException;
 import com.shticell.engine.expression.api.Expression;
 import com.shticell.engine.expression.impl.IdentityExpression;
-import com.shticell.engine.expression.impl.bool.EqualsExpression;
-import com.shticell.engine.expression.impl.bool.NotExpression;
 import com.shticell.engine.expression.impl.numeric.*;
 import com.shticell.engine.expression.impl.ref.RefExpression;
 import com.shticell.engine.expression.impl.string.ConcatExpression;
@@ -157,43 +155,6 @@ public enum FunctionParser {
             return new SumExpression(rangeName, sheet);
         }
     },
-//    EQUALS {
-//        @Override
-//        public Expression parse(List<String> arguments, Sheet sheet) {
-//            validateArgumentCount(arguments, 2, "EQUALS");
-//
-//            Expression left = parseExpression(arguments.get(0).trim(), sheet);
-//            Expression right = parseExpression(arguments.get(1).trim(), sheet);
-//
-//            // No need for type validation upfront; handled in evaluation
-//
-//            return new EqualsExpression(left, right);
-//        }
-//    },
-    PERCENT {
-        @Override
-        public Expression parse(List<String> arguments, Sheet sheet) {
-            validateArgumentCount(arguments, 2, "PERCENT");
-
-            Expression left = parseExpression(arguments.get(0).trim(), sheet);
-            Expression right = parseExpression(arguments.get(1).trim(), sheet);
-
-            return new PercentExpression(left, right);
-        }
-},
-
-    NOT {
-        @Override
-        public Expression parse(List<String> arguments, Sheet sheet) {
-            validateArgumentCount(arguments, 1, "NOT");
-
-            Expression exp = parseExpression(arguments.get(0).trim(), sheet);
-            validateArgumentType(exp, CellType.BOOLEAN, "NOT");
-
-            return new NotExpression(exp);
-        }
-    },
-
     AVERAGE {
         @Override
         public Expression parse(List<String> arguments, Sheet sheet) {

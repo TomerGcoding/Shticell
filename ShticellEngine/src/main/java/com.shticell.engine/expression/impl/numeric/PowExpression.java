@@ -35,6 +35,7 @@ public class PowExpression extends NumericExpression {
 
     }
 
+    @Override
     public List<Expression> getExpressions() {
         List<Expression> expressions = new ArrayList<>();
         expressions.add(left);
