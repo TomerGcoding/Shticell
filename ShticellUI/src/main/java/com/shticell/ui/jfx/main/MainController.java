@@ -19,6 +19,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
 
@@ -28,6 +29,8 @@ import java.util.Map;
 
 public class MainController {
 
+    @FXML
+    private CheckBox animationsCheckbox;
     @FXML
     private BorderPane mainBorderPane;
     @FXML
@@ -39,6 +42,8 @@ public class MainController {
     @FXML
     private ProgressBar progressBar;
 
+    @FXML
+    private Label shticellLabel;
     @FXML
     private Label progressLabel;
 
@@ -96,6 +101,7 @@ public class MainController {
                 changeShticellStyle(newValue);
             }
         });
+        initializeAnimationsCheckbox();
 //        try {
 //            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
 //            Parent rangeView = loader.load();
@@ -245,6 +251,7 @@ public class MainController {
             uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
             uiModel.selectedCellIdProperty().set(cellID);
             gridManager.highlightDependenciesAndInfluences(cell);
+            AnimationManager.animateCellSelection(label);
         });
     }
 
@@ -266,5 +273,21 @@ public class MainController {
         loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
         RangeController rangeController = (RangeController)loader.getController();
 
+    }
+
+    private void initializeAnimationsCheckbox() {
+        animationsCheckbox = new CheckBox("Activate Animations");
+        animationsCheckbox.setSelected(false);  // Set to unchecked by default
+        animationsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            AnimationManager.setAnimationsEnabled(newValue);
+            if (newValue) {
+                AnimationManager.animateShticellLabel(shticellLabel);
+            } else {
+                // Reset the Shticell label
+                shticellLabel.setTextFill(Color.BLACK);
+                shticellLabel.setRotate(0);
+            }
+        });
+        mainBorderPane.setBottom(animationsCheckbox);
     }
 }

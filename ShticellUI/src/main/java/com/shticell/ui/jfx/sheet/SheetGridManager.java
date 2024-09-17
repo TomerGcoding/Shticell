@@ -4,8 +4,11 @@ import com.shticell.engine.Engine;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.ui.jfx.main.AnimationManager;
 import com.shticell.ui.jfx.main.MainController;
 import com.shticell.ui.jfx.main.UIModel;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -57,6 +60,8 @@ public class SheetGridManager {
         addColumnsAndRowHeaders(numColumns, colWidth, numRows, rowHeight);
         uiModel.initializePropertiesForEachCell(sheetGridPane);
         populateSheetGridPane(sheet, numColumns, colWidth, numRows, rowHeight);
+        AnimationManager.animateSheetPresentation(sheetGridPane);
+
     }
 
 
@@ -151,6 +156,8 @@ public class SheetGridManager {
                 Label dependencyLabel = cellIDtoLabel.get(dependencyCellId);
                 if (dependencyLabel != null) {
                     dependencyLabel.getStyleClass().add("dependency-cell");
+                    AnimationManager.animateCellSelection(dependencyLabel);
+
                 }
             }
             for (CellDTO influencedCell : cellDTO.getInfluencingOn()) {
@@ -159,6 +166,7 @@ public class SheetGridManager {
                 Label influencedLabel = cellIDtoLabel.get(influencedCellId);
                 if (influencedLabel != null) {
                     influencedLabel.getStyleClass().add("influence-cell");
+                    AnimationManager.animateCellSelection(influencedLabel);
                 }
             }
         }
@@ -243,7 +251,6 @@ public class SheetGridManager {
         // Refresh the layout
         sheetGridPane.requestLayout();
     }
-
 
     public void setSheetStyle(int styleNumber) {
         String stylesheet = String.format("sheet%d.css", styleNumber);

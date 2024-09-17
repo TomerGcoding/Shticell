@@ -26,7 +26,7 @@
                         <ComboBox fx:id="changeStyleComboBox" layoutY="2.0" prefHeight="25.0" prefWidth="119.0" promptText="Sthicell Styles" />
                      </children>
                   </AnchorPane>
-                  <Label alignment="CENTER" prefHeight="34.0" prefWidth="752.0" text="Sthicell" textAlignment="CENTER">
+                  <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="34.0" prefWidth="752.0" text="Sthicell" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold Italic" size="23.0" />
                      </font>
