@@ -93,7 +93,7 @@ public class ContextMenuFactory {
             cellLabel.setTextFill(Color.BLACK);  // Reset text color to default (black)
             cellLabel.setStyle("");  // Clear all styles
             cellLabel.getStyleClass().clear();  // Clear any custom style classes
-            cellLabel.getStyleClass().addAll("label","cell");  // Add back the default label style class
+            cellLabel.getStyleClass().addAll("cell");  // Add back the default label style class
         });
 
         changeTextColor.setOnAction(e -> {
@@ -162,12 +162,14 @@ public class ContextMenuFactory {
 
         return contextMenu;
     }
+
     private String toHexString(Color color) {
         return String.format("%02X%02X%02X",
                 (int) (color.getRed() * 255),
                 (int) (color.getGreen() * 255),
                 (int) (color.getBlue() * 255));
     }
+
     private Color getCurrentBackgroundColor(Label cellLabel) {
         String style = cellLabel.getStyle();
         if (style.contains("-fx-background-color")) {

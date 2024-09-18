@@ -17,8 +17,6 @@ public class UIModel {
     private final StringProperty fullPath;
     private final StringProperty name;
     private final BooleanProperty isFileSelected;
-    private final IntegerProperty columnWidth;
-    private final IntegerProperty rowHeight;
     private final BooleanProperty isLoading;
     private IntegerProperty selectedCellVersion;
     private Map<String,StringProperty> cellIdtoCellValue;
@@ -30,8 +28,6 @@ public class UIModel {
         this.fullPath = new SimpleStringProperty( );
         this.name = new SimpleStringProperty( );
         this.isFileSelected = new SimpleBooleanProperty(false );
-        this.columnWidth = new SimpleIntegerProperty( );
-        this.rowHeight = new SimpleIntegerProperty( );
         this.selectedCellId = new SimpleStringProperty( );
         this.selectedCellOriginalValue = new SimpleStringProperty( );
         this.selectedCellVersion = new SimpleIntegerProperty();
@@ -86,12 +82,6 @@ public class UIModel {
     }
     public BooleanProperty isFileSelectedProperty( ) {
         return this.isFileSelected;
-    }
-    public IntegerProperty columnWidthProperty( ) {
-        return this.columnWidth;
-    }
-    public IntegerProperty rowHeightProperty( ) {
-        return this.rowHeight;
     }
 
 }

@@ -1,0 +1,40 @@
+.cell {
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 0.5px;
+    -fx-background-color: #E56F;
+    /*-fx-text-fill: white;*/
+    -fx-padding: 5px;
+    -fx-alignment: center;
+}
+
+.cell:hover {
+    -fx-background-color: #E51;
+}
+
+#selected-cell {
+    -fx-border-color: #FF9800;
+    -fx-border-width: 2px;
+    -fx-background-color: #3C3C3C;
+}
+
+.header {
+    -fx-border-width: 0.5px;
+    -fx-border-color: #4CAF50;
+    -fx-background-color: #1E1E1E;
+    -fx-text-fill: #FF9800;
+    -fx-alignment: center;
+    -fx-font-weight: bold;
+    -fx-padding: 8px;
+}
+
+.dependency-cell {
+    -fx-border-color: #2196F3;
+    -fx-border-width: 2px;
+    -fx-background-color: rgba(33, 150, 243, 0.2);
+}
+
+.influence-cell {
+    -fx-border-color: #FF4081;
+    -fx-border-width: 2px;
+    -fx-background-color: rgba(255, 64, 129, 0.2);
+}
