@@ -15,22 +15,28 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.util.Pair;
 
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class MainController {
 
     @FXML
     private CheckBox animationsCheckbox;
+
+    @FXML
+    private Button sortSheetButton;
     @FXML
     private BorderPane mainBorderPane;
     @FXML
@@ -95,6 +101,7 @@ public class MainController {
             }
         });
         versionSelectorComponentController.setEngine(engine);
+        versionSelectorComponentController.setSheetGridManager(gridManager);
         changeStyleComboBox.getItems().addAll(1,2,3);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null) {
@@ -102,6 +109,7 @@ public class MainController {
             }
         });
         initializeAnimationsCheckbox();
+        initializeSortSheetButton();
 //        try {
 //            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
 //            Parent rangeView = loader.load();
@@ -276,7 +284,6 @@ public class MainController {
     }
 
     private void initializeAnimationsCheckbox() {
-        animationsCheckbox = new CheckBox("Activate Animations");
         animationsCheckbox.setSelected(false);  // Set to unchecked by default
         animationsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             AnimationManager.setAnimationsEnabled(newValue);
@@ -288,6 +295,74 @@ public class MainController {
                 shticellLabel.setRotate(0);
             }
         });
-        mainBorderPane.setBottom(animationsCheckbox);
     }
+    private void initializeSortSheetButton() {
+        sortSheetButton.setOnAction(e -> showSortDialog());
+    }
+    private void showSortDialog() {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Sort Sheet");
+        dialog.setHeaderText("Enter sort range and columns");
+
+        ButtonType sortButtonType = new ButtonType("Sort", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(sortButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField rangeField = new TextField();
+        rangeField.setPromptText("e.g., A4..D6");
+        TextField columnsField = new TextField();
+        columnsField.setPromptText("e.g., C,D,B");
+
+        grid.add(new Label("Range:"), 0, 0);
+        grid.add(rangeField, 1, 0);
+        grid.add(new Label("Columns to sort by:"), 0, 1);
+        grid.add(columnsField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == sortButtonType) {
+                return new Pair<>(rangeField.getText(), columnsField.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(pair -> {
+            try {
+                SheetDTO sortedSheet = engine.sortSheet(pair.getKey(), pair.getValue());
+                showSortedSheetDialog(sortedSheet);
+            } catch (Exception ex) {
+                showErrorAlert("Sorting Error", "An error occurred while sorting the sheet: " + ex.getMessage());
+            }
+        });
+    }
+
+    private void showSortedSheetDialog(SheetDTO sortedSheet) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Sorted Sheet");
+        GridPane grid = new GridPane();
+        gridManager.createReadOnlySheetGridPane(grid, sortedSheet);
+        grid.getStylesheets().add(getClass().getResource("/com/shticell/ui/jfx/sheet/"+gridManager.getActiveStyleSheet()).toExternalForm());
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        dialog.showAndWait();
+    }
+
+    private void showErrorAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
 }
+
+
