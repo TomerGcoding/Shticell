@@ -18,6 +18,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -142,6 +143,7 @@ public class SheetGridManager {
 
     public void highlightDependenciesAndInfluences(CellDTO cellDTO) {
         if (cellDTO != null) {
+            resetCellBorders();
             for (CellDTO dependencyCell : cellDTO.getDependsOn()) {
                 String dependencyCellId = CoordinateFormatter.indexToCellId(dependencyCell.getCoordinate().getRow(),
                         dependencyCell.getCoordinate().getColumn());
@@ -163,7 +165,9 @@ public class SheetGridManager {
 
     public void resetCellBorders() {
         for (Label label : cellIDtoLabel.values()) {
+            label.setStyle("");
             label.getStyleClass().removeAll("dependency-cell", "influence-cell");
+            //setSheetStyle(styleNumber);
         }
     }
 
@@ -242,7 +246,15 @@ public class SheetGridManager {
     }
 
 
-
+    public void colorRangeCells(List<String> rangeCellIds)   {
+        resetCellBorders();
+        for (String cellId : rangeCellIds) {
+            Label cellLabel = cellIDtoLabel.get(cellId);  // Get the label by its cell ID
+            if (cellLabel != null) {
+                cellLabel.setStyle("-fx-border-color: pink; -fx-border-width: 2px;");
+            }
+        }
+    }
 }
 
 

@@ -30,6 +30,7 @@ public class RangeController {
     private TextField deleteNameTextField;
 
     private Engine engine;
+
     private MainController mainController; // Reference to MainController
 
     public void setEngine(Engine engine) {
@@ -60,6 +61,7 @@ public class RangeController {
             alert.setContentText(e.getMessage());
             alert.showAndWait();
         }
+
     }
     @FXML
     private void deleteRange(ActionEvent event) {

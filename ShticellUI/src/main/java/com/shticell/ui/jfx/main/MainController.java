@@ -15,6 +15,7 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
@@ -23,7 +24,9 @@ import javafx.stage.FileChooser;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MainController {
@@ -88,17 +91,10 @@ public class MainController {
             if(newValue != null) {
                 newValue.setId("selected-cell");
             }
+
         });
         versionSelectorComponentController.setEngine(engine);
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
-//            Parent rangeView = loader.load();
-//            mainBorderPane.setRight(rangeView);
-//            rangeController = loader.getController();
-//            rangeController.setEngine(engine);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        createRangeController();
     }
 
 
@@ -242,9 +238,21 @@ public class MainController {
     }
 
     private void createRangeController() {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
-        RangeController rangeController = (RangeController)loader.getController();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+            Parent rangeView = loader.load();
+            mainBorderPane.setRight(rangeView);
+            rangeController = loader.getController();
+            rangeController.setEngine(engine);
+            rangeController.setMainController(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
+
+    public void colorRangeCells(List<String> rangeCellIds) {
+        gridManager.colorRangeCells(rangeCellIds);
+    }
+
 }

@@ -66,25 +66,6 @@ public class RangeImpl implements Range, Serializable {
 
     }
 
-
-//    @Override
-//    public Double calculateAverage(Sheet sheet) {
-//        if (!cellsInRange.isEmpty())
-//            return calculateSum(sheet)/cellsInRange.size();
-//        return 0.0;
-//    }
-//
-//    @Override
-//    public Double calculateSum(Sheet sheet) {
-//        Double result = 0.0;
-//        for (Cell cell : cellsInRange) {
-//            if(cell.getEffectiveValue().getCellType().equals(CellType.NUMERIC))
-//                 result += cell.getEffectiveValue().extractValueWithExpectation(Double.class);
-//        }
-//        return result;
-//    }
-
-
     @Override
     public List<EffectiveValue> getRangeValues(Sheet sheet) {
         this.cellsInRange = generateCells(sheet);

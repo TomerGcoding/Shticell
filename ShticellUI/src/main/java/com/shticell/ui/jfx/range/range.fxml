@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.range.RangeController">
+   <children>
+      <HBox alignment="CENTER_LEFT" maxWidth="300.0">
+         <children>
+            <Label text="Name: ">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="15.0" top="10.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="insertNameTextField">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" maxWidth="300.0" prefHeight="46.0" prefWidth="310.0">
+         <children>
+            <Label text="Range:">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="15.0" top="10.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="insertRangeTextField">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" maxWidth="300.0">
+         <children>
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#addNewRange" text="Insert New Range">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+         <VBox.margin>
+            <Insets right="10.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" maxWidth="300.0">
+         <children>
+            <Label text="Delete Range: ">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="15.0" top="10.0" />
+               </HBox.margin>
+            </Label>
+            <TextField fx:id="deleteNameTextField">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </HBox.margin>
+            </TextField>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_RIGHT" maxWidth="300.0">
+         <children>
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#deleteRange" text="Delete Range">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+         <VBox.margin>
+            <Insets right="10.0" />
+         </VBox.margin>
+      </HBox>
+      <Accordion fx:id="activeRangeAccordion" maxWidth="300.0">
+         <panes>
+            <TitledPane fx:id="activeRangesTitledPane" animated="false" prefHeight="554.0" prefWidth="346.0" text="Active Ranges">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox fx:id="vboxInsideTitledPane" prefHeight="375.0" prefWidth="346.0" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </TitledPane>
+         </panes>
+      </Accordion>
+   </children>
+</VBox>
