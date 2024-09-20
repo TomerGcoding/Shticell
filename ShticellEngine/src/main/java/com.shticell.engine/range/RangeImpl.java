@@ -82,7 +82,6 @@ public class RangeImpl implements Range, Serializable {
         return result;
     }
 
-
     @Override
     public List<EffectiveValue> getRangeValues() {
         List <EffectiveValue> values = new ArrayList<>();

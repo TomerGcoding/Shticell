@@ -37,6 +37,18 @@ public class RangeController {
 
     private Engine engine;
 
+
+    private MainController mainController; // Reference to MainController
+
+    public void setEngine(Engine engine) {
+        this.engine = engine;
+    }
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+
     @FXML
     void addNewRange(ActionEvent event) {
         String rangeName =  insertNameTextField.getText();
@@ -44,8 +56,17 @@ public class RangeController {
         RangeDTO rangeDTO = engine.addRange(rangeName, rangeCells);
         Label newLabel = new Label(rangeDTO.getName());
         vboxInsideTitledPane.getChildren().add(newLabel);
-
+            // Attach event handler to highlight range cells when clicked
+        newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(rangeCellIds));
+        } catch (Exception e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while adding new range");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+     }
     }
+
     @FXML
     void deleteRange(ActionEvent event) {
         String rangeName = deleteNameTextField.getText();
@@ -78,6 +99,5 @@ public class RangeController {
     public void initialize() {
 
     }
-
 
 }

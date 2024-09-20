@@ -1,8 +1,5 @@
 package com.shticell.engine.dto;
 
-import com.shticell.engine.cell.api.Cell;
-import com.sun.codemodel.JForEach;
-
 import java.util.ArrayList;
 import java.util.List;
 

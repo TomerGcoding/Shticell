@@ -150,12 +150,12 @@ public class CellImpl implements Cell, Serializable {
 
     private void addDependencyForAverageExpression(Expression expression) {
         Range range = ((AverageExpression) expression).getRange();
-        List<Cell> cells = range.getCells();
-        for (Cell cell : cells) {
-            addDependency(cell);
+        List<Cell> cells = range.generateCells(sheet);
+        for (Cell refCell : cells) {
+            addDependency(refCell);
+            refCell.addInfluence(this);
         }
         range.addInfluence(this.ID);
-
     }
 
     @Override
