@@ -30,7 +30,7 @@ public class RangeImpl implements Range, Serializable {
     }
 
 
-    private List<Cell> generateCells(Sheet sheet) {
+    public List<Cell> generateCells(Sheet sheet) {
         int[] startIndex = CoordinateFormatter.cellIdToIndex(startCellId);
         int[] endIndex = CoordinateFormatter.cellIdToIndex(endCellId);
 
@@ -65,22 +65,22 @@ public class RangeImpl implements Range, Serializable {
         return cellsInRange;
     }
 
-    @Override
-    public Double calculateAverage() {
-        if (!cellsInRange.isEmpty())
-            return calculateSum()/cellsInRange.size();
-        return 0.0;
-    }
-
-    @Override
-    public Double calculateSum() {
-        Double result = 0.0;
-        for (Cell cell : cellsInRange) {
-            if(cell.getEffectiveValue().getCellType().equals(CellType.NUMERIC))
-                 result += cell.getEffectiveValue().extractValueWithExpectation(Double.class);
-        }
-        return result;
-    }
+//    @Override
+//    public Double calculateAverage() {
+//        if (!cellsInRange.isEmpty())
+//            return calculateSum()/cellsInRange.size();
+//        return 0.0;
+//    }
+//
+//    @Override
+//    public Double calculateSum() {
+//        Double result = 0.0;
+//        for (Cell cell : cellsInRange) {
+//            if(cell.getEffectiveValue().getCellType().equals(CellType.NUMERIC))
+//                result += cell.getEffectiveValue().extractValueWithExpectation(Double.class);
+//        }
+//        return result;
+//    }
 
     @Override
     public List<EffectiveValue> getRangeValues() {
@@ -105,7 +105,7 @@ public class RangeImpl implements Range, Serializable {
     public void removeInfluence(String cellId) {
         influenceOnCells.remove(cellId);;
     }
-     @Override
+    @Override
     public List<String> getInfluenceOnCells() {
         return influenceOnCells;
     }

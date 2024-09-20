@@ -77,9 +77,11 @@ public class DTOCreator {
 
     public static RangeDTO rangeToDTO(Range range) {
         List<CellDTO> cellDTOList = new ArrayList<>();
+        List <String> Ids = new ArrayList<>();
         for (Cell cell : range.getCells()) {
             cellDTOList.add(cellToDTO(cell));
+            Ids.add(cell.getId());
         }
-        return new RangeDTO(range.getName(), cellDTOList);
+        return new RangeDTO(range.getName(), cellDTOList, Ids);
     }
 }
