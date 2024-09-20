@@ -23,6 +23,7 @@ import java.util.Map;
 
 
 public class SheetGridManager {
+
     private MainController mainController;
     private ContextMenuFactory contextMenuFactory;
     private GridPane sheetGridPane;
@@ -32,6 +33,7 @@ public class SheetGridManager {
 
     public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, Engine engine, MainController mainController) {
         this.sheetGridPane = sheetGridPane;
+        this.sheetGridPane.getStylesheets().add(getClass().getResource("sheet1.css").toExternalForm());
         this.uiModel = uiModel;
         this.engine = engine;
         this.cellIDtoLabel = new HashMap<String, Label>();
@@ -143,7 +145,6 @@ public class SheetGridManager {
 
     public void highlightDependenciesAndInfluences(CellDTO cellDTO) {
         if (cellDTO != null) {
-            resetCellBorders();
             for (CellDTO dependencyCell : cellDTO.getDependsOn()) {
                 String dependencyCellId = CoordinateFormatter.indexToCellId(dependencyCell.getCoordinate().getRow(),
                         dependencyCell.getCoordinate().getColumn());
@@ -178,7 +179,7 @@ public class SheetGridManager {
             Integer nodeRowIndex = GridPane.getRowIndex(node);
             if (nodeColumnIndex != null && nodeColumnIndex == columnIndex
                     && node instanceof Label
-                && nodeRowIndex>0&& nodeRowIndex!=null) {
+                    && nodeRowIndex>0&& nodeRowIndex!=null) {
                 Label label = (Label) node;
                 label.setAlignment(alignment);
             }
@@ -246,6 +247,12 @@ public class SheetGridManager {
     }
 
 
+    public void setSheetStyle(int styleNumber) {
+        String stylesheet = String.format("sheet%d.css", styleNumber);
+        this.sheetGridPane.getStylesheets().clear();
+        this.sheetGridPane.getStylesheets().add(getClass().getResource(stylesheet).toExternalForm());
+    }
+
     public void colorRangeCells(List<String> rangeCellIds)   {
         resetCellBorders();
         for (String cellId : rangeCellIds) {
@@ -256,6 +263,3 @@ public class SheetGridManager {
         }
     }
 }
-
-
-

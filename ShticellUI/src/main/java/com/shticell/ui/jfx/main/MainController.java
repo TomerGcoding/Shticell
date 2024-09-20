@@ -34,7 +34,7 @@ public class MainController {
     @FXML
     private BorderPane mainBorderPane;
     @FXML
-    private Button changeStyleButton;
+    private ComboBox<Integer> changeStyleComboBox;
     @FXML
     private VersionController versionSelectorComponentController;
     @FXML
@@ -91,9 +91,14 @@ public class MainController {
             if(newValue != null) {
                 newValue.setId("selected-cell");
             }
-
         });
         versionSelectorComponentController.setEngine(engine);
+        changeStyleComboBox.getItems().addAll(1,2,3);
+        changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != null) {
+                gridManager.setSheetStyle(newValue);
+            }
+        });
         createRangeController();
     }
 

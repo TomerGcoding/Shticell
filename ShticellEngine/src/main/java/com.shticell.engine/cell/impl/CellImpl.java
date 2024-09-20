@@ -158,6 +158,7 @@ public class CellImpl implements Cell, Serializable {
         for (Cell refCell : cells) {
             addDependency(refCell);
             refCell.addInfluence(this);
+        }
 
         range.addInfluence(this.ID);
 
