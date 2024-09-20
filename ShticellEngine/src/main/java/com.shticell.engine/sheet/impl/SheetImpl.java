@@ -190,24 +190,17 @@ public class SheetImpl implements Sheet, Serializable {
 
     @Override
     public Range addRange(String name, String cellsRange) throws IllegalArgumentException {
-        String lowerCaseName = name.toLowerCase();
-        String lowerCaseCellsRange = cellsRange.toUpperCase();
-
-        if (activeRanges.containsKey(lowerCaseName)) {
+        if (activeRanges.containsKey(name)) {
             throw new IllegalArgumentException("Invalid name: A range with the name '" + name + "' already exists.");
         }
 
-        String[] rangeParts = lowerCaseCellsRange.split("\\.\\.");
-        if (!(properties.isCoordinateLegal(rangeParts[0]) && properties.isCoordinateLegal(rangeParts[1]))) {
-            throw new IllegalArgumentException("Invalid range: " + cellsRange);
-        }
+        String[] rangeParts = cellsRange.split("\\.\\.");
         if (rangeParts.length != 2) {
             throw new IllegalArgumentException("Invalid range format: " + cellsRange);
         }
 
         Range range = new RangeImpl(name, rangeParts[0], rangeParts[1], this);
-
-        activeRanges.put(lowerCaseName, range);
+        activeRanges.put(name, range);
         return range;
     }
 
@@ -235,13 +228,12 @@ public class SheetImpl implements Sheet, Serializable {
         if (!activeRanges.containsKey(rangeName)) {
             throw new IllegalArgumentException("Invalid range name: " + rangeName);
         }
-        return activeRanges.get(rangeName).getRangeValues(this
-        );
+        return activeRanges.get(rangeName).getRangeValues();
     }
 
     @Override
     public Range getRange(String rangeName) {
-        return activeRanges.get(rangeName.toLowerCase());
+        return activeRanges.get(rangeName);
     }
 
     @Override

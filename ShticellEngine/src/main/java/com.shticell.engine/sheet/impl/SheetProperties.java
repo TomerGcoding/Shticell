@@ -1,5 +1,5 @@
 package com.shticell.engine.sheet.impl;
-import com.shticell.engine.sheet.coordinate.*;
+import com.shticell.engine.sheet.coordinate.Coordinate;
 
 import java.io.Serializable;
 
@@ -39,11 +39,6 @@ public class SheetProperties implements Serializable {
     }
     public boolean isCoordinateLegal(int row, int column) {
         return row >= 0 && row < numRows && column >= 0 && column < numCols;
-    }
-
-    public boolean isCoordinateLegal(String cellId) {
-        int[] indexes = CoordinateFormatter.cellIdToIndex(cellId);
-        return isCoordinateLegal(indexes[0], indexes[1]);
     }
 
 }

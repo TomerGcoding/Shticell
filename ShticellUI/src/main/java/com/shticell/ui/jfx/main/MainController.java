@@ -26,7 +26,6 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MainController {
@@ -101,7 +100,6 @@ public class MainController {
         });
         createRangeController();
     }
-
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
@@ -213,6 +211,7 @@ public class MainController {
             alert.showAndWait();
         }
     }
+  
     private boolean isCellChanged(String cellId){
         CellDTO cell = engine.getCellInfo(cellId);
         boolean changed = true;
@@ -242,6 +241,7 @@ public class MainController {
         });
     }
 
+
     private void createRangeController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
@@ -260,4 +260,16 @@ public class MainController {
         gridManager.colorRangeCells(rangeCellIds);
     }
 
+    private void changeShticellStyle(int selectedStyle) {
+        applyStyles(selectedStyle);
+    }
+
+    private void applyStyles(int styleNumber) {
+        String mainStylesheet = String.format("main%d.css", styleNumber);
+
+        mainBorderPane.getStylesheets().clear();
+        mainBorderPane.getStylesheets().add(getClass().getResource(mainStylesheet).toExternalForm());
+
+        gridManager.setSheetStyle(styleNumber);
+    }
 }

@@ -117,14 +117,8 @@ public class EngineImpl implements Engine, Serializable {
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
-        try {
-            Range newRange = sheet.addRange(name, cellsRange);
-            return rangeToDTO(newRange, sheet);
-        }
-        catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("Range "+ name + " can't be added with the value " + cellsRange + " because "
-                    + e.getMessage() + "\n" );
-        }
+        Range newRange = sheet.addRange(name, cellsRange);
+        return rangeToDTO(newRange);
     }
 
     @Override

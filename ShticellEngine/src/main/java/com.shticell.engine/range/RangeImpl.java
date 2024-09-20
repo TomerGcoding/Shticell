@@ -16,18 +16,21 @@ import java.util.Objects;
 
 public class RangeImpl implements Range, Serializable {
 
-    private List<String> cellsIdInRange;
-    private List<Cell> cellsInRange;
-     private final String name;
-    private List<String> influenceOnCells;
+    private final String startCellId;
+    private final String endCellId;
+    private final List<Cell> cellsInRange;
+    private final String name;
+    private List<String> influenceOnCells = new ArrayList<>();
 
     public RangeImpl(String name, String startCellId, String endCellId, Sheet sheet) {
         this.name = name;
-        generateCellIdsInRange(startCellId, endCellId);
-        influenceOnCells = new ArrayList<>();
+        this.startCellId = startCellId;
+        this.endCellId = endCellId;
+        this.cellsInRange = generateCells(sheet);
     }
 
-    private void generateCellIdsInRange(String startCellId, String endCellId) {
+
+    private List<Cell> generateCells(Sheet sheet) {
         int[] startIndex = CoordinateFormatter.cellIdToIndex(startCellId);
         int[] endIndex = CoordinateFormatter.cellIdToIndex(endCellId);
 
@@ -36,39 +39,51 @@ public class RangeImpl implements Range, Serializable {
         int startCol = Math.min(startIndex[1], endIndex[1]);
         int endCol = Math.max(startIndex[1], endIndex[1]);
 
-        this.cellsIdInRange = new ArrayList<>();
+        List<Cell> cellsInRange = new ArrayList<>();
 
+        // Iterate over rows and columns to generate the cells
         for (int row = startRow; row <= endRow; row++) {
             for (int col = startCol; col <= endCol; col++) {
-                String cellId = CoordinateFormatter.indexToCellId(row, col);
-                this.cellsIdInRange.add(cellId);
+                Coordinate coordinate = CoordinateFactory.createCoordinate(row, col);
+                Cell cell = sheet.getCell(coordinate);
+
+                // If the cell doesn't exist, create it
+                if (cell == null) {
+                    cell = new CellImpl(row, col, "", sheet.getVersion(), sheet);
+                    sheet.addCell(coordinate, cell); // Add new cell to the sheet
+                }
+
+                cellsInRange.add(cell);
             }
         }
 
-    }
-
-    public List<Cell> generateCells(Sheet sheet) {
-        List cellList = new ArrayList<>();
-        for (String cellId : cellsIdInRange) {
-            Coordinate coordinate = CoordinateFactory.createCoordinate(cellId);
-            Cell cell = sheet.getCell(coordinate);
-
-
-            if (cell == null) {
-                int[] indices = CoordinateFormatter.cellIdToIndex(cellId);
-                cell = new CellImpl(indices[0], indices[1], "", sheet.getVersion(), sheet);
-                sheet.addCell(coordinate, cell); // Add new cell to the sheet
-            }
-
-            cellList.add(cell);
-        }
-        return cellList;
-
+        return cellsInRange;
     }
 
     @Override
-    public List<EffectiveValue> getRangeValues(Sheet sheet) {
-        this.cellsInRange = generateCells(sheet);
+    public List<Cell> getCells() {
+        return cellsInRange;
+    }
+
+    @Override
+    public Double calculateAverage() {
+        if (!cellsInRange.isEmpty())
+            return calculateSum()/cellsInRange.size();
+        return 0.0;
+    }
+
+    @Override
+    public Double calculateSum() {
+        Double result = 0.0;
+        for (Cell cell : cellsInRange) {
+            if(cell.getEffectiveValue().getCellType().equals(CellType.NUMERIC))
+                 result += cell.getEffectiveValue().extractValueWithExpectation(Double.class);
+        }
+        return result;
+    }
+
+    @Override
+    public List<EffectiveValue> getRangeValues() {
         List <EffectiveValue> values = new ArrayList<>();
         for(Cell cell : cellsInRange){
             values.add(cell.getEffectiveValue());
@@ -83,8 +98,7 @@ public class RangeImpl implements Range, Serializable {
 
     @Override
     public void addInfluence(String cellId) {
-        if (!influenceOnCells.contains(cellId))
-            influenceOnCells.add(cellId);
+        influenceOnCells.add(cellId);
     }
 
     @Override

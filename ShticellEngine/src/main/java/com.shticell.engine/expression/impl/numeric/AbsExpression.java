@@ -28,7 +28,7 @@ public class AbsExpression extends NumericExpression {
 
     @Override
     public List<Expression> getExpressions() {
-        List<Expression> expressions = new ArrayList<>();
+        List<Expression> expressions = new ArrayList<Expression>();
         expressions.add(expression);
         return expressions;
     }
