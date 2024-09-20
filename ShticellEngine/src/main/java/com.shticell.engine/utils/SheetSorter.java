@@ -5,6 +5,8 @@ import com.shticell.engine.cell.impl.CellImpl;
 import com.shticell.engine.cell.impl.CellType;
 import com.shticell.engine.dto.DTOCreator;
 import com.shticell.engine.dto.SheetDTO;
+import com.shticell.engine.expression.impl.ref.RefExpression;
+import com.shticell.engine.expression.parser.FunctionParser;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 
@@ -12,7 +14,7 @@ import java.util.*;
 
 public class SheetSorter {
     private Sheet sheet;
-    private final List<Cell> rangeToSort;
+    private final List<List<Cell>> rangeToSort;
     private final List<Integer> columnsToSortBy;
 
     public SheetSorter(Sheet sheet, String rangeToSort, String columnsToSortBy) {
@@ -29,16 +31,23 @@ public class SheetSorter {
         return columnsToSort;
     }
 
-    private List<Cell> getRangeToSort(String rangeToSort) {
-        List<Cell> rangeToSortList = new ArrayList<>();
+    private List<List<Cell>> getRangeToSort(String rangeToSort) {
+        List<List<Cell>> rangeToSortList = new ArrayList<>();
         List<String> rangeCellsIds = parseRangeToSort(rangeToSort);
+        Map<Integer,List<Cell>> rowIndexToRowCellsInRange = new HashMap<>();
         for (String rangeCellId : rangeCellsIds) {
+            int[] indexes = CoordinateFormatter.cellIdToIndex(rangeCellId);
             Cell cell = sheet.getCell(rangeCellId);
             if (cell == null) {
-                int[] indexes = CoordinateFormatter.cellIdToIndex(rangeCellId);
                 cell = new CellImpl(indexes[0], indexes[1], "", sheet.getVersion(), sheet);
             }
-            rangeToSortList.add(cell);
+            if(!rowIndexToRowCellsInRange.containsKey(indexes[0])) {
+                rowIndexToRowCellsInRange.put(indexes[0], new ArrayList<>());
+            }
+            rowIndexToRowCellsInRange.get(indexes[0]).add(cell);
+        }
+        for (List<Cell> row : rowIndexToRowCellsInRange.values()) {
+            rangeToSortList.add(row);
         }
         return rangeToSortList;
     }
@@ -67,18 +76,14 @@ public class SheetSorter {
 
 
     public SheetDTO sort() {
-        // Group cells into rows
-        Map<Integer, List<Cell>> rowMap = new TreeMap<>();
-        for (Cell cell : rangeToSort) {
-            rowMap.computeIfAbsent(cell.getCoordinate().getRow(), k -> new ArrayList<>()).add(cell);
-        }
-        List<List<Cell>> rows = new ArrayList<>(rowMap.values());
 
         // Create a comparator for rows
         Comparator<List<Cell>> rowComparator = (row1, row2) -> {
             for (Integer column : columnsToSortBy) {
                 Cell cell1 = getCellAtColumn(row1, column);
+                cell1.calculateEffectiveValue();
                 Cell cell2 = getCellAtColumn(row2, column);
+                cell2.calculateEffectiveValue();
 
                 if (cell1.getEffectiveValue().getCellType() == CellType.NUMERIC
                         && cell2.getEffectiveValue().getCellType() == CellType.NUMERIC) {
@@ -93,26 +98,40 @@ public class SheetSorter {
                         // Handle parsing errors
                     }
                 }
+                else if(cell1.getEffectiveValue().getCellType() == CellType.STRING) {
+                        if (cell2.getEffectiveValue().getCellType() == CellType.NUMERIC) {
+                            return 1;
+                        }else {
+                            return 0;
+                        }
+                }
+                else if (cell2.getEffectiveValue().getCellType() == CellType.STRING) {
+                        if (cell1.getEffectiveValue().getCellType() == CellType.NUMERIC) {
+                            return -1;
+                        }else {
+                            return 0;
+                        }
+                }
             }
             return 0;
         };
 
         // Sort the rows
-        List<List<Cell>> originalOrder = new ArrayList<>(rows);
-        rows.sort(rowComparator);
+        List<List<Cell>> originalOrder = new ArrayList<>(rangeToSort);
+        rangeToSort.sort(rowComparator);
 
         // Swap the values for all cells in the rows
-        for (int i = 0; i < rows.size(); i++) {
+        for (int i = 0; i < rangeToSort.size(); i++) {
             List<Cell> originalRow = originalOrder.get(i);
-            List<Cell> sortedRow = rows.get(i);
+            List<Cell> sortedRow = rangeToSort.get(i);
 
             for (int j = 0; j < originalRow.size(); j++) {
                 Cell originalCell = originalRow.get(j);
                 Cell sortedCell = sortedRow.get(j);
 
-                String tempValue = originalCell.getOriginalValue();
-                this.sheet = sheet.setCell(originalCell.getId(), sortedCell.getOriginalValue());
-                this.sheet = sheet.setCell(sortedCell.getId(), tempValue);
+                if(originalCell.getDependsOn().isEmpty()&&sortedCell.getDependsOn().isEmpty()) {
+                    this.sheet = sheet.setCell(originalCell.getId(), sortedCell.getOriginalValue());
+                }
             }
         }
 
