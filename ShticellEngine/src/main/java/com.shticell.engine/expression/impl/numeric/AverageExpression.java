@@ -20,7 +20,8 @@ public class AverageExpression implements Expression {
 
     @Override
     public EffectiveValue eval() {
-        List<EffectiveValue> values = sheet.getRangeValues(rangeName);
+        Range range = sheet.getRange(rangeName);
+        List<EffectiveValue> values = range.getRangeValues(sheet);
         double sum = values.stream()
                 .filter(value -> value.getCellType() == CellType.NUMERIC)
                 .mapToDouble(value -> (Double) value.getValue())

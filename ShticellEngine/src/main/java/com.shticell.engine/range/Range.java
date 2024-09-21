@@ -8,12 +8,11 @@ import com.shticell.engine.sheet.api.Sheet;
 import java.util.List;
 
 public interface Range {
-    List<Cell> getCells();
     boolean equals(Object o);
-    List<EffectiveValue> getRangeValues();
+    List<EffectiveValue> getRangeValues(Sheet sheet);
     String getName();
     void addInfluence(String cellId);
     void removeInfluence(String cellId);
     List<String> getInfluenceOnCells();
-    List<Cell> generateCells(Sheet sheet);
+    List<Cell> getCells(Sheet sheet);
 }

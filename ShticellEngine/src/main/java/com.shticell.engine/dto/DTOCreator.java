@@ -75,10 +75,10 @@ public class DTOCreator {
                 sheet.getProperties());
     }
 
-    public static RangeDTO rangeToDTO(Range range) {
+    public static RangeDTO rangeToDTO(Range range, Sheet sheet) {
         List<CellDTO> cellDTOList = new ArrayList<>();
         List <String> Ids = new ArrayList<>();
-        for (Cell cell : range.getCells()) {
+        for (Cell cell : range.getCells(sheet)) {
             cellDTOList.add(cellToDTO(cell));
             Ids.add(cell.getId());
         }

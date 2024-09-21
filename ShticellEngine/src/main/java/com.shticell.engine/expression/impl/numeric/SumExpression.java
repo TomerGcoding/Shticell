@@ -21,7 +21,7 @@ public class SumExpression implements Expression {
     @Override
     public EffectiveValue eval() {
         Range range = sheet.getRange(rangeName);
-        List<EffectiveValue> values = range.getRangeValues();
+        List<EffectiveValue> values = range.getRangeValues(sheet);
         double sum = values.stream()
                 .filter(value -> value.getCellType() == CellType.NUMERIC)
                 .mapToDouble(value -> (Double) value.getValue())
