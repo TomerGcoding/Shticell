@@ -1,5 +1,6 @@
 package com.shticell.ui.jfx.sheet;
 
+import com.shticell.ui.jfx.main.AnimationManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -129,8 +130,8 @@ public class ContextMenuFactory {
 
         changeCellBackgroundColor.setOnAction(e -> {
             ColorPicker colorPicker = new ColorPicker();
-            colorPicker.setValue(getCurrentBackgroundColor(cellLabel)); // Default color, you can change this
-
+            Color currentColor = getCurrentBackgroundColor(cellLabel);
+            colorPicker.setValue(currentColor); // Default color, you can change this
             Dialog<Color> dialog = new Dialog<>();
             dialog.setTitle("Choose Background Color");
             dialog.setHeaderText("Select a color for the cell background");
@@ -153,8 +154,8 @@ public class ContextMenuFactory {
                 return null;
             });
 
-            dialog.showAndWait().ifPresent(color -> {
-                cellLabel.setStyle("-fx-background-color: #" + toHexString(color) + ";");
+            dialog.showAndWait().ifPresent(newColor -> {
+                cellLabel.setStyle("-fx-background-color: #" + toHexString(newColor) + ";");
             });
         });
 

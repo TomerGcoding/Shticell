@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.CheckBox?>
 <BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="563.0" prefWidth="757.0" stylesheets="@main1.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
    <top>
       <VBox prefHeight="61.0" prefWidth="715.0" spacing="10.0" BorderPane.alignment="CENTER">
@@ -26,7 +27,7 @@
                         <ComboBox fx:id="changeStyleComboBox" layoutY="2.0" prefHeight="25.0" prefWidth="119.0" promptText="Sthicell Styles" />
                      </children>
                   </AnchorPane>
-                  <Label alignment="CENTER" prefHeight="34.0" prefWidth="752.0" text="Sthicell" textAlignment="CENTER">
+                  <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="34.0" prefWidth="752.0" text="Sthicell" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold Italic" size="23.0" />
                      </font>
@@ -68,4 +69,11 @@
         </tabs>
       </TabPane>
    </center>
+   <bottom>
+      <HBox spacing="10">
+         <CheckBox fx:id="animationsCheckbox" text="Activate animations" />
+         <Button fx:id="sortSheetButton" text="Sort Sheet" />
+         <!-- ... other bottom content ... -->
+      </HBox>
+   </bottom>
 </BorderPane>

@@ -4,8 +4,11 @@ import com.shticell.engine.Engine;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.ui.jfx.main.AnimationManager;
 import com.shticell.ui.jfx.main.MainController;
 import com.shticell.ui.jfx.main.UIModel;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -17,6 +20,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 
+import javax.swing.text.html.StyleSheet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +34,12 @@ public class SheetGridManager {
     private UIModel uiModel;
     private Engine engine;
     private Map<String, Label> cellIDtoLabel;
+    private String activeStyleSheet;
 
     public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, Engine engine, MainController mainController) {
         this.sheetGridPane = sheetGridPane;
-        this.sheetGridPane.getStylesheets().add(getClass().getResource("sheet1.css").toExternalForm());
+        this.activeStyleSheet = "sheet1.css";
+        this.sheetGridPane.getStylesheets().add(getClass().getResource(activeStyleSheet).toExternalForm());
         this.uiModel = uiModel;
         this.engine = engine;
         this.cellIDtoLabel = new HashMap<String, Label>();
@@ -45,8 +51,6 @@ public class SheetGridManager {
         sheetGridPane.getChildren().clear();
         sheetGridPane.getColumnConstraints().clear();
         sheetGridPane.getRowConstraints().clear();
-//        sheetGridPane.addColumn(0);
-//        sheetGridPane.addRow(0);
 
         int numRows = sheet.getProperties().getNumRows();
         int numColumns = sheet.getProperties().getNumCols();
@@ -57,6 +61,24 @@ public class SheetGridManager {
         addColumnsAndRowHeaders(numColumns, colWidth, numRows, rowHeight);
         uiModel.initializePropertiesForEachCell(sheetGridPane);
         populateSheetGridPane(sheet, numColumns, colWidth, numRows, rowHeight);
+        AnimationManager.animateSheetPresentation(sheetGridPane);
+
+    }
+    public void createReadOnlySheetGridPane(GridPane gridPane,SheetDTO sheet) {
+        gridPane.getChildren().clear();
+        gridPane.getColumnConstraints().clear();
+        gridPane.getRowConstraints().clear();
+
+        int numRows = sheet.getProperties().getNumRows();
+        int numColumns = sheet.getProperties().getNumCols();
+        int rowHeight = sheet.getProperties().getRowHeight();
+        int colWidth = sheet.getProperties().getColWidth();
+
+        addColumnAndRowConstraintsReadOnly(gridPane,numColumns, colWidth, numRows, rowHeight);
+        addColumnsAndRowHeadersReadOnly(gridPane,numColumns, colWidth, numRows, rowHeight);
+        populateReadOnlySheetGridPane(gridPane,sheet, numColumns, colWidth, numRows, rowHeight);
+
+
     }
 
 
@@ -74,6 +96,22 @@ public class SheetGridManager {
             sheetGridPane.getRowConstraints().add(rowConst);
         }
         sheetGridPane.getColumnConstraints().get(0).setPrefWidth(20);
+    }
+
+    private void addColumnAndRowConstraintsReadOnly(GridPane gridPane,int numColumns, int colWidth, int numRows, int rowHeight) {
+        // Constraints for columns and rows
+        for (int i = 0; i <= numColumns; i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPrefWidth(colWidth); // width of each column
+            gridPane.getColumnConstraints().add(colConst);
+        }
+
+        for (int i = 0; i <= numRows; i++) {
+            RowConstraints rowConst = new RowConstraints();
+            rowConst.setPrefHeight(rowHeight); // height of each row
+            gridPane.getRowConstraints().add(rowConst);
+        }
+        gridPane.getColumnConstraints().get(0).setPrefWidth(20);
     }
 
     private void addColumnsAndRowHeaders(int numColumns, int colWidth, int numRows, int rowHeight) {
@@ -109,6 +147,39 @@ public class SheetGridManager {
         }
     }
 
+    private void addColumnsAndRowHeadersReadOnly(GridPane gridPane,int numColumns, int colWidth, int numRows, int rowHeight) {
+        // Adding column headers (A, B, C, ...)
+        for (int col = 0; col <= numColumns; col++) {
+            String colLabel = getColumnName(col);
+            Label label = new Label("");
+            if (col != 0) {
+                final int columnIndex = col;
+                label.setOnContextMenuRequested(event -> {
+                    ContextMenu contextMenu = contextMenuFactory.createColumnContextMenu(columnIndex);
+                    contextMenu.show(label, event.getScreenX(), event.getScreenY());
+                });
+                label.setText(colLabel);
+            }
+            label.setPrefWidth(colWidth);
+            label.getStyleClass().add("header");
+            gridPane.add(label, col, 0); // Adding to the first row (row 0)
+        }
+
+        // Adding row headers (1, 2, 3, ...)
+        for (int row = 1; row <= numRows; row++) {
+            Label label = new Label(String.valueOf(row));
+            label.setPrefHeight(rowHeight);
+            label.setPrefWidth(20);
+            label.getStyleClass().add("header");
+            final int rowIndex = row;
+            label.setOnContextMenuRequested(event -> {
+                ContextMenu contextMenu = contextMenuFactory.createRowContextMenu(rowIndex);
+                contextMenu.show(label, event.getScreenX(), event.getScreenY());
+            });
+            gridPane.add(label, 0, row); // Adding to the first column (column 0)
+        }
+    }
+
     private void populateSheetGridPane(SheetDTO sheet, int numColumns, int colWidth, int numRows, int rowHeight) {
         for (int row = 1; row <= numRows; row++) {
             for (int col = 1; col <= numColumns; col++) {
@@ -133,6 +204,25 @@ public class SheetGridManager {
         }
     }
 
+    private void populateReadOnlySheetGridPane(GridPane gridPane, SheetDTO sheet, int numColumns, int colWidth, int numRows, int rowHeight) {
+        for (int row = 1; row <= numRows; row++) {
+            for (int col = 1; col <= numColumns; col++) {
+                String cellID = CoordinateFormatter.indexToCellId(row - 1, col - 1);
+                CellDTO cellDTO = sheet.getCell(row - 1, col - 1);
+                Label label = new Label();
+                if(cellDTO!=null){
+                    label.setText(sheet.getCell(row - 1, col - 1).getEffectiveValue().toString());
+                }else {
+                    label.setText("");
+                }
+                label.setPrefHeight(rowHeight);
+                label.setPrefWidth(colWidth);
+                label.getStyleClass().add("cell");
+                gridPane.add(label, col, row);
+            }
+        }
+    }
+
     public String getColumnName(int index) {
         StringBuilder columnName = new StringBuilder();
         while (index > 0) {
@@ -151,6 +241,8 @@ public class SheetGridManager {
                 Label dependencyLabel = cellIDtoLabel.get(dependencyCellId);
                 if (dependencyLabel != null) {
                     dependencyLabel.getStyleClass().add("dependency-cell");
+                    AnimationManager.animateCellSelection(dependencyLabel);
+
                 }
             }
             for (CellDTO influencedCell : cellDTO.getInfluencingOn()) {
@@ -159,6 +251,7 @@ public class SheetGridManager {
                 Label influencedLabel = cellIDtoLabel.get(influencedCellId);
                 if (influencedLabel != null) {
                     influencedLabel.getStyleClass().add("influence-cell");
+                    AnimationManager.animateCellSelection(influencedLabel);
                 }
             }
         }
@@ -246,11 +339,13 @@ public class SheetGridManager {
         sheetGridPane.requestLayout();
     }
 
-
     public void setSheetStyle(int styleNumber) {
-        String stylesheet = String.format("sheet%d.css", styleNumber);
+        activeStyleSheet = String.format("sheet%d.css", styleNumber);
         this.sheetGridPane.getStylesheets().clear();
-        this.sheetGridPane.getStylesheets().add(getClass().getResource(stylesheet).toExternalForm());
+        this.sheetGridPane.getStylesheets().add(getClass().getResource(activeStyleSheet).toExternalForm());
+    }
+    public String getActiveStyleSheet() {
+        return activeStyleSheet;
     }
 
     public void colorRangeCells(List<String> rangeCellIds)   {

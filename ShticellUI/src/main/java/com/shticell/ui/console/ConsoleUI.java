@@ -29,12 +29,12 @@ public class ConsoleUI {
         while (true) {
             mainMenu.display();
             int choice = getUserChoice();
-            if (choice == 7) {
+            if (choice == 8) {
                 mainMenu.executeOption(choice);
                 break;
             }// This should ideally be handled as a MenuItem action
             mainMenu.executeOption(choice);
-            createNewRange();
+            //createNewRange();
         }
     }
 
@@ -56,6 +56,8 @@ public class ConsoleUI {
         subMenu.addMenuItem(new SimpleActionMenuItem("Save current system state", this::handleOption6));
         subMenu.addMenuItem(new SimpleActionMenuItem("Load saved system state",this::handleOption7));
         subMenu.addMenuItem(new SimpleActionMenuItem("Back to main menu",()->{}));
+
+        menu.addMenuItem(new SimpleActionMenuItem("Sort sheet", this::handleOption8));
 
         menu.addMenuItem(new SimpleActionMenuItem("Exit", this::handleExit));
 
@@ -214,6 +216,15 @@ public class ConsoleUI {
         catch (IOException | ClassNotFoundException e) {
             System.out.println("Error writing to file: " + e.getMessage());
         }
+    }
+
+    private void handleOption8() {
+        System.out.println("enter range:");
+        String range = scanner.nextLine();
+        System.out.println("enter columns for sort:");
+        String columns = scanner.nextLine();
+        SheetDTO sheetToprint = engine.sortSheet(range,columns);
+        SheetPrinter.printSheet(sheetToprint);
     }
 
 
