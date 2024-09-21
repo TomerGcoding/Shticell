@@ -92,6 +92,18 @@ public enum FunctionParser {
             return new PowExpression(left, right);
         }
     },
+    PERCENT {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "PERCENT");
+
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+
+            return new PercentExpression(left, right);
+        }
+    },
     ABS {
         @Override
         public Expression parse(List<String> arguments, Sheet sheet) {
@@ -202,7 +214,42 @@ public enum FunctionParser {
 
             return new EqualsExpression(left, right);
         }
-    };
+    },
+    BIGGER {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "BIGGER");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new BiggerExpression(left, right);
+        }
+    },
+    LESS {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "LESS");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+            return new LessExpression(left, right);
+        }
+    },
+    IF {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            // Validate that there are 3 arguments: condition, thenExpression, and elseExpression
+            validateArgumentCount(arguments, 3, "IF");
+
+            // Parse the condition, then expression, and else expression
+            Expression condition = parseExpression(arguments.get(0).trim(), sheet);
+            Expression thenExpression = parseExpression(arguments.get(1).trim(), sheet);
+            Expression elseExpression = parseExpression(arguments.get(2).trim(), sheet);
+
+            // Return the IfExpression
+            return new IfExpression(condition, thenExpression, elseExpression);
+        }
+
+        };
 
     abstract public Expression parse(List<String> arguments, Sheet sheet);
 
