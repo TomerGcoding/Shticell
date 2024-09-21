@@ -67,7 +67,7 @@
       </HBox>
       <HBox prefHeight="20.0" prefWidth="200.0">
          <children>
-            <Label alignment="CENTER" prefHeight="18.0" prefWidth="200.0" style="-fx-background-color: 200;" text="Delete Range">
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="200.0" text="Delete Range">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
