@@ -36,7 +36,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Hello There in FXML");
+        primaryStage.setTitle("Shticell");
 
         Parent load = FXMLLoader.load(getClass().getResource("jfx/main/main.fxml"));
         load.getStyleClass().add("shticell");

@@ -108,7 +108,7 @@ public class MainController {
         changeStyleComboBox.getItems().addAll(1,2,3);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null) {
-                gridManager.setSheetStyle(newValue);
+                changeShticellStyle(newValue);
             }
         });
         initializeAnimationsCheckbox();
