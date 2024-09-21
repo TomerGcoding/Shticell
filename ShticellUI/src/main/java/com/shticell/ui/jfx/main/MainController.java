@@ -16,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
@@ -26,7 +27,9 @@ import javafx.util.Pair;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -105,22 +108,13 @@ public class MainController {
         changeStyleComboBox.getItems().addAll(1,2,3);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null) {
-                changeShticellStyle(newValue);
+                gridManager.setSheetStyle(newValue);
             }
         });
         initializeAnimationsCheckbox();
         initializeSortSheetButton();
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
-//            Parent rangeView = loader.load();
-//            mainBorderPane.setRight(rangeView);
-//            rangeController = loader.getController();
-//            rangeController.setEngine(engine);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        createRangeController();
     }
-
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
@@ -232,7 +226,7 @@ public class MainController {
             alert.showAndWait();
         }
     }
-
+  
     private boolean isCellChanged(String cellId){
         CellDTO cell = engine.getCellInfo(cellId);
         boolean changed = true;
@@ -263,6 +257,25 @@ public class MainController {
         });
     }
 
+
+    private void createRangeController() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+            Parent rangeView = loader.load();
+            mainBorderPane.setRight(rangeView);
+            rangeController = loader.getController();
+            rangeController.setEngine(engine);
+            rangeController.setMainController(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void colorRangeCells(List<String> rangeCellIds) {
+        gridManager.colorRangeCells(rangeCellIds);
+    }
+
     private void changeShticellStyle(int selectedStyle) {
         applyStyles(selectedStyle);
     }
@@ -276,12 +289,6 @@ public class MainController {
         gridManager.setSheetStyle(styleNumber);
     }
 
-    private void createRangeController() {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/com/shticell/ui/jfx/main/Range.fxml"));
-        RangeController rangeController = (RangeController)loader.getController();
-
-    }
 
     private void initializeAnimationsCheckbox() {
         animationsCheckbox.setSelected(false);  // Set to unchecked by default

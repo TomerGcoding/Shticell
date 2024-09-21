@@ -259,7 +259,9 @@ public class SheetGridManager {
 
     public void resetCellBorders() {
         for (Label label : cellIDtoLabel.values()) {
+            label.setStyle("");
             label.getStyleClass().removeAll("dependency-cell", "influence-cell");
+            //setSheetStyle(styleNumber);
         }
     }
 
@@ -270,7 +272,7 @@ public class SheetGridManager {
             Integer nodeRowIndex = GridPane.getRowIndex(node);
             if (nodeColumnIndex != null && nodeColumnIndex == columnIndex
                     && node instanceof Label
-                && nodeRowIndex>0&& nodeRowIndex!=null) {
+                    && nodeRowIndex>0&& nodeRowIndex!=null) {
                 Label label = (Label) node;
                 label.setAlignment(alignment);
             }
@@ -345,7 +347,14 @@ public class SheetGridManager {
     public String getActiveStyleSheet() {
         return activeStyleSheet;
     }
+
+    public void colorRangeCells(List<String> rangeCellIds)   {
+        resetCellBorders();
+        for (String cellId : rangeCellIds) {
+            Label cellLabel = cellIDtoLabel.get(cellId);  // Get the label by its cell ID
+            if (cellLabel != null) {
+                cellLabel.setStyle("-fx-border-color: pink; -fx-border-width: 2px;");
+            }
+        }
+    }
 }
-
-
-
