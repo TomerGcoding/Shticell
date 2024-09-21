@@ -23,8 +23,11 @@ public class UIModel {
     private StringProperty selectedCellId;
     private StringProperty selectedCellOriginalValue;
 
-    public UIModel(Label fileFullPathLabel, Tab sheetNameTab, Button updateSelectedCellValueButton, GridPane sheetGridPane,
-                   Label currentCellLabel, TextField selectedCellOriginalValueTextField, Label lastVersionUpdateLabel, AnchorPane versionSelectorComponent) {
+    public UIModel(Label fileFullPathLabel, Tab sheetNameTab,
+                   Button updateSelectedCellValueButton, GridPane sheetGridPane,
+                   Label currentCellLabel, TextField selectedCellOriginalValueTextField,
+                   Label lastVersionUpdateLabel, AnchorPane versionSelectorComponent,
+                   Button sortSheetButton) {
         this.fullPath = new SimpleStringProperty( );
         this.name = new SimpleStringProperty( );
         this.isFileSelected = new SimpleBooleanProperty(false );
@@ -41,6 +44,8 @@ public class UIModel {
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
+        sortSheetButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+
 
     }
 

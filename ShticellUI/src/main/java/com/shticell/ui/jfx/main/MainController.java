@@ -91,7 +91,7 @@ public class MainController {
     @FXML
     private void initialize() {
         uiModel = new UIModel(chosenFileFullPathLabel, sheetTab,updateSelectedCellValueButton,sheetGridPane,currentCellLabel,selectedCellOriginalValueTextField,
-                currentCellVersionLabel,versionSelectorComponent);
+                currentCellVersionLabel,versionSelectorComponent, sortSheetButton);
         gridManager = new SheetGridManager(sheetGridPane,uiModel,engine,this);
         chosenFileFullPathLabel.setId("file-path");
         selectedCell = new SimpleObjectProperty<>();
