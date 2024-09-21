@@ -8,6 +8,7 @@ import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.cell.impl.CellType;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SumExpression implements Expression {
     private final String rangeName;
@@ -23,6 +24,7 @@ public class SumExpression implements Expression {
         Range range = sheet.getRange(rangeName);
         List<EffectiveValue> values = range.getRangeValues(sheet);
         double sum = values.stream()
+                .filter(Objects::nonNull)
                 .filter(value -> value.getCellType() == CellType.NUMERIC)
                 .mapToDouble(value -> (Double) value.getValue())
                 .sum();

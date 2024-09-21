@@ -4,12 +4,13 @@ import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.exceptions.IllegalNumberOfArgumentsException;
 import com.shticell.engine.expression.api.Expression;
 import com.shticell.engine.expression.impl.IdentityExpression;
+import com.shticell.engine.expression.impl.bool.*;
 import com.shticell.engine.expression.impl.numeric.*;
 import com.shticell.engine.expression.impl.ref.RefExpression;
-import com.shticell.engine.expression.impl.string.ConcatExpression;
-import com.shticell.engine.expression.impl.string.SubExpression;
+import com.shticell.engine.expression.impl.string.*;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.cell.impl.CellType;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +162,45 @@ public enum FunctionParser {
             validateArgumentCount(arguments, 1, "AVERAGE");
             String rangeName = arguments.get(0).trim();
             return new AverageExpression(rangeName, sheet);
+        }
+    },
+    NOT {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 1, "NOT");
+            Expression exp = parseExpression(arguments.get(0).trim(), sheet);
+            validateArgumentType(exp, CellType.BOOLEAN, "NOT");
+            return new NotExpression(exp);
+        }
+    },
+    AND {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "AND");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new AndExpression(left, right);
+        }
+    },
+    OR {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "OR");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new OrExpression(left, right);
+        }
+    },
+    EQUALS {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "EQUALS");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new EqualsExpression(left, right);
         }
     };
 

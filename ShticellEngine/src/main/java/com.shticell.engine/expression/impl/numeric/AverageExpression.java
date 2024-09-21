@@ -42,6 +42,7 @@ public class AverageExpression implements Expression {
     public boolean isDepndsOnSomeCell() {
         return true;
     }
+
     public Range getRange(){
         return sheet != null ? sheet.getRange(rangeName) : null;
     }
