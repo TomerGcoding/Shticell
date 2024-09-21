@@ -9,19 +9,29 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.range.RangeController">
+<VBox prefWidth="200" style="-fx-background-color: PINK;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.range.RangeController">
    <children>
+      <HBox prefHeight="20.0" prefWidth="200.0">
+         <children>
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="200.0" text="Insert New Range">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
       <HBox alignment="CENTER_LEFT" maxWidth="300.0">
          <children>
             <Label text="Name: ">
                <HBox.margin>
-                  <Insets bottom="10.0" left="15.0" top="10.0" />
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="insertNameTextField">
+            <TextField fx:id="insertNameTextField" prefWidth="80.0">
                <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" top="10.0" />
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
                </HBox.margin>
             </TextField>
          </children>
@@ -30,19 +40,19 @@
          <children>
             <Label text="Range:">
                <HBox.margin>
-                  <Insets bottom="10.0" left="15.0" top="10.0" />
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="insertRangeTextField">
+            <TextField fx:id="insertRangeTextField" prefWidth="80.0">
                <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" top="10.0" />
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
                </HBox.margin>
             </TextField>
          </children>
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxWidth="300.0">
          <children>
-            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#addNewRange" text="Insert New Range">
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#addNewRange" text="Insert">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
@@ -55,6 +65,15 @@
             <Insets right="10.0" />
          </VBox.margin>
       </HBox>
+      <HBox prefHeight="20.0" prefWidth="200.0">
+         <children>
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="200.0" style="-fx-background-color: 200;" text="Delete Range">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
       <HBox alignment="CENTER_LEFT" maxWidth="300.0">
          <children>
             <Label text="Delete Range: ">
@@ -62,16 +81,16 @@
                   <Insets bottom="10.0" left="15.0" top="10.0" />
                </HBox.margin>
             </Label>
-            <TextField fx:id="deleteNameTextField">
+            <TextField fx:id="deleteNameTextField" prefWidth="80.0">
                <HBox.margin>
-                  <Insets bottom="10.0" left="10.0" top="10.0" />
+                  <Insets bottom="10.0" left="5.0" top="10.0" />
                </HBox.margin>
             </TextField>
          </children>
       </HBox>
       <HBox alignment="CENTER_RIGHT" maxWidth="300.0">
          <children>
-            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#deleteRange" text="Delete Range">
+            <Button alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#deleteRange" text="Delete">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
