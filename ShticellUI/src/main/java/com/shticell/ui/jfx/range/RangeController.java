@@ -25,10 +25,8 @@ public class RangeController {
     @FXML
     private Button deleteRangeBtn;
 
-
     @FXML
     private TextField insertNameTextField;
-
 
     @FXML
     private TextField insertRangeTextField;
@@ -37,7 +35,6 @@ public class RangeController {
     private VBox vboxInsideTitledPane;
 
     private Engine engine;
-
 
     private MainController mainController; // Reference to MainController
 
@@ -49,7 +46,6 @@ public class RangeController {
         this.mainController = mainController;
     }
 
-
     @FXML
     void addNewRange(ActionEvent event) {
         try {
@@ -58,7 +54,6 @@ public class RangeController {
             RangeDTO rangeDTO = engine.addRange(rangeName, rangeCells);
             Label newLabel = new Label(rangeDTO.getName());
             vboxInsideTitledPane.getChildren().add(newLabel);
-            // Attach event handler to highlight range cells when clicked
             newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(rangeDTO.getCellsIdInRange()));
         }
       catch (Exception e){

@@ -135,7 +135,7 @@ public class SheetImpl implements Sheet, Serializable {
                 .filter(Cell::calculateEffectiveValue) // Calculate the effective value in topological order
                 .collect(Collectors.toList());
         cellsThatHaveChanged.add(newCell);
-        System.out.println("");
+        //System.out.println("");
         int newVersion = newSheetVersion.increaseVersion();
         cellsThatHaveChanged.forEach(cell -> cell.setVersion(newVersion));
         return newSheetVersion;
@@ -228,7 +228,7 @@ public class SheetImpl implements Sheet, Serializable {
         if (!activeRanges.containsKey(rangeName)) {
             throw new IllegalArgumentException("Invalid range name: " + rangeName);
         }
-        return activeRanges.get(rangeName).getRangeValues();
+        return activeRanges.get(rangeName).getRangeValues(this);
     }
 
     @Override

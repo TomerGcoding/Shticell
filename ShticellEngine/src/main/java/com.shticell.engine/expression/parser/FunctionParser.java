@@ -4,12 +4,13 @@ import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.exceptions.IllegalNumberOfArgumentsException;
 import com.shticell.engine.expression.api.Expression;
 import com.shticell.engine.expression.impl.IdentityExpression;
+import com.shticell.engine.expression.impl.bool.*;
 import com.shticell.engine.expression.impl.numeric.*;
 import com.shticell.engine.expression.impl.ref.RefExpression;
-import com.shticell.engine.expression.impl.string.ConcatExpression;
-import com.shticell.engine.expression.impl.string.SubExpression;
+import com.shticell.engine.expression.impl.string.*;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.cell.impl.CellType;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +92,18 @@ public enum FunctionParser {
             return new PowExpression(left, right);
         }
     },
+    PERCENT {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "PERCENT");
+
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+
+            return new PercentExpression(left, right);
+        }
+    },
     ABS {
         @Override
         public Expression parse(List<String> arguments, Sheet sheet) {
@@ -162,7 +175,81 @@ public enum FunctionParser {
             String rangeName = arguments.get(0).trim();
             return new AverageExpression(rangeName, sheet);
         }
-    };
+    },
+    NOT {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 1, "NOT");
+            Expression exp = parseExpression(arguments.get(0).trim(), sheet);
+            validateArgumentType(exp, CellType.BOOLEAN, "NOT");
+            return new NotExpression(exp);
+        }
+    },
+    AND {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "AND");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new AndExpression(left, right);
+        }
+    },
+    OR {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "OR");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new OrExpression(left, right);
+        }
+    },
+    EQUALS {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "EQUALS");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new EqualsExpression(left, right);
+        }
+    },
+    BIGGER {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "BIGGER");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+
+            return new BiggerExpression(left, right);
+        }
+    },
+    LESS {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            validateArgumentCount(arguments, 2, "LESS");
+            Expression left = parseExpression(arguments.get(0).trim(), sheet);
+            Expression right = parseExpression(arguments.get(1).trim(), sheet);
+            return new LessExpression(left, right);
+        }
+    },
+    IF {
+        @Override
+        public Expression parse(List<String> arguments, Sheet sheet) {
+            // Validate that there are 3 arguments: condition, thenExpression, and elseExpression
+            validateArgumentCount(arguments, 3, "IF");
+
+            // Parse the condition, then expression, and else expression
+            Expression condition = parseExpression(arguments.get(0).trim(), sheet);
+            Expression thenExpression = parseExpression(arguments.get(1).trim(), sheet);
+            Expression elseExpression = parseExpression(arguments.get(2).trim(), sheet);
+
+            // Return the IfExpression
+            return new IfExpression(condition, thenExpression, elseExpression);
+        }
+
+        };
 
     abstract public Expression parse(List<String> arguments, Sheet sheet);
 
