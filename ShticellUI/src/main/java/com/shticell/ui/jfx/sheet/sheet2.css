@@ -37,3 +37,8 @@
     -fx-border-width: 2px;
     -fx-background-color: #F1F8E9;
 }
+.ranged-cell{
+    -fx-border-color: #D192D1FF;
+    -fx-border-width: 2px;
+    -fx-background-color: #ECE2ECFF;
+}
