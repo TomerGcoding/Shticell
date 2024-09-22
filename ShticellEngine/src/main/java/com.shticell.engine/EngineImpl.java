@@ -7,6 +7,7 @@ import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.dto.DTOCreator;
 import com.shticell.engine.cell.api.Cell;
+import com.shticell.engine.utils.SheetFilterer;
 import com.shticell.engine.utils.SheetLoader;
 import com.shticell.engine.utils.SheetSorter;
 import com.shticell.engine.utils.VersionShower;
@@ -139,4 +140,14 @@ public class EngineImpl implements Engine, Serializable {
         SheetSorter sorter = new SheetSorter(sheet,rangeToSort,columnsToSortBy);
         return sorter.sort();
     }
+
+    @Override
+    public SheetDTO filterSheet(String rangeToFilter,String columnsToFilterBy,String valuesToFilterBy){
+        if (sheet == null) {
+            throw new IllegalStateException("No sheet is currently loaded.");
+        }
+        SheetFilterer filterer = new SheetFilterer(sheet,rangeToFilter,columnsToFilterBy,valuesToFilterBy);
+        return filterer.filter();
+    }
+
 }

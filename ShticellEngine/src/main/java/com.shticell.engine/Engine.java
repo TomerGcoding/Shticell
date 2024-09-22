@@ -32,4 +32,6 @@ public interface Engine {
     void removeRange(String name);
 
     SheetDTO sortSheet(String rangeToSort,String columnsToSortBy);
+
+    SheetDTO filterSheet(String rangeToFilter,String columnsToFilterBy,String valuesToFilterBy);
 }

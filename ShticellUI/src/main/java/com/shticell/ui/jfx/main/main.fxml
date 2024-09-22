@@ -27,6 +27,7 @@
                         <ComboBox fx:id="changeStyleComboBox" layoutY="2.0" prefHeight="25.0" prefWidth="119.0" promptText="Sthicell Styles" />
                      </children>
                   </AnchorPane>
+                  <CheckBox fx:id="animationsCheckbox" text="Activate animations" />
                   <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="34.0" prefWidth="812.0" text="Shticell" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold Italic" size="23.0" />
@@ -71,8 +72,8 @@
    </center>
    <bottom>
       <HBox spacing="10">
-         <CheckBox fx:id="animationsCheckbox" text="Activate animations" />
          <Button fx:id="sortSheetButton" text="Sort Sheet" />
+         <Button fx:id="filterSheetButton" text="Filter Sheet" />
          <!-- ... other bottom content ... -->
       </HBox>
    </bottom>

@@ -24,7 +24,6 @@ public class SheetDTO implements Serializable {
         this.activeRanges = activeRanges;
         this.currVersion = currVersion;
         this.sheetName = sheetName;
-        this.activeRanges = activeRanges;
     }
 
     public Map<Coordinate, CellDTO> getActiveCells() {

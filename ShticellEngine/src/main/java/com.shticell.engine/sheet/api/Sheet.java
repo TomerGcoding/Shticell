@@ -35,5 +35,4 @@ public interface Sheet {
 
     void removeRange(String name);
 
-    Map <String, Range> getRanges();
 }

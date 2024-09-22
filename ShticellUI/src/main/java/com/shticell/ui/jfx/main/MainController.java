@@ -39,6 +39,8 @@ public class MainController {
     private CheckBox animationsCheckbox;
 
     @FXML
+    private Button filterSheetButton;
+    @FXML
     private Button sortSheetButton;
     @FXML
     private BorderPane mainBorderPane;
@@ -91,7 +93,7 @@ public class MainController {
     @FXML
     private void initialize() {
         uiModel = new UIModel(chosenFileFullPathLabel, sheetTab,updateSelectedCellValueButton,sheetGridPane,currentCellLabel,selectedCellOriginalValueTextField,
-                currentCellVersionLabel,versionSelectorComponent, sortSheetButton);
+                currentCellVersionLabel,versionSelectorComponent, sortSheetButton,filterSheetButton);
         gridManager = new SheetGridManager(sheetGridPane,uiModel,engine,this);
         chosenFileFullPathLabel.setId("file-path");
         selectedCell = new SimpleObjectProperty<>();
@@ -113,6 +115,7 @@ public class MainController {
         });
         initializeAnimationsCheckbox();
         initializeSortSheetButton();
+        initializeFilterSheetButton();
         createRangeController();
     }
 
@@ -362,6 +365,72 @@ public class MainController {
 
         dialog.showAndWait();
     }
+
+
+    private void initializeFilterSheetButton() {
+        filterSheetButton.setOnAction(e -> showFilterDialog());
+    }
+
+    private void showFilterDialog() {
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Filter Sheet");
+        dialog.setHeaderText("Enter filter range and columns");
+
+        ButtonType filterButtonType = new ButtonType("Filter", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(filterButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField rangeField = new TextField();
+        rangeField.setPromptText("e.g., A4..D6");
+        TextField columnsField = new TextField();
+        columnsField.setPromptText("e.g., C,D,B");
+        TextField conditionField = new TextField();
+        conditionField.setPromptText("e.g., >0 AND <100");
+
+        grid.add(new Label("Range:"), 0, 0);
+        grid.add(rangeField, 1, 0);
+        grid.add(new Label("Columns to filter by:"), 0, 1);
+        grid.add(columnsField, 1, 1);
+        grid.add(new Label("Values for filter:"), 0, 2);
+        grid.add(conditionField, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == filterButtonType) {
+                return new Pair<>(rangeField.getText(), columnsField.getText() + ";" + conditionField.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(pair -> {
+            try {
+                String[] filterParams = pair.getValue().split(";");
+                SheetDTO filteredSheet = engine.filterSheet(pair.getKey(), filterParams[0], filterParams[1]);
+                showFilteredSheetDialog(filteredSheet);
+            } catch (Exception ex) {
+                showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + ex.getMessage());
+            }
+        });
+    }
+    private void showFilteredSheetDialog(SheetDTO filteredSheet) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Filtered Sheet");
+        GridPane grid = new GridPane();
+        gridManager.createReadOnlySheetGridPane(grid, filteredSheet);
+        grid.getStylesheets().add(getClass().getResource("/com/shticell/ui/jfx/sheet/"+gridManager.getActiveStyleSheet()).toExternalForm());
+        dialog.getDialogPane().setContent(grid);
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        dialog.showAndWait();
+    }
+
 
     private void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

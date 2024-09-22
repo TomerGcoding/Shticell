@@ -27,7 +27,8 @@ public class UIModel {
                    Button updateSelectedCellValueButton, GridPane sheetGridPane,
                    Label currentCellLabel, TextField selectedCellOriginalValueTextField,
                    Label lastVersionUpdateLabel, AnchorPane versionSelectorComponent,
-                   Button sortSheetButton) {
+                   Button sortSheetButton,
+                   Button filterSheetButton) {
         this.fullPath = new SimpleStringProperty( );
         this.name = new SimpleStringProperty( );
         this.isFileSelected = new SimpleBooleanProperty(false );
@@ -45,8 +46,7 @@ public class UIModel {
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
         sortSheetButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
-
-
+        filterSheetButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
     }
 
     public void initializePropertiesForEachCell(GridPane sheetGridPane) {
