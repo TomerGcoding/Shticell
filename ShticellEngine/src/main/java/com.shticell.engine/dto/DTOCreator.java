@@ -69,10 +69,18 @@ public class DTOCreator {
                 cells.put(entry.getKey(), cellDTO);
             }
         }
+        Map<String, RangeDTO> ranges = new HashMap<>();
+        for (Map.Entry<String, Range> entry : sheet.getRanges().entrySet()) {
+            RangeDTO rangeDTO = rangeToDTO(entry.getValue(),sheet);
+            if (rangeDTO != null) {
+                ranges.put(entry.getKey(), rangeDTO);
+            }
+        }
         return new SheetDTO(cells,
                 sheet.getVersion(),
                 sheet.getSheetName(),
-                sheet.getProperties());
+                sheet.getProperties(),
+                ranges);
     }
 
     public static RangeDTO rangeToDTO(Range range, Sheet sheet) {

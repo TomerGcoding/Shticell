@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class SheetDTO implements Serializable {
     private final Map<Coordinate, CellDTO> activeCells;
+    private final Map<String, RangeDTO> activeRanges;
     private final int currVersion;
     private final String sheetName;
     private final SheetProperties properties;
@@ -16,16 +17,20 @@ public class SheetDTO implements Serializable {
     public SheetDTO(Map<Coordinate, CellDTO> activeCells,
                     int currVersion,
                     String sheetName,
-                    SheetProperties properties) {
+                    SheetProperties properties,
+                    Map<String, RangeDTO> activeRanges) {
         this.properties = properties;
         this.activeCells = activeCells;
         this.currVersion = currVersion;
         this.sheetName = sheetName;
+        this.activeRanges = activeRanges;
     }
 
     public Map<Coordinate, CellDTO> getActiveCells() {
         return activeCells;
     }
+
+    public Map<String, RangeDTO> getActiveRanges() {return activeRanges;}
 
     public CellDTO getCell(int row, int column) {
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));

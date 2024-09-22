@@ -168,6 +168,7 @@ public class MainController {
                     uiModel.isFileSelectedProperty().setValue(true);
                     gridManager.createSheetGridPane(sheetDTO);
                     sheetTab.setContent(sheetGridPane);
+                    rangeController.addLoadedRange(sheetDTO);
                 });
             });
             loadTask.setOnFailed(e -> {

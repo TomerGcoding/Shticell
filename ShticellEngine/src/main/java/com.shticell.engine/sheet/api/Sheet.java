@@ -30,6 +30,7 @@ public interface Sheet {
 
     List<EffectiveValue> getRangeValues(String rangeName);
 
+    Map<String,Range> getRanges();
     Range getRange(String rangeName);
 
     void removeRange(String name);
