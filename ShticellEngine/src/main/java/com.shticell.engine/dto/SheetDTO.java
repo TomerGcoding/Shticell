@@ -24,13 +24,16 @@ public class SheetDTO implements Serializable {
         this.activeRanges = activeRanges;
         this.currVersion = currVersion;
         this.sheetName = sheetName;
+        this.activeRanges = activeRanges;
     }
 
     public Map<Coordinate, CellDTO> getActiveCells() {
         return activeCells;
     }
 
+
     public Map<String, RangeDTO> getActiveRanges() { return activeRanges; }
+
 
     public CellDTO getCell(int row, int column) {
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));

@@ -2,6 +2,7 @@ package com.shticell.ui.jfx.range;
 
 import com.shticell.engine.Engine;
 import com.shticell.engine.dto.RangeDTO;
+import com.shticell.engine.dto.SheetDTO;
 import com.shticell.ui.jfx.main.MainController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -89,4 +90,14 @@ void deleteRange(ActionEvent event) {
         alert.showAndWait();
         }
     }
+
+    public void addLoadedRange(SheetDTO sheetDTO) {
+        vboxInsideTitledPane.getChildren().clear();
+        for(RangeDTO range: sheetDTO.getActiveRanges().values()){
+            Label newLabel = new Label(range.getName());
+            vboxInsideTitledPane.getChildren().add(newLabel);
+            newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(range.getCellsIdInRange()));
+        }
+    }
 }
+

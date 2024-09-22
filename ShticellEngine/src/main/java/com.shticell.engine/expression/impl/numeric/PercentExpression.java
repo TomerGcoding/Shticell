@@ -5,9 +5,11 @@ import com.shticell.engine.cell.impl.CellType;
 import com.shticell.engine.cell.impl.EffectiveValueImpl;
 import com.shticell.engine.expression.api.Expression;
 
+import java.util.List;
+
 import static com.shticell.engine.cell.impl.CellType.NUMERIC;
 
-public class PercentExpression implements Expression {
+public class PercentExpression extends NumericExpression {
     private final Expression part;
     private final Expression whole;
 
@@ -31,6 +33,11 @@ public class PercentExpression implements Expression {
     @Override
     public CellType getFunctionResultType() {
         return CellType.BOOLEAN;
+    }
+
+    @Override
+    public List<Expression> getExpressions() {
+        return List.of(part,whole);
     }
 
     @Override

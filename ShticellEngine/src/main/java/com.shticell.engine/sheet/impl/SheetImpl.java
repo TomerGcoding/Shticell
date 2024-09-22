@@ -38,6 +38,9 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
+    public Map <String, Range> getRanges() {return activeRanges;}
+
+    @Override
     public SheetProperties getProperties() {
         return properties;
     }
