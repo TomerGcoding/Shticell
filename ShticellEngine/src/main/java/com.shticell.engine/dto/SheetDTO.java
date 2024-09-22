@@ -15,12 +15,13 @@ public class SheetDTO implements Serializable {
     private final SheetProperties properties;
 
     public SheetDTO(Map<Coordinate, CellDTO> activeCells,
+                    Map <String, RangeDTO> activeRanges,
                     int currVersion,
                     String sheetName,
-                    SheetProperties properties,
-                    Map<String, RangeDTO> activeRanges) {
+                    SheetProperties properties) {
         this.properties = properties;
         this.activeCells = activeCells;
+        this.activeRanges = activeRanges;
         this.currVersion = currVersion;
         this.sheetName = sheetName;
         this.activeRanges = activeRanges;
@@ -30,7 +31,9 @@ public class SheetDTO implements Serializable {
         return activeCells;
     }
 
-    public Map<String, RangeDTO> getActiveRanges() {return activeRanges;}
+
+    public Map<String, RangeDTO> getActiveRanges() { return activeRanges; }
+
 
     public CellDTO getCell(int row, int column) {
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));

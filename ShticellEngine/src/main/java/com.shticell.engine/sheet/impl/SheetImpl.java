@@ -251,4 +251,9 @@ public class SheetImpl implements Sheet, Serializable {
         else
             activeRanges.remove(name);
     }
+
+    @Override
+    public Map<String, Range> getRanges() {
+        return activeRanges;
+    }
 }
