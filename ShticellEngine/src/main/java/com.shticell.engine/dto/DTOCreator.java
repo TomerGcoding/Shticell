@@ -63,13 +63,19 @@ public class DTOCreator {
 
     public static SheetDTO sheetToDTO(Sheet sheet) {
         Map<Coordinate, CellDTO> cells = new HashMap<>();
+        Map<String, RangeDTO> ranges = new HashMap<>();
         for (Map.Entry<Coordinate, Cell> entry : sheet.getCells().entrySet()) {
             CellDTO cellDTO = cellToDTO(entry.getValue());
             if (cellDTO != null) {
                 cells.put(entry.getKey(), cellDTO);
             }
         }
+        for (Range range : sheet.getRanges().values()) {
+            RangeDTO rangeDTO = rangeToDTO(range, sheet);
+            ranges.put(rangeDTO.getName(), rangeDTO);
+        }
         return new SheetDTO(cells,
+                ranges,
                 sheet.getVersion(),
                 sheet.getSheetName(),
                 sheet.getProperties());
