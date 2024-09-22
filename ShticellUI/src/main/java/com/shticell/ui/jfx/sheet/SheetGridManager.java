@@ -259,9 +259,7 @@ public class SheetGridManager {
 
     public void resetCellBorders() {
         for (Label label : cellIDtoLabel.values()) {
-            label.setStyle("");
-            label.getStyleClass().removeAll("dependency-cell", "influence-cell");
-            //setSheetStyle(styleNumber);
+            label.getStyleClass().removeAll("dependency-cell", "influence-cell","ranged-cell");
         }
     }
 
@@ -353,7 +351,8 @@ public class SheetGridManager {
         for (String cellId : rangeCellIds) {
             Label cellLabel = cellIDtoLabel.get(cellId);  // Get the label by its cell ID
             if (cellLabel != null) {
-                cellLabel.setStyle("-fx-border-color: pink; -fx-border-width: 2px;");
+                cellLabel.getStyleClass().add("ranged-cell");
+                AnimationManager.animateCellSelection(cellLabel);
             }
         }
     }
