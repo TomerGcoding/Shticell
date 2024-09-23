@@ -127,7 +127,6 @@ public class SheetFilterer {
                         newValue = filteredCell.getOriginalValue();
                     }
                 }
-
                 // Set the cell value in the new row position
                 sheet = sheet.setCell(CoordinateFormatter.indexToCellId(startRow + i, cell.getCoordinate().getColumn()), newValue);
             }
