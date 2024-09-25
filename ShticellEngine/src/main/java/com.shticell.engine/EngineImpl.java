@@ -148,6 +148,7 @@ public class EngineImpl implements Engine, Serializable {
         }
         SheetFilterer filterer = new SheetFilterer(sheet,rangeToFilter,columnsToFilterBy);
         return filterer.filter(valuesToFilterBy);
+
     }
 
 }
