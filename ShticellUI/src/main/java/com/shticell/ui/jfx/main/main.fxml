@@ -16,23 +16,34 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="563.0" prefWidth="757.0" stylesheets="@main1.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
+<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="563.0" prefWidth="900.0" stylesheets="@main4.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
    <top>
-      <VBox prefHeight="61.0" prefWidth="715.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="150.0" prefWidth="890.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox style="-fx-background-color: lightBlue;">
+            <HBox prefHeight="21.0" prefWidth="870.0">
                <children>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <ComboBox fx:id="changeStyleComboBox" layoutY="2.0" prefHeight="25.0" prefWidth="119.0" promptText="Sthicell Styles" />
-                     </children>
-                  </AnchorPane>
-                  <CheckBox fx:id="animationsCheckbox" text="Activate animations" />
-                  <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="34.0" prefWidth="812.0" text="Shticell" textAlignment="CENTER">
+                  <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="0.0" prefWidth="850.0" text="Shticell" textAlignment="CENTER">
                      <font>
                         <Font name="System Bold Italic" size="23.0" />
                      </font>
                   </Label>
+               </children>
+            </HBox>
+            <HBox>
+               <children>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <ComboBox fx:id="changeStyleComboBox" layoutY="2.0" prefHeight="25.0" prefWidth="150.0" promptText="Sthicell Styles" />
+                     </children>
+                  </AnchorPane>
+                  <CheckBox fx:id="animationsCheckbox" alignment="CENTER" text="Activate animations">
+                     <padding>
+                        <Insets top="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </CheckBox>
                </children>
             </HBox>
             <HBox prefHeight="81.0" prefWidth="874.0" spacing="10.0">
@@ -65,16 +76,15 @@
    </padding>
    <center>
       <TabPane fx:id="sheetTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-        <tabs>
-          <Tab fx:id="sheetTab" text="Insurance" />
-        </tabs>
+         <tabs>
+            <Tab fx:id="sheetTab" text="Insurance" />
+         </tabs>
       </TabPane>
    </center>
    <bottom>
       <HBox spacing="10">
          <Button fx:id="sortSheetButton" text="Sort Sheet" />
          <Button fx:id="filterSheetButton" text="Filter Sheet" />
-         <!-- ... other bottom content ... -->
       </HBox>
    </bottom>
 </BorderPane>

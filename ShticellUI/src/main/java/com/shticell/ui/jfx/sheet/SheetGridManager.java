@@ -38,7 +38,7 @@ public class SheetGridManager {
 
     public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, Engine engine, MainController mainController) {
         this.sheetGridPane = sheetGridPane;
-        this.activeStyleSheet = "sheet1.css";
+        this.activeStyleSheet = "sheet4.css";
         this.sheetGridPane.getStylesheets().add(getClass().getResource(activeStyleSheet).toExternalForm());
         this.uiModel = uiModel;
         this.engine = engine;
