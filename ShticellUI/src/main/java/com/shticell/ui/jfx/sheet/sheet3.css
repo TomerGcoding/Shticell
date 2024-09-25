@@ -1,40 +1,45 @@
 .cell {
-    -fx-border-color: #4CAF50;
+    -fx-border-color: #D2B48C;
     -fx-border-width: 0.5px;
-    -fx-background-color: #E56F;
-    /*-fx-text-fill: white;*/
+    -fx-background-color: #FFF8DC;
     -fx-padding: 5px;
-    -fx-alignment: center;
+    -fx-transition: background-color 0.2s;
 }
 
 .cell:hover {
-    -fx-background-color: #E51;
+    -fx-background-color: #F0E6D2;
 }
 
 #selected-cell {
-    -fx-border-color: #FF9800;
+    -fx-border-color: #A0522D;
     -fx-border-width: 2px;
-    -fx-background-color: #3C3C3C;
+    -fx-background-color: #E6CCB2;
 }
 
 .header {
     -fx-border-width: 0.5px;
-    -fx-border-color: #4CAF50;
-    -fx-background-color: #1E1E1E;
-    -fx-text-fill: #FF9800;
+    -fx-border-color: #8B4513;
+    -fx-background-color: #A0522D;
+    -fx-text-fill: #F0E6D2;
     -fx-alignment: center;
     -fx-font-weight: bold;
     -fx-padding: 8px;
 }
 
 .dependency-cell {
-    -fx-border-color: #2196F3;
+    -fx-border-color: #CD853F;
     -fx-border-width: 2px;
-    -fx-background-color: rgba(33, 150, 243, 0.2);
+    -fx-background-color: #FAEBD7;
 }
 
 .influence-cell {
-    -fx-border-color: #FF4081;
+    -fx-border-color: #DEB887;
     -fx-border-width: 2px;
-    -fx-background-color: rgba(255, 64, 129, 0.2);
+    -fx-background-color: #FEFAF5;
+}
+
+.ranged-cell {
+    -fx-border-color: #D2691E;
+    -fx-border-width: 2px;
+    -fx-background-color: #FFE4B5;
 }

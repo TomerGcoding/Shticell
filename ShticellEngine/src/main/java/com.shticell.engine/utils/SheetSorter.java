@@ -26,6 +26,7 @@ public class SheetSorter {
     private List<Integer> parseColumnsToSortBy(String columnsToSortBy) {
         List<Integer> columnsToSort = new ArrayList<Integer>();
         for (String column : columnsToSortBy.split(",")) {
+            column = column.toUpperCase();
             columnsToSort.add(CoordinateFormatter.getColumnIndex(column.trim()));
         }
         return columnsToSort;
@@ -88,8 +89,8 @@ public class SheetSorter {
                 if (cell1.getEffectiveValue().getCellType() == CellType.NUMERIC
                         && cell2.getEffectiveValue().getCellType() == CellType.NUMERIC) {
                     try {
-                        double value1 = Double.parseDouble(cell1.getOriginalValue());
-                        double value2 = Double.parseDouble(cell2.getOriginalValue());
+                        double value1 = Double.parseDouble(cell1.getEffectiveValue().getValue().toString());
+                        double value2 = Double.parseDouble(cell2.getEffectiveValue().getValue().toString());
                         int comparison = Double.compare(value1, value2);
                         if (comparison != 0) {
                             return comparison;

@@ -1,39 +1,39 @@
 .root {
-    -fx-font-family: "Roboto", sans-serif;
-    -fx-background-color: #FF98;
+    -fx-font-family: "Georgia", serif;
+    -fx-background-color: #F0E6D2;
 }
 
 #file-path {
-    -fx-text-fill: #FF9800;
+    -fx-text-fill: #8B4513;
+    -fx-font-family: "Verdana", sans-serif;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-padding: 5px 10px;
-    -fx-background-color: #2C2C2C;
+    -fx-background-color: #E6CCB2;
     -fx-background-radius: 5px;
-    -fx-effect: dropshadow(three-pass-box, rgba(255,152,0,0.4), 10, 0, 0, 0);
 }
 
 .button {
-    -fx-background-color: #4CAF50;
-    -fx-text-fill: white;
+    -fx-background-color: #A0522D;
+    -fx-text-fill: #F0E6D2;
     -fx-font-weight: bold;
     -fx-padding: 8px 16px;
-    -fx-background-radius: 25px;
-    -fx-effect: dropshadow(three-pass-box, rgba(76,175,80,0.5), 10, 0, 0, 0);
+    -fx-background-radius: 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 2);
 }
 
 .button:hover {
-    -fx-background-color: #45a049;
+    -fx-background-color: #8B4513;
 }
 
 .text-field {
-    -fx-background-color: #2C2C2C;
-    -fx-text-fill: white;
-    -fx-border-color: #4CAF50;
+    -fx-background-color: #FFF8DC;
+    -fx-border-color: #D2B48C;
     -fx-border-radius: 5px;
     -fx-padding: 5px;
 }
 
 .text-field:focused {
-    -fx-border-color: #FF9800;
+    -fx-border-color: #A0522D;
+    -fx-effect: innershadow(gaussian, #D2B48C, 5, 0, 0, 0);
 }
