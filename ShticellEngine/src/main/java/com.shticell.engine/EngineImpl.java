@@ -146,8 +146,8 @@ public class EngineImpl implements Engine, Serializable {
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
-        SheetFilterer filterer = new SheetFilterer(sheet,rangeToFilter,columnsToFilterBy,valuesToFilterBy);
-        return filterer.filter();
+        SheetFilterer filterer = new SheetFilterer(sheet,rangeToFilter,columnsToFilterBy);
+        return filterer.filter(valuesToFilterBy);
     }
 
 }
