@@ -80,7 +80,7 @@ public class MainController {
 
     private UIModel uiModel;
 
-    private GridPane sheetGridPane=new GridPane();
+    private GridPane sheetGridPane = new GridPane();
 
     private SheetGridManager gridManager;
 
@@ -440,6 +440,9 @@ public class MainController {
         alert.showAndWait();
     }
 
+    public BorderPane getMainBorderPane() {
+        return mainBorderPane;
+    }
 }
 
 

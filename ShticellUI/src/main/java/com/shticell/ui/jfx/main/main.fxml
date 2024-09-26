@@ -6,85 +6,83 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="563.0" prefWidth="900.0" stylesheets="@main4.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
-   <top>
-       <VBox fx:id="topVBox" prefHeight="100.0" VBox.vgrow="NEVER">
-         <children>
-            <HBox prefHeight="21.0" prefWidth="870.0">
+
+<ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
+   <content>
+      <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="500.0" prefHeight="563.0" stylesheets="@main4.css">
+         <top>
+             <VBox fx:id="topVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" spacing="5.0" VBox.vgrow="NEVER">
                <children>
-                  <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="0.0" prefWidth="850.0" text="Shticell" textAlignment="CENTER">
-                     <font>
-                        <Font name="System Bold Italic" size="23.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <HBox>
-               <children>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="21.0" prefWidth="870.0" VBox.vgrow="ALWAYS">
                      <children>
-                        <ComboBox fx:id="changeStyleComboBox" layoutY="2.0" prefHeight="25.0" prefWidth="150.0" promptText="Sthicell Styles" />
+                        <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="30.0" prefWidth="128.0" text="Shticell" textAlignment="CENTER" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font name="System Bold Italic" size="23.0" />
+                           </font>
+                        </Label>
                      </children>
-                  </AnchorPane>
-                  <CheckBox fx:id="animationsCheckbox" alignment="CENTER" text="Activate animations">
-                     <padding>
-                        <Insets top="10.0" />
-                     </padding>
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </CheckBox>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" minWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <ComboBox fx:id="changeStyleComboBox" minWidth="50.0" prefHeight="25.0" promptText="Sthicell Styles" />
+                        <CheckBox fx:id="animationsCheckbox" alignment="CENTER" minWidth="50.0" prefHeight="27.0" text="Activate animations" HBox.hgrow="ALWAYS">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </CheckBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="81.0" prefWidth="874.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Button fx:id="loadXMLFileButton" minWidth="100.0" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" HBox.hgrow="ALWAYS" />
+                        <StackPane HBox.hgrow="ALWAYS">
+                           <Label fx:id="chosenFileFullPathLabel" minWidth="80.0" prefHeight="24.0" prefWidth="638.0" text="No File Currently Loaded" />
+                           <ProgressBar fx:id="progressBar" managed="false" prefWidth="400.0" progress="0.0" visible="false" />
+                           <Label fx:id="progressLabel" managed="false" text="" textFill="black" visible="false" />
+                        </StackPane>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" minWidth="400.0" prefHeight="17.0" prefWidth="793.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <Label minWidth="20.0" prefHeight="24.0" prefWidth="43.0" text="Cell ID:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="currentCellLabel" minWidth="12.0" prefHeight="17.0" prefWidth="21.0" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="50.0" prefHeight="25.0" prefWidth="89.0" text="Original Value:" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="selectedCellOriginalValueTextField" minWidth="50.0" prefHeight="25.0" prefWidth="183.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="updateSelectedCellValueButton" disable="true" minWidth="50.0" mnemonicParsing="false" onAction="#updateSelectedCellValue" prefHeight="25.0" prefWidth="100.0" text="Update Value" HBox.hgrow="ALWAYS" />
+                        <Label minWidth="60.0" prefHeight="25.0" prefWidth="112.0" text="Last version update:" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="currentCellVersionLabel" minWidth="10.0" prefHeight="17.0" prefWidth="16.0" HBox.hgrow="ALWAYS" />
+                        <fx:include fx:id="versionSelectorComponent" source="../version/version.fxml" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
                </children>
+            </VBox>
+         </top>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+         <center>
+            <TabPane fx:id="sheetTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+               <tabs>
+                  <Tab fx:id="sheetTab" text="Insurance" />
+               </tabs>
+            </TabPane>
+         </center>
+         <bottom>
+            <HBox spacing="10">
+               <Button fx:id="sortSheetButton" text="Sort Sheet" />
+               <Button fx:id="filterSheetButton" text="Filter Sheet" />
             </HBox>
-            <HBox prefHeight="81.0" prefWidth="874.0" spacing="10.0">
-               <children>
-                  <Button fx:id="loadXMLFileButton" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" />
-                  <StackPane>
-                     <Label fx:id="chosenFileFullPathLabel" prefHeight="24.0" prefWidth="638.0" text="No File Currently Loaded" />
-                     <ProgressBar fx:id="progressBar" managed="false" prefWidth="400.0" progress="0.0" visible="false" />
-                     <Label fx:id="progressLabel" managed="false" text="" textFill="black" visible="false" />
-                  </StackPane>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="17.0" prefWidth="793.0" spacing="5.0">
-               <children>
-                  <Label prefHeight="24.0" prefWidth="43.0" text="Cell ID:" />
-                  <Label fx:id="currentCellLabel" prefHeight="17.0" prefWidth="21.0" />
-                  <Label prefHeight="25.0" prefWidth="89.0" text="Original Value:" />
-                  <TextField fx:id="selectedCellOriginalValueTextField" prefHeight="25.0" prefWidth="183.0" />
-                  <Button fx:id="updateSelectedCellValueButton" disable="true" mnemonicParsing="false" onAction="#updateSelectedCellValue" prefHeight="25.0" prefWidth="100.0" text="Update Value" />
-                  <Label prefHeight="25.0" prefWidth="112.0" text="Last version update:" />
-                  <Label fx:id="currentCellVersionLabel" prefHeight="17.0" prefWidth="16.0" />
-                  <fx:include fx:id="versionSelectorComponent" source="../version/version.fxml" />
-               </children>
-            </HBox>
-         </children>
-      </VBox>
-   </top>
-   <padding>
-      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-   </padding>
-   <center>
-      <TabPane fx:id="sheetTabPane" VBox.vgrow="ALWAYS" prefHeight="400.0">
-         <tabs>
-            <Tab fx:id="sheetTab" text="Sheet" />
-         </tabs>
-      </TabPane>
-   </center>
-   <bottom>
-      <HBox spacing="10">
-         <Button fx:id="sortSheetButton" text="Sort Sheet" />
-         <Button fx:id="filterSheetButton" text="Filter Sheet" />
-      </HBox>
-   </bottom>
-</BorderPane>
+         </bottom>
+      </BorderPane>
+   </content>
+</ScrollPane>

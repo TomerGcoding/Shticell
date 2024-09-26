@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
@@ -61,6 +62,21 @@ public class SheetGridManager {
         addColumnsAndRowHeaders(numColumns, colWidth, numRows, rowHeight);
         uiModel.initializePropertiesForEachCell(sheetGridPane);
         populateSheetGridPane(sheet, numColumns, colWidth, numRows, rowHeight);
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(sheetGridPane);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setOnScroll(event -> {
+            if (scrollPane.isHover()) {
+                scrollPane.setHvalue(scrollPane.getHvalue() - event.getDeltaX() / scrollPane.getContent().getBoundsInLocal().getWidth());
+                scrollPane.setVvalue(scrollPane.getVvalue() - event.getDeltaY() / scrollPane.getContent().getBoundsInLocal().getHeight());
+                event.consume();
+            }
+        });
+        mainController.getMainBorderPane().setCenter(scrollPane);
         AnimationManager.animateSheetPresentation(sheetGridPane);
 
     }
@@ -92,7 +108,7 @@ public class SheetGridManager {
 
         for (int i = 0; i <= numRows; i++) {
             RowConstraints rowConst = new RowConstraints();
-            rowConst.setPrefHeight(rowHeight); // height of each row
+            rowConst.setPrefHeight(rowHeight);
             sheetGridPane.getRowConstraints().add(rowConst);
         }
         sheetGridPane.getColumnConstraints().get(0).setPrefWidth(20);
