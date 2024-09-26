@@ -4,6 +4,8 @@
     -fx-background-color: WHITE;
     -fx-padding: 5px;
     -fx-alignment: center;
+    -fx-min-width: 80px;
+    -fx-max-width: 200px;
 }
 
 .cell:hover {

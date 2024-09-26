@@ -18,7 +18,7 @@
 
 <BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="563.0" prefWidth="900.0" stylesheets="@main4.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
    <top>
-      <VBox prefHeight="150.0" prefWidth="890.0" spacing="5.0" BorderPane.alignment="CENTER">
+       <VBox fx:id="topVBox" prefHeight="100.0" VBox.vgrow="NEVER">
          <children>
             <HBox prefHeight="21.0" prefWidth="870.0">
                <children>
@@ -75,9 +75,9 @@
       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
    </padding>
    <center>
-      <TabPane fx:id="sheetTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane fx:id="sheetTabPane" VBox.vgrow="ALWAYS" prefHeight="400.0">
          <tabs>
-            <Tab fx:id="sheetTab" text="Insurance" />
+            <Tab fx:id="sheetTab" text="Sheet" />
          </tabs>
       </TabPane>
    </center>
