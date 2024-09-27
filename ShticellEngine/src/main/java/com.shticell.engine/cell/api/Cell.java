@@ -19,4 +19,5 @@ public interface Cell  {
     void addInfluence(Cell thisCell);
     void removeFromInfluenceOn(Cell originCell);
     void deleteMeFromInfluenceList();
+    int getColumn();
 }

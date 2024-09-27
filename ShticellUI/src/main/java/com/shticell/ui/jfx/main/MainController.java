@@ -374,7 +374,7 @@ public class MainController {
     private void showFilterDialog() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Filter Sheet");
-        dialog.setHeaderText("Enter filter range and columns");
+        dialog.setHeaderText("Enter filter range and select a column for filtering");
 
         ButtonType filterButtonType = new ButtonType("Filter", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(filterButtonType, ButtonType.CANCEL);
@@ -387,22 +387,46 @@ public class MainController {
         TextField rangeField = new TextField();
         rangeField.setPromptText("e.g., A4..D6");
         TextField columnsField = new TextField();
-        columnsField.setPromptText("e.g., C,D,B");
-        TextField conditionField = new TextField();
-        conditionField.setPromptText("e.g., >0 AND <100");
+        columnsField.setPromptText("e.g., C");
+
+        // ComboBox for displaying unique values after selecting a column
+        ComboBox<String> uniqueValuesComboBox = new ComboBox<>();
+        uniqueValuesComboBox.setPromptText("Select a value");
+        uniqueValuesComboBox.setDisable(true); // Initially disabled
+
+        // Label for filter condition
+        Label filterLabel = new Label("Unique Values:");
 
         grid.add(new Label("Range:"), 0, 0);
         grid.add(rangeField, 1, 0);
-        grid.add(new Label("Columns to filter by:"), 0, 1);
+        grid.add(new Label("Column to filter by:"), 0, 1);
         grid.add(columnsField, 1, 1);
-        grid.add(new Label("Values for filter:"), 0, 2);
-        grid.add(conditionField, 1, 2);
+        grid.add(filterLabel, 0, 2);
+        grid.add(uniqueValuesComboBox, 1, 2);
 
         dialog.getDialogPane().setContent(grid);
 
+        columnsField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+                try {
+                    List<String> uniqueValues = engine.getUniqueColumnValues(newValue.trim());
+
+                    uniqueValuesComboBox.getItems().clear();
+                    uniqueValuesComboBox.getItems().addAll(uniqueValues);
+                    uniqueValuesComboBox.setDisable(false);
+
+                } catch (Exception ex) {
+                    showErrorAlert("Fetching Unique Values", "An error occurred while fetching unique values: " + ex.getMessage());
+                }
+            }
+        });
+
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == filterButtonType) {
-                return new Pair<>(rangeField.getText(), columnsField.getText() + ";" + conditionField.getText());
+                String selectedValue = uniqueValuesComboBox.getValue();
+                if (selectedValue != null) {
+                    return new Pair<>(rangeField.getText(), columnsField.getText() + ";" + selectedValue);
+                }
             }
             return null;
         });
@@ -419,6 +443,7 @@ public class MainController {
             }
         });
     }
+
 
     private void showFilteredSheetDialog(SheetDTO filteredSheet) {
         Dialog<Void> dialog = new Dialog<>();
