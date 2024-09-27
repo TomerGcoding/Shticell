@@ -253,4 +253,17 @@ public class SheetImpl implements Sheet, Serializable {
     public Map<String, Range> getRanges() {
         return activeRanges;
     }
+
+    @Override
+    public List<String> getUniqeColumnValues(String columnId) {
+        List <String> values = new ArrayList<>();
+        int column = CoordinateFormatter.cellIdToIndex(columnId + "1")[1];
+        for (Cell cell : activeCells.values()) {
+            if (cell.getColumn() == column && !values.contains(cell.getEffectiveValue().getValue())) {
+                values.add(cell.getEffectiveValue().getValue().toString());
+            }
+        }
+        System.out.println(values);
+        return values;
+    }
 }

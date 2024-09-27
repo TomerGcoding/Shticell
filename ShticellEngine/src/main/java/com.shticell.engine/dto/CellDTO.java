@@ -1,6 +1,7 @@
 package com.shticell.engine.dto;
 
 import com.shticell.engine.sheet.coordinate.Coordinate;
+import javafx.scene.paint.Color;
 //import engine.sheet.coordinate.CoordinateFormatter;
 
 import java.io.Serializable;
@@ -56,4 +57,5 @@ public class CellDTO implements Serializable {
     public List<CellDTO> getInfluencingOn() {
         return influencingOn;
     }
+
 }

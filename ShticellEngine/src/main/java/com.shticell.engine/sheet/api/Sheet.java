@@ -35,4 +35,5 @@ public interface Sheet {
 
     void removeRange(String name);
 
+    List<String> getUniqeColumnValues(String columnId);
 }

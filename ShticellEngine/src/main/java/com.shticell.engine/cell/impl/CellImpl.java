@@ -206,5 +206,10 @@ public class CellImpl implements Cell, Serializable {
             cell.removeFromInfluenceOn(this);
         }
     }
+
+    @Override
+    public int getColumn() {
+        return coordinate.getColumn();
+    }
 }
 

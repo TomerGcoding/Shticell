@@ -6,6 +6,7 @@ import com.shticell.engine.dto.SheetDTO;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public interface Engine {
@@ -34,4 +35,5 @@ public interface Engine {
     SheetDTO sortSheet(String rangeToSort,String columnsToSortBy);
 
     SheetDTO filterSheet(String rangeToFilter,String columnsToFilterBy,String valuesToFilterBy);
+    List<String> getUniqueColumnValues(String columnId);
 }

@@ -151,4 +151,8 @@ public class EngineImpl implements Engine, Serializable {
 
     }
 
+    @Override
+    public List<String> getUniqueColumnValues(String columnId) {
+        return sheet.getUniqeColumnValues(columnId);
+    }
 }
