@@ -117,6 +117,7 @@ public class MainController {
         initializeSortSheetButton();
         initializeFilterSheetButton();
         createRangeController();
+
     }
 
     @FXML
@@ -265,7 +266,7 @@ public class MainController {
     private void createRangeController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
-            Parent rangeView = loader.load();
+            ScrollPane rangeView = loader.load();
             mainBorderPane.setRight(rangeView);
             rangeController = loader.getController();
             rangeController.setEngine(engine);
@@ -273,7 +274,6 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void colorRangeCells(List<String> rangeCellIds) {

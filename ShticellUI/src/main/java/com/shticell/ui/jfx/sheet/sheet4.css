@@ -9,13 +9,13 @@
 }
 
 .cell:hover {
-    -fx-background-color: rgba(144, 202, 249, 0.5);
+    -fx-background-color: #D3D3D3;
 }
 
 #selected-cell {
-    -fx-border-color: #90CAF9;
+    -fx-border-color: #808080;
     -fx-border-width: 2px;
-    -fx-background-color: rgba(144, 202, 249, 0.5);
+    -fx-background-color: #D3D3D3;
 }
 
 .header {
@@ -29,9 +29,9 @@
 }
 
 .dependency-cell {
-    -fx-border-color: #B39DDB;
+    -fx-border-color: #90CAF9;
     -fx-border-width: 2px;
-    -fx-background-color: #EDE7F6;
+    -fx-background-color: rgba(144, 202, 249, 0.5);
 }
 
 .influence-cell {
