@@ -92,9 +92,9 @@ public class ContextMenuFactory {
 
         resetToDefault.setOnAction(e -> {
             cellLabel.setTextFill(Color.BLACK);
-            cellLabel.setStyle("");
+            cellLabel.setStyle("");  // Reset all styles
             cellLabel.getStyleClass().clear();
-            cellLabel.getStyleClass().addAll("cell");
+            cellLabel.getStyleClass().addAll("cell");  // Reapply default style class if any
         });
 
         changeTextColor.setOnAction(e -> {
@@ -123,13 +123,21 @@ public class ContextMenuFactory {
                 return null;
             });
 
-            dialog.showAndWait().ifPresent(cellLabel::setTextFill);
+            dialog.showAndWait().ifPresent(newColor -> {
+                // Instead of overriding all styles, just update the text color
+                String textColorStyle = "-fx-text-fill: #" + toHexString(newColor) + ";";
+                // Preserve background color style and other styles
+                String existingBackgroundColor = getCurrentBackgroundColor(cellLabel) != null ? toHexString(getCurrentBackgroundColor(cellLabel)) : "#FFFFFF";
+                String backgroundColorStyle = "-fx-background-color: #" + existingBackgroundColor + ";";
+                cellLabel.setStyle(backgroundColorStyle + textColorStyle);
+            });
         });
 
         changeCellBackgroundColor.setOnAction(e -> {
             ColorPicker colorPicker = new ColorPicker();
-            Color currentColor = getCurrentBackgroundColor(cellLabel);
-            colorPicker.setValue(currentColor); // Default color, you can change this
+            Color currentColor = getCurrentBackgroundColor(cellLabel);  // Assuming you have a method to get the current background color
+            colorPicker.setValue(currentColor);  // Set current background color
+
             Dialog<Color> dialog = new Dialog<>();
             dialog.setTitle("Choose Background Color");
             dialog.setHeaderText("Select a color for the cell background");
@@ -153,11 +161,16 @@ public class ContextMenuFactory {
             });
 
             dialog.showAndWait().ifPresent(newColor -> {
-                cellLabel.setStyle("-fx-background-color: #" + toHexString(newColor) + ";");
+                // Instead of overriding all styles, just update the background color
+                String backgroundColorStyle = "-fx-background-color: #" + toHexString(newColor) + ";";
+                // Preserve text color style and other styles
+                String existingTextColor = cellLabel.getTextFill() != null ? toHexString((Color) cellLabel.getTextFill()) : "#000000";
+                String textColorStyle = "-fx-text-fill: #" + existingTextColor + ";";
+                cellLabel.setStyle(backgroundColorStyle + textColorStyle);
             });
         });
 
-        contextMenu.getItems().addAll(changeTextColor, changeCellBackgroundColor,new SeparatorMenuItem(), resetToDefault);
+        contextMenu.getItems().addAll(changeTextColor, changeCellBackgroundColor, new SeparatorMenuItem(), resetToDefault);
 
         return contextMenu;
     }
@@ -182,7 +195,6 @@ public class ContextMenuFactory {
         }
         return Color.WHITE;
     }
-
 }
 
 
