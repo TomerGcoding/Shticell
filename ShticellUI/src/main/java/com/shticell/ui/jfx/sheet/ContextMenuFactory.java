@@ -94,7 +94,9 @@ public class ContextMenuFactory {
             cellLabel.setTextFill(Color.BLACK);
             cellLabel.setStyle("");  // Reset all styles
             cellLabel.getStyleClass().clear();
-            cellLabel.getStyleClass().addAll("cell");  // Reapply default style class if any
+            cellLabel.getStyleClass().addAll("cell");
+            cellLabel.getProperties().remove("backgroundColor");
+            cellLabel.getProperties().remove("textColor");
         });
 
         changeTextColor.setOnAction(e -> {
@@ -124,19 +126,18 @@ public class ContextMenuFactory {
             });
 
             dialog.showAndWait().ifPresent(newColor -> {
-                // Instead of overriding all styles, just update the text color
                 String textColorStyle = "-fx-text-fill: #" + toHexString(newColor) + ";";
-                // Preserve background color style and other styles
                 String existingBackgroundColor = getCurrentBackgroundColor(cellLabel) != null ? toHexString(getCurrentBackgroundColor(cellLabel)) : "#FFFFFF";
                 String backgroundColorStyle = "-fx-background-color: #" + existingBackgroundColor + ";";
                 cellLabel.setStyle(backgroundColorStyle + textColorStyle);
+                cellLabel.getProperties().put("textColor", newColor);
             });
         });
 
         changeCellBackgroundColor.setOnAction(e -> {
             ColorPicker colorPicker = new ColorPicker();
-            Color currentColor = getCurrentBackgroundColor(cellLabel);  // Assuming you have a method to get the current background color
-            colorPicker.setValue(currentColor);  // Set current background color
+            Color currentColor = getCurrentBackgroundColor(cellLabel);
+            colorPicker.setValue(currentColor);
 
             Dialog<Color> dialog = new Dialog<>();
             dialog.setTitle("Choose Background Color");
@@ -161,12 +162,11 @@ public class ContextMenuFactory {
             });
 
             dialog.showAndWait().ifPresent(newColor -> {
-                // Instead of overriding all styles, just update the background color
                 String backgroundColorStyle = "-fx-background-color: #" + toHexString(newColor) + ";";
-                // Preserve text color style and other styles
                 String existingTextColor = cellLabel.getTextFill() != null ? toHexString((Color) cellLabel.getTextFill()) : "#000000";
                 String textColorStyle = "-fx-text-fill: #" + existingTextColor + ";";
                 cellLabel.setStyle(backgroundColorStyle + textColorStyle);
+                cellLabel.getProperties().put("backgroundColor", newColor); // Save the chosen background color
             });
         });
 
@@ -195,7 +195,7 @@ public class ContextMenuFactory {
         }
         return Color.WHITE;
     }
-}
 
+}
 
 
