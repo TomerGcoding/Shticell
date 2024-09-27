@@ -72,7 +72,6 @@ void deleteRange(ActionEvent event) {
     try {
         engine.removeRange(rangeName);
 
-        // Find and remove the label with the matching rangeName
         for (javafx.scene.Node node : vboxInsideTitledPane.getChildren()) {
             if (node instanceof Label) {
                 Label label = (Label) node;

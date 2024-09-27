@@ -14,10 +14,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import javax.swing.text.html.StyleSheet;
@@ -38,7 +36,7 @@ public class SheetGridManager {
 
     public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, Engine engine, MainController mainController) {
         this.sheetGridPane = sheetGridPane;
-        this.activeStyleSheet = "sheet1.css";
+        this.activeStyleSheet = "sheet4.css";
         this.sheetGridPane.getStylesheets().add(getClass().getResource(activeStyleSheet).toExternalForm());
         this.uiModel = uiModel;
         this.engine = engine;
@@ -51,7 +49,6 @@ public class SheetGridManager {
         sheetGridPane.getChildren().clear();
         sheetGridPane.getColumnConstraints().clear();
         sheetGridPane.getRowConstraints().clear();
-
         int numRows = sheet.getProperties().getNumRows();
         int numColumns = sheet.getProperties().getNumCols();
         int rowHeight = sheet.getProperties().getRowHeight();
@@ -61,9 +58,30 @@ public class SheetGridManager {
         addColumnsAndRowHeaders(numColumns, colWidth, numRows, rowHeight);
         uiModel.initializePropertiesForEachCell(sheetGridPane);
         populateSheetGridPane(sheet, numColumns, colWidth, numRows, rowHeight);
-        AnimationManager.animateSheetPresentation(sheetGridPane);
+        sheetGridPane.setMinSize(GridPane.USE_COMPUTED_SIZE, GridPane.USE_COMPUTED_SIZE);
+        sheetGridPane.setPrefSize(numColumns * colWidth, numRows * rowHeight);
+      //  sheetGridPane.setMaxSize(GridPane.USE_MAX_SIZE, GridPane.USE_COMPUTED_SIZE);
 
+        ScrollPane scrollPane = new ScrollPane(sheetGridPane);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setFitToWidth(true);
+        sheetGridPane.prefWidthProperty().bind(scrollPane.widthProperty().subtract(0));
+        sheetGridPane.prefHeightProperty().bind(scrollPane.heightProperty().subtract(0));
+//        scrollPane.setOnScroll(event -> {
+//            if (scrollPane.isHover()) {
+//                double deltaX = event.getDeltaX() / scrollPane.getContent().getBoundsInLocal().getWidth();
+//                double deltaY = event.getDeltaY() / scrollPane.getContent().getBoundsInLocal().getHeight();
+//                scrollPane.setHvalue(scrollPane.getHvalue() - deltaX);
+//                scrollPane.setVvalue(scrollPane.getVvalue() - deltaY);
+//                event.consume();
+//            }
+//        });
+        mainController.getMainBorderPane().setCenter(scrollPane);
+        AnimationManager.animateSheetPresentation(sheetGridPane);
     }
+
     public void createReadOnlySheetGridPane(GridPane gridPane,SheetDTO sheet) {
         gridPane.getChildren().clear();
         gridPane.getColumnConstraints().clear();
@@ -92,7 +110,7 @@ public class SheetGridManager {
 
         for (int i = 0; i <= numRows; i++) {
             RowConstraints rowConst = new RowConstraints();
-            rowConst.setPrefHeight(rowHeight); // height of each row
+            rowConst.setPrefHeight(rowHeight);
             sheetGridPane.getRowConstraints().add(rowConst);
         }
         sheetGridPane.getColumnConstraints().get(0).setPrefWidth(20);
@@ -129,7 +147,7 @@ public class SheetGridManager {
             }
             label.setPrefWidth(colWidth);
             label.getStyleClass().add("header");
-            sheetGridPane.add(label, col, 0); // Adding to the first row (row 0)
+            sheetGridPane.add(label, col, 0);
         }
 
         // Adding row headers (1, 2, 3, ...)
@@ -162,10 +180,9 @@ public class SheetGridManager {
             }
             label.setPrefWidth(colWidth);
             label.getStyleClass().add("header");
-            gridPane.add(label, col, 0); // Adding to the first row (row 0)
+            gridPane.add(label, col, 0);
         }
 
-        // Adding row headers (1, 2, 3, ...)
         for (int row = 1; row <= numRows; row++) {
             Label label = new Label(String.valueOf(row));
             label.setPrefHeight(rowHeight);
@@ -176,7 +193,7 @@ public class SheetGridManager {
                 ContextMenu contextMenu = contextMenuFactory.createRowContextMenu(rowIndex);
                 contextMenu.show(label, event.getScreenX(), event.getScreenY());
             });
-            gridPane.add(label, 0, row); // Adding to the first column (column 0)
+            gridPane.add(label, 0, row);
         }
     }
 

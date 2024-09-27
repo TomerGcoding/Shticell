@@ -42,6 +42,8 @@ public class Main extends Application {
         load.getStyleClass().add("shticell");
         Scene scene = new Scene(load);
         primaryStage.setScene(scene);
+        primaryStage.setMinWidth(600);
+        primaryStage.setMinHeight(400);
         primaryStage.show();
     }
 

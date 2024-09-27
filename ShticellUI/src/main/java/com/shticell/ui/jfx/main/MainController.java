@@ -80,7 +80,7 @@ public class MainController {
 
     private UIModel uiModel;
 
-    private GridPane sheetGridPane=new GridPane();
+    private GridPane sheetGridPane = new GridPane();
 
     private SheetGridManager gridManager;
 
@@ -107,16 +107,17 @@ public class MainController {
         });
         versionSelectorComponentController.setEngine(engine);
         versionSelectorComponentController.setSheetGridManager(gridManager);
-        changeStyleComboBox.getItems().addAll(1,2,3);
+        changeStyleComboBox.getItems().addAll(1,2,3,4);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null) {
-                changeShticellStyle(newValue);
+                applyStyles(newValue);
             }
         });
         initializeAnimationsCheckbox();
         initializeSortSheetButton();
         initializeFilterSheetButton();
         createRangeController();
+
     }
 
     @FXML
@@ -265,7 +266,7 @@ public class MainController {
     private void createRangeController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
-            Parent rangeView = loader.load();
+            ScrollPane rangeView = loader.load();
             mainBorderPane.setRight(rangeView);
             rangeController = loader.getController();
             rangeController.setEngine(engine);
@@ -273,7 +274,6 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void colorRangeCells(List<String> rangeCellIds) {
@@ -293,7 +293,6 @@ public class MainController {
         gridManager.setSheetStyle(styleNumber);
     }
 
-
     private void initializeAnimationsCheckbox() {
         animationsCheckbox.setSelected(false);  // Set to unchecked by default
         animationsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -307,9 +306,11 @@ public class MainController {
             }
         });
     }
+
     private void initializeSortSheetButton() {
         sortSheetButton.setOnAction(e -> showSortDialog());
     }
+
     private void showSortDialog() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Sort Sheet");
@@ -366,7 +367,6 @@ public class MainController {
         dialog.showAndWait();
     }
 
-
     private void initializeFilterSheetButton() {
         filterSheetButton.setOnAction(e -> showFilterDialog());
     }
@@ -419,6 +419,7 @@ public class MainController {
             }
         });
     }
+
     private void showFilteredSheetDialog(SheetDTO filteredSheet) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Filtered Sheet");
@@ -431,7 +432,6 @@ public class MainController {
         dialog.showAndWait();
     }
 
-
     private void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -440,6 +440,9 @@ public class MainController {
         alert.showAndWait();
     }
 
+    public BorderPane getMainBorderPane() {
+        return mainBorderPane;
+    }
 }
 
 

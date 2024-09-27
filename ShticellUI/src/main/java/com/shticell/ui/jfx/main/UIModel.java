@@ -53,7 +53,6 @@ public class UIModel {
         cellIdtoCellValue = new HashMap<>();
         for (int row = 0; row < sheetGridPane.getRowCount(); row++) {
             for (int col = 0; col < sheetGridPane.getColumnCount() ; col++) {
-                // Create StringProperty for this cell
                 String cellID = CoordinateFormatter.indexToCellId(row,col);
                 cellIdtoCellValue.put(cellID,new SimpleStringProperty(""));
             }
