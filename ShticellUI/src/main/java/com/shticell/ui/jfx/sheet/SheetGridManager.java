@@ -233,8 +233,9 @@ public class SheetGridManager {
                 label.setPrefHeight(rowHeight);
                 label.setPrefWidth(colWidth);
                 label.getStyleClass().add("cell");
-                label.setBackground(cellIDtoLabel.get(cellID).getBackground());
-                label.setTextFill(cellIDtoLabel.get(cellID).getTextFill());
+                label.setStyle(cellIDtoLabel.get(cellID).getStyle());
+//                label.setBackground(cellIDtoLabel.get(cellID).getBackground());
+//                label.setTextFill(cellIDtoLabel.get(cellID).getTextFill());
                 gridPane.add(label, col, row);
             }
         }
