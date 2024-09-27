@@ -1,14 +1,11 @@
 package com.shticell.ui.jfx.sheet;
 
-import com.shticell.engine.Engine;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.ui.jfx.main.AnimationManager;
 import com.shticell.ui.jfx.main.MainController;
 import com.shticell.ui.jfx.main.UIModel;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -16,31 +13,27 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-
-import javax.swing.text.html.StyleSheet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class SheetGridManager {
 
-    private MainController mainController;
-    private ContextMenuFactory contextMenuFactory;
-    private GridPane sheetGridPane;
-    private UIModel uiModel;
-    private Engine engine;
-    private Map<String, Label> cellIDtoLabel;
+    private final MainController mainController;
+    private final ContextMenuFactory contextMenuFactory;
+    private final GridPane sheetGridPane;
+    private final UIModel uiModel;
+    private final Map<String, Label> cellIDtoLabel;
     private String activeStyleSheet;
 
-    public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, Engine engine, MainController mainController) {
+    public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, MainController mainController) {
         this.sheetGridPane = sheetGridPane;
         this.activeStyleSheet = "sheet4.css";
-        this.sheetGridPane.getStylesheets().add(getClass().getResource(activeStyleSheet).toExternalForm());
+        this.sheetGridPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource(activeStyleSheet)).toExternalForm());
         this.uiModel = uiModel;
-        this.engine = engine;
-        this.cellIDtoLabel = new HashMap<String, Label>();
+        this.cellIDtoLabel = new HashMap<>();
         this.mainController = mainController;
         this.contextMenuFactory = new ContextMenuFactory(this);
     }
@@ -113,7 +106,7 @@ public class SheetGridManager {
             rowConst.setPrefHeight(rowHeight);
             sheetGridPane.getRowConstraints().add(rowConst);
         }
-        sheetGridPane.getColumnConstraints().get(0).setPrefWidth(20);
+        sheetGridPane.getColumnConstraints().getFirst().setPrefWidth(20);
     }
 
     private void addColumnAndRowConstraintsReadOnly(GridPane gridPane,int numColumns, int colWidth, int numRows, int rowHeight) {
@@ -129,7 +122,7 @@ public class SheetGridManager {
             rowConst.setPrefHeight(rowHeight); // height of each row
             gridPane.getRowConstraints().add(rowConst);
         }
-        gridPane.getColumnConstraints().get(0).setPrefWidth(20);
+        gridPane.getColumnConstraints().getFirst().setPrefWidth(20);
     }
 
     private void addColumnsAndRowHeaders(int numColumns, int colWidth, int numRows, int rowHeight) {
@@ -234,8 +227,6 @@ public class SheetGridManager {
                 label.setPrefWidth(colWidth);
                 label.getStyleClass().add("cell");
                 label.setStyle(cellIDtoLabel.get(cellID).getStyle());
-//                label.setBackground(cellIDtoLabel.get(cellID).getBackground());
-//                label.setTextFill(cellIDtoLabel.get(cellID).getTextFill());
                 gridPane.add(label, col, row);
             }
         }
@@ -285,10 +276,7 @@ public class SheetGridManager {
         for (Node node : sheetGridPane.getChildren()) {
             Integer nodeColumnIndex = GridPane.getColumnIndex(node);
             Integer nodeRowIndex = GridPane.getRowIndex(node);
-            if (nodeColumnIndex != null && nodeColumnIndex == columnIndex
-                    && node instanceof Label
-                    && nodeRowIndex>0&& nodeRowIndex!=null) {
-                Label label = (Label) node;
+            if (nodeColumnIndex != null && nodeColumnIndex == columnIndex && node instanceof Label label && nodeRowIndex > 0) {
                 label.setAlignment(alignment);
             }
         }
@@ -312,8 +300,7 @@ public class SheetGridManager {
         for (Node node : sheetGridPane.getChildren()) {
             Integer nodeColumnIndex = GridPane.getColumnIndex(node);
             if (nodeColumnIndex != null && nodeColumnIndex == columnIndex) {
-                if (node instanceof Region) {
-                    Region region = (Region) node;
+                if (node instanceof Region region) {
                     region.setPrefWidth(width);
                     region.setMaxWidth(width);
                 }
@@ -342,8 +329,7 @@ public class SheetGridManager {
         for (Node node : sheetGridPane.getChildren()) {
             Integer nodeRowIndex = GridPane.getRowIndex(node);
             if (nodeRowIndex != null && nodeRowIndex == rowIndex) {
-                if (node instanceof Region) {
-                    Region region = (Region) node;
+                if (node instanceof Region region) {
                     region.setPrefHeight(height);
                     region.setMaxHeight(height);
                 }

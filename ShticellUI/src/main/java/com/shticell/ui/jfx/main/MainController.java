@@ -16,7 +16,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
@@ -94,7 +93,7 @@ public class MainController {
     private void initialize() {
         uiModel = new UIModel(chosenFileFullPathLabel, sheetTab,updateSelectedCellValueButton,sheetGridPane,currentCellLabel,selectedCellOriginalValueTextField,
                 currentCellVersionLabel,versionSelectorComponent, sortSheetButton,filterSheetButton);
-        gridManager = new SheetGridManager(sheetGridPane,uiModel,engine,this);
+        gridManager = new SheetGridManager(sheetGridPane,uiModel, this);
         chosenFileFullPathLabel.setId("file-path");
         selectedCell = new SimpleObjectProperty<>();
         selectedCell.addListener((observable, oldValue, newValue) -> {
