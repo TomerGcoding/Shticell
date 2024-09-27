@@ -150,7 +150,6 @@ public class SheetGridManager {
             sheetGridPane.add(label, col, 0);
         }
 
-        // Adding row headers (1, 2, 3, ...)
         for (int row = 1; row <= numRows; row++) {
             Label label = new Label(String.valueOf(row));
             label.setPrefHeight(rowHeight);
@@ -166,7 +165,6 @@ public class SheetGridManager {
     }
 
     private void addColumnsAndRowHeadersReadOnly(GridPane gridPane,int numColumns, int colWidth, int numRows, int rowHeight) {
-        // Adding column headers (A, B, C, ...)
         for (int col = 0; col <= numColumns; col++) {
             String colLabel = getColumnName(col);
             Label label = new Label("");
@@ -243,7 +241,7 @@ public class SheetGridManager {
     public String getColumnName(int index) {
         StringBuilder columnName = new StringBuilder();
         while (index > 0) {
-            index--; // Decrease index to make it 0-based
+            index--;
             columnName.insert(0, (char) ('A' + (index % 26)));
             index = index / 26;
         }
@@ -279,7 +277,6 @@ public class SheetGridManager {
             label.getStyleClass().removeAll("dependency-cell", "influence-cell","ranged-cell");
         }
     }
-
 
     public void setColumnAlignment(int columnIndex, Pos alignment) {
         for (Node node : sheetGridPane.getChildren()) {

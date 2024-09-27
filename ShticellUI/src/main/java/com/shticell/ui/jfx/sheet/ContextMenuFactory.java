@@ -91,15 +91,15 @@ public class ContextMenuFactory {
         MenuItem resetToDefault = new MenuItem("Reset Cell Styling");
 
         resetToDefault.setOnAction(e -> {
-            cellLabel.setTextFill(Color.BLACK);  // Reset text color to default (black)
-            cellLabel.setStyle("");  // Clear all styles
-            cellLabel.getStyleClass().clear();  // Clear any custom style classes
-            cellLabel.getStyleClass().addAll("cell");  // Add back the default label style class
+            cellLabel.setTextFill(Color.BLACK);
+            cellLabel.setStyle("");
+            cellLabel.getStyleClass().clear();
+            cellLabel.getStyleClass().addAll("cell");
         });
 
         changeTextColor.setOnAction(e -> {
             ColorPicker colorPicker = new ColorPicker();
-            colorPicker.setValue((Color) cellLabel.getTextFill()); // Default color, you can change this
+            colorPicker.setValue((Color) cellLabel.getTextFill());
 
             Dialog<Color> dialog = new Dialog<>();
             dialog.setTitle("Choose Text Color");
@@ -123,9 +123,7 @@ public class ContextMenuFactory {
                 return null;
             });
 
-            dialog.showAndWait().ifPresent(color -> {
-                cellLabel.setTextFill(color);
-            });
+            dialog.showAndWait().ifPresent(cellLabel::setTextFill);
         });
 
         changeCellBackgroundColor.setOnAction(e -> {
@@ -182,7 +180,7 @@ public class ContextMenuFactory {
                 }
             }
         }
-        return Color.WHITE; // Default color if no background color is set
+        return Color.WHITE;
     }
 
 }

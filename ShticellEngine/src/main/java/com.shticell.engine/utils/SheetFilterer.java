@@ -60,14 +60,17 @@ public class SheetFilterer {
         int startRow = rangeToFilter.get(0).get(0).getCoordinate().getRow();
 
         for (int i = 0; i < rangeToFilter.size(); i++) {
-            List<Cell> currentRow = i < filteredRows.size() ? filteredRows.get(i) : null;
+            List<Cell> currentRow = rangeToFilter.get(i); // Current row in original data
 
-            for (Cell cell : rangeToFilter.get(i)) {
+            boolean isRowFiltered = filteredRows.contains(currentRow);
+
+            for (Cell cell : currentRow) {
                 String newValue = "";
-                if (currentRow != null) {
-                    Cell filteredCell = getCellAtColumn(currentRow, cell.getCoordinate().getColumn());
-                    newValue = filteredCell.getOriginalValue();
+                if (isRowFiltered) {
+                    newValue = cell.getEffectiveValue().getValue().toString();
                 }
+
+
                 sheet = sheet.setCell(CoordinateFormatter.indexToCellId(startRow + i, cell.getCoordinate().getColumn()), newValue);
             }
         }

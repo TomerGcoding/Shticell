@@ -217,7 +217,6 @@ public class MainController {
                 uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
                 uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
 
-                // Update the labels of influenced cells
                 for (CellDTO influencedCell : updatedCell.getInfluencingOn()) {
                     String influencedCellId = influencedCell.getId();
                     uiModel.cellIdProperty(influencedCellId).setValue(influencedCell.getEffectiveValue().toString());
