@@ -78,35 +78,29 @@ public class SheetSorter {
 
     public SheetDTO sort() {
 
-        // Create a comparator for rows
         Comparator<List<Cell>> rowComparator = (row1, row2) -> {
             for (Integer column : columnsToSortBy) {
                 Cell cell1 = getCellAtColumn(row1, column);
-                cell1.calculateEffectiveValue();
                 Cell cell2 = getCellAtColumn(row2, column);
-                cell2.calculateEffectiveValue();
 
                 if (cell1.getEffectiveValue().getCellType() == CellType.NUMERIC
                         && cell2.getEffectiveValue().getCellType() == CellType.NUMERIC) {
-                    try {
                         double value1 = Double.parseDouble(cell1.getEffectiveValue().getValue().toString());
                         double value2 = Double.parseDouble(cell2.getEffectiveValue().getValue().toString());
                         int comparison = Double.compare(value1, value2);
                         if (comparison != 0) {
                             return comparison;
                         }
-                    } catch (NumberFormatException e) {
-                        // Handle parsing errors
-                    }
+
                 }
-                else if(cell1.getEffectiveValue().getCellType() == CellType.STRING) {
+                else if(cell1.getEffectiveValue().getCellType() != CellType.NUMERIC) {
                         if (cell2.getEffectiveValue().getCellType() == CellType.NUMERIC) {
                             return 1;
                         }else {
                             return 0;
                         }
                 }
-                else if (cell2.getEffectiveValue().getCellType() == CellType.STRING) {
+                else if (cell2.getEffectiveValue().getCellType() != CellType.NUMERIC) {
                         if (cell1.getEffectiveValue().getCellType() == CellType.NUMERIC) {
                             return -1;
                         }else {
@@ -117,11 +111,9 @@ public class SheetSorter {
             return 0;
         };
 
-        // Sort the rows
         List<List<Cell>> originalOrder = new ArrayList<>(rangeToSort);
         rangeToSort.sort(rowComparator);
 
-        // Swap the values for all cells in the rows
         for (int i = 0; i < rangeToSort.size(); i++) {
             List<Cell> originalRow = originalOrder.get(i);
             List<Cell> sortedRow = rangeToSort.get(i);
@@ -130,9 +122,9 @@ public class SheetSorter {
                 Cell originalCell = originalRow.get(j);
                 Cell sortedCell = sortedRow.get(j);
 
-                if(originalCell.getDependsOn().isEmpty()&&sortedCell.getDependsOn().isEmpty()) {
-                    this.sheet = sheet.setCell(originalCell.getId(), sortedCell.getOriginalValue());
-                }
+                //if(originalCell.getDependsOn().isEmpty()&&sortedCell.getDependsOn().isEmpty()) {
+                    this.sheet = sheet.setCell(originalCell.getId(), sortedCell.getEffectiveValue().getValue().toString());
+              //  }
             }
         }
 

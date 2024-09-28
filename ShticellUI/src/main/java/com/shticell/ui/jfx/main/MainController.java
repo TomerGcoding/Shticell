@@ -27,10 +27,7 @@ import javafx.util.Pair;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MainController {
 
@@ -370,9 +367,9 @@ public class MainController {
     }
 
     private void showFilterDialog() {
-        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        Dialog<Pair<String, List<String>>> dialog = new Dialog<>();
         dialog.setTitle("Filter Sheet");
-        dialog.setHeaderText("Enter filter range and select a column for filtering");
+        dialog.setHeaderText("Enter filter range and select values for filtering");
 
         ButtonType filterButtonType = new ButtonType("Filter", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(filterButtonType, ButtonType.CANCEL);
@@ -387,12 +384,11 @@ public class MainController {
         TextField columnsField = new TextField();
         columnsField.setPromptText("e.g., C");
 
-        // ComboBox for displaying unique values after selecting a column
-        ComboBox<String> uniqueValuesComboBox = new ComboBox<>();
-        uniqueValuesComboBox.setPromptText("Select a value");
-        uniqueValuesComboBox.setDisable(true); // Initially disabled
+        // Use a ListView to allow multiple selections
+        ListView<String> uniqueValuesListView = new ListView<>();
+        uniqueValuesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        uniqueValuesListView.setDisable(true);  // Initially disabled until values are loaded
 
-        // Label for filter condition
         Label filterLabel = new Label("Unique Values:");
 
         grid.add(new Label("Range:"), 0, 0);
@@ -400,18 +396,19 @@ public class MainController {
         grid.add(new Label("Column to filter by:"), 0, 1);
         grid.add(columnsField, 1, 1);
         grid.add(filterLabel, 0, 2);
-        grid.add(uniqueValuesComboBox, 1, 2);
+        grid.add(uniqueValuesListView, 1, 2);
 
         dialog.getDialogPane().setContent(grid);
 
+        // Listener for when the user enters a column name to filter by
         columnsField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.isEmpty()) {
                 try {
                     List<String> uniqueValues = engine.getUniqueColumnValues(newValue.trim());
 
-                    uniqueValuesComboBox.getItems().clear();
-                    uniqueValuesComboBox.getItems().addAll(uniqueValues);
-                    uniqueValuesComboBox.setDisable(false);
+                    uniqueValuesListView.getItems().clear();
+                    uniqueValuesListView.getItems().addAll(uniqueValues);
+                    uniqueValuesListView.setDisable(false);  // Enable the list view once values are loaded
 
                 } catch (Exception ex) {
                     showErrorAlert("Fetching Unique Values", "An error occurred while fetching unique values: " + ex.getMessage());
@@ -421,26 +418,28 @@ public class MainController {
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == filterButtonType) {
-                String selectedValue = uniqueValuesComboBox.getValue();
-                if (selectedValue != null) {
-                    return new Pair<>(rangeField.getText(), columnsField.getText() + ";" + selectedValue);
+                List<String> selectedValues = new ArrayList<>(uniqueValuesListView.getSelectionModel().getSelectedItems());
+                if (!selectedValues.isEmpty()) {
+                    return new Pair<>(rangeField.getText(), selectedValues);
                 }
             }
             return null;
         });
 
-        Optional<Pair<String, String>> result = dialog.showAndWait();
+        Optional<Pair<String, List<String>>> result = dialog.showAndWait();
 
         result.ifPresent(pair -> {
             try {
-                String[] filterParams = pair.getValue().split(";");
-                SheetDTO filteredSheet = engine.filterSheet(pair.getKey(), filterParams[0], filterParams[1]);
+                String range = pair.getKey();
+                List<String> selectedValues = pair.getValue();
+                SheetDTO filteredSheet = engine.filterSheet(range, columnsField.getText(), selectedValues);
                 showFilteredSheetDialog(filteredSheet);
             } catch (Exception ex) {
                 showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + ex.getMessage());
             }
         });
     }
+
 
 
     private void showFilteredSheetDialog(SheetDTO filteredSheet) {

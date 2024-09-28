@@ -259,7 +259,7 @@ public class SheetImpl implements Sheet, Serializable {
         List <String> values = new ArrayList<>();
         int column = CoordinateFormatter.cellIdToIndex(columnId + "1")[1];
         for (Cell cell : activeCells.values()) {
-            if (cell.getColumn() == column && !values.contains(cell.getEffectiveValue().getValue())) {
+            if (cell.getColumn() == column && !values.contains(cell.getEffectiveValue().getValue().toString())) {
                 values.add(cell.getEffectiveValue().getValue().toString());
             }
         }

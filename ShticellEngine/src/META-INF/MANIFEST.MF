@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: 
 Class-Path: lib\jaxb-ri-4.0.5\mod\angus-activation.jar
             lib\jaxb-ri-4.0.5\mod\jakarta.activation-api.jar
             lib\jaxb-ri-4.0.5\mod\jakarta.xml.bind-api.jar
@@ -7,5 +6,6 @@ Class-Path: lib\jaxb-ri-4.0.5\mod\angus-activation.jar
             lib\jaxb-ri-4.0.5\mod\jaxb-impl.jar
             lib\jaxb-ri-4.0.5\mod\jaxb-jxc.jar
             lib\jaxb-ri-4.0.5\mod\jaxb-xjc.jar
+
 
 

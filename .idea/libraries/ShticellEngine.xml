@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="ShticellEngine">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/out/artifacts/ShticellEngine/ShticellEngine.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
