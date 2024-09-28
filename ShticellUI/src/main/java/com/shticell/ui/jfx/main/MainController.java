@@ -261,7 +261,7 @@ public class MainController {
     private void createRangeController()  {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
         try{
-            ScrollPane rangeView = loader.load();
+            VBox rangeView = loader.load();
             mainBorderPane.setRight(rangeView);
             rangeController = loader.getController();
             rangeController.setEngine(engine);

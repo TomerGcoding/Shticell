@@ -198,10 +198,14 @@ public class SheetImpl implements Sheet, Serializable {
         if (rangeParts.length != 2) {
             throw new IllegalArgumentException("Invalid range format: " + cellsRange);
         }
-
-        Range range = new RangeImpl(name, rangeParts[0], rangeParts[1], this);
-        activeRanges.put(name, range);
-        return range;
+        try {
+            Range range = new RangeImpl(name, rangeParts[0], rangeParts[1], this);
+            activeRanges.put(name, range);
+            return range;
+        }
+        catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid coordinates: " + cellsRange);
+        }
     }
 
     public void addCell(Coordinate coordinate, Cell cell) {
@@ -266,4 +270,6 @@ public class SheetImpl implements Sheet, Serializable {
         System.out.println(values);
         return values;
     }
+
+
 }

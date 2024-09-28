@@ -12,19 +12,7 @@ import javafx.scene.layout.VBox;
 public class RangeController {
 
     @FXML
-    private Accordion activeRangeAccordion;
-
-    @FXML
-    private TitledPane activeRangesTitledPane;
-
-    @FXML
-    private Label daleteNameLabel;
-
-    @FXML
     private TextField deleteNameTextField;
-
-    @FXML
-    private Button deleteRangeBtn;
 
     @FXML
     private TextField insertNameTextField;
@@ -37,7 +25,7 @@ public class RangeController {
 
     private Engine engine;
 
-    private MainController mainController; // Reference to MainController
+    private MainController mainController;
 
     public void setEngine(Engine engine) {
         this.engine = engine;

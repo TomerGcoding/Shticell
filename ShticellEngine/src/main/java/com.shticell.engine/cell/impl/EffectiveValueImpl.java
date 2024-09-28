@@ -1,8 +1,6 @@
 package com.shticell.engine.cell.impl;
 
 import com.shticell.engine.cell.api.EffectiveValue;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -50,8 +48,7 @@ public class EffectiveValueImpl implements EffectiveValue, Serializable {
 
     @Override
     public <T> T extractValueWithExpectation(Class<T> type) {
-        if (type == Integer.class && cellType == CellType.NUMERIC && value instanceof Double) {
-            Double doubleValue = (Double) value;
+        if (type == Integer.class && cellType == CellType.NUMERIC && value instanceof Double doubleValue) {
             if (doubleValue % 1 == 0) {
                 return type.cast(doubleValue.intValue());  // Cast Double to Integer if it's effectively an integer
             }
