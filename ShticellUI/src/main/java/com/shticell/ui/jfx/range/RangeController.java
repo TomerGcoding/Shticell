@@ -90,8 +90,5 @@ void deleteRange(ActionEvent event) {
         }
     }
 
-    public void resetRanges() {
-        vboxInsideTitledPane.getChildren().clear();
-    }
 }
 

@@ -19,7 +19,6 @@ public class EqualsExpression implements Expression {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
 
-        // Check if the cell types are the same
         if (leftValue.getCellType().equals(rightValue.getCellType())) {
             if (leftValue.getValue().equals(rightValue.getValue())) {
                 return new EffectiveValueImpl(CellType.BOOLEAN, true);

@@ -166,7 +166,7 @@ public class ContextMenuFactory {
                 String existingTextColor = cellLabel.getTextFill() != null ? toHexString((Color) cellLabel.getTextFill()) : "#000000";
                 String textColorStyle = "-fx-text-fill: #" + existingTextColor + ";";
                 cellLabel.setStyle(backgroundColorStyle + textColorStyle);
-                cellLabel.getProperties().put("backgroundColor", newColor); // Save the chosen background color
+                cellLabel.getProperties().put("backgroundColor", newColor);
             });
         });
 

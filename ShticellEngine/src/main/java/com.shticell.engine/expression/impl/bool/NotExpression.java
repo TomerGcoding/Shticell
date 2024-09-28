@@ -14,7 +14,6 @@ public class NotExpression implements Expression {
     public EffectiveValue eval() {
         EffectiveValue value = expression.eval();
         try {
-            // Ensure the expression evaluates to a Boolean
             Boolean result = !value.extractValueWithExpectation(Boolean.class);
             return new EffectiveValueImpl(CellType.BOOLEAN, result);
         } catch (Exception e) {

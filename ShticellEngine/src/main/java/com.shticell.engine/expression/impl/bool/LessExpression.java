@@ -21,7 +21,6 @@ public class LessExpression implements Expression {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
 
-        // Check if the cell types are the same
         if (leftValue.getCellType()==NUMERIC && rightValue.getCellType()==NUMERIC) {
             if ((Double)leftValue.getValue() <= (Double)rightValue.getValue()) {
                 return new EffectiveValueImpl(CellType.BOOLEAN, true);

@@ -290,13 +290,12 @@ public class MainController {
     }
 
     private void initializeAnimationsCheckbox() {
-        animationsCheckbox.setSelected(false);  // Set to unchecked by default
+        animationsCheckbox.setSelected(false);
         animationsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             AnimationManager.setAnimationsEnabled(newValue);
             if (newValue) {
                 AnimationManager.animateShticellLabel(shticellLabel);
             } else {
-                // Reset the Shticell label
                 shticellLabel.setTextFill(Color.BLACK);
                 shticellLabel.setRotate(0);
             }
@@ -385,10 +384,9 @@ public class MainController {
         TextField columnsField = new TextField();
         columnsField.setPromptText("e.g., C");
 
-        // Use a ListView to allow multiple selections
         ListView<String> uniqueValuesListView = new ListView<>();
         uniqueValuesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        uniqueValuesListView.setDisable(true);  // Initially disabled until values are loaded
+        uniqueValuesListView.setDisable(true);
 
         Label filterLabel = new Label("Unique Values:");
 
@@ -401,7 +399,6 @@ public class MainController {
 
         dialog.getDialogPane().setContent(grid);
 
-        // Listener for when the user enters a column name to filter by
         columnsField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.isEmpty()) {
                 try {
@@ -409,7 +406,7 @@ public class MainController {
 
                     uniqueValuesListView.getItems().clear();
                     uniqueValuesListView.getItems().addAll(uniqueValues);
-                    uniqueValuesListView.setDisable(false);  // Enable the list view once values are loaded
+                    uniqueValuesListView.setDisable(false);
 
                 } catch (Exception ex) {
                     showErrorAlert("Fetching Unique Values", "An error occurred while fetching unique values: " + ex.getMessage());

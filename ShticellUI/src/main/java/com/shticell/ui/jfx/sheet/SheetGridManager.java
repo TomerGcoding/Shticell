@@ -51,9 +51,6 @@ public class SheetGridManager {
         addColumnsAndRowHeaders(numColumns, colWidth, numRows, rowHeight);
         uiModel.initializePropertiesForEachCell(sheetGridPane);
         populateSheetGridPane(sheet, numColumns, colWidth, numRows, rowHeight);
-//        sheetGridPane.setMinSize(GridPane.USE_COMPUTED_SIZE, GridPane.USE_COMPUTED_SIZE);
-//        sheetGridPane.setPrefSize(numColumns * colWidth, numRows * rowHeight);
-
         ScrollPane scrollPane = new ScrollPane(sheetGridPane);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
@@ -86,7 +83,7 @@ public class SheetGridManager {
     private void addColumnAndRowConstraints(int numColumns, int colWidth, int numRows, int rowHeight) {
         for (int i = 0; i <= numColumns; i++) {
             ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPrefWidth(colWidth); // width of each column
+            colConst.setPrefWidth(colWidth);
             sheetGridPane.getColumnConstraints().add(colConst);
         }
 
@@ -114,7 +111,6 @@ public class SheetGridManager {
     }
 
     private void addColumnsAndRowHeaders(int numColumns, int colWidth, int numRows, int rowHeight) {
-        // Adding column headers (A, B, C, ...)
         for (int col = 0; col <= numColumns; col++) {
             String colLabel = getColumnName(col);
             Label label = new Label("");
@@ -141,7 +137,7 @@ public class SheetGridManager {
                 ContextMenu contextMenu = contextMenuFactory.createRowContextMenu(rowIndex);
                 contextMenu.show(label, event.getScreenX(), event.getScreenY());
             });
-            sheetGridPane.add(label, 0, row); // Adding to the first column (column 0)
+            sheetGridPane.add(label, 0, row);
         }
     }
 
@@ -271,20 +267,16 @@ public class SheetGridManager {
     }
 
     public void setColumnWidth(int columnIndex, double width) {
-        // Ensure the column constraints list is large enough
         while (sheetGridPane.getColumnConstraints().size() <= columnIndex) {
             sheetGridPane.getColumnConstraints().add(new ColumnConstraints());
         }
 
-        // Get the constraint for the specific column
         ColumnConstraints columnConstraints = sheetGridPane.getColumnConstraints().get(columnIndex);
 
-        // Set the width
         columnConstraints.setPrefWidth(width);
         columnConstraints.setMinWidth(width);
         columnConstraints.setMaxWidth(width);
 
-        // Update the width of all cells in this column
         for (Node node : sheetGridPane.getChildren()) {
             Integer nodeColumnIndex = GridPane.getColumnIndex(node);
             if (nodeColumnIndex != null && nodeColumnIndex == columnIndex) {
@@ -334,7 +326,7 @@ public class SheetGridManager {
     public void colorRangeCells(List<String> rangeCellIds)   {
         resetCellBorders();
         for (String cellId : rangeCellIds) {
-            Label cellLabel = cellIDtoLabel.get(cellId);  // Get the label by its cell ID
+            Label cellLabel = cellIDtoLabel.get(cellId);
             if (cellLabel != null) {
                 cellLabel.getStyleClass().add("ranged-cell");
                 AnimationManager.animateCellSelection(cellLabel);
