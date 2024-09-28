@@ -30,7 +30,7 @@ public class SheetGridManager {
 
     public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, MainController mainController) {
         this.sheetGridPane = sheetGridPane;
-        this.activeStyleSheet = "sheet4.css";
+        this.activeStyleSheet = "sheet1.css";
         this.sheetGridPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource(activeStyleSheet)).toExternalForm());
         this.uiModel = uiModel;
         this.cellIDtoLabel = new HashMap<>();
@@ -51,9 +51,8 @@ public class SheetGridManager {
         addColumnsAndRowHeaders(numColumns, colWidth, numRows, rowHeight);
         uiModel.initializePropertiesForEachCell(sheetGridPane);
         populateSheetGridPane(sheet, numColumns, colWidth, numRows, rowHeight);
-        sheetGridPane.setMinSize(GridPane.USE_COMPUTED_SIZE, GridPane.USE_COMPUTED_SIZE);
-        sheetGridPane.setPrefSize(numColumns * colWidth, numRows * rowHeight);
-      //  sheetGridPane.setMaxSize(GridPane.USE_MAX_SIZE, GridPane.USE_COMPUTED_SIZE);
+//        sheetGridPane.setMinSize(GridPane.USE_COMPUTED_SIZE, GridPane.USE_COMPUTED_SIZE);
+//        sheetGridPane.setPrefSize(numColumns * colWidth, numRows * rowHeight);
 
         ScrollPane scrollPane = new ScrollPane(sheetGridPane);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);

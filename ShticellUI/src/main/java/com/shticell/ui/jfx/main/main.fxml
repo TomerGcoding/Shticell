@@ -19,7 +19,10 @@
 
 <ScrollPane fitToHeight="true" fitToWidth="true" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
    <content>
-      <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="500.0" prefHeight="563.0" stylesheets="@main4.css">
+      <BorderPane fx:id="mainBorderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="500.0" prefHeight="563.0" stylesheets="@main1.css">
+         <right>
+          <fx:include source="/com/shticell/ui/jfx/range/range.fxml"/>
+            </right>
          <top>
              <VBox fx:id="topVBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="100.0" spacing="5.0" VBox.vgrow="NEVER">
                <children>

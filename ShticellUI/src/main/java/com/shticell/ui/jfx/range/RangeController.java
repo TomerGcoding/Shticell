@@ -56,6 +56,8 @@ public class RangeController {
             Label newLabel = new Label(rangeDTO.getName());
             vboxInsideTitledPane.getChildren().add(newLabel);
             newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(rangeDTO.getCellsIdInRange()));
+            insertNameTextField.clear();
+            insertRangeTextField.clear();
         }
       catch (Exception e){
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -81,6 +83,7 @@ void deleteRange(ActionEvent event) {
                 }
             }
         }
+        deleteNameTextField.clear();
     } catch (Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -97,6 +100,10 @@ void deleteRange(ActionEvent event) {
             vboxInsideTitledPane.getChildren().add(newLabel);
             newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(range.getCellsIdInRange()));
         }
+    }
+
+    public void resetRanges() {
+        vboxInsideTitledPane.getChildren().clear();
     }
 }
 

@@ -76,7 +76,7 @@ public class MainController {
 
     private UIModel uiModel;
 
-    private GridPane sheetGridPane = new GridPane();
+    private GridPane sheetGridPane  = new GridPane();;
 
     private SheetGridManager gridManager;
 
@@ -103,7 +103,7 @@ public class MainController {
         });
         versionSelectorComponentController.setEngine(engine);
         versionSelectorComponentController.setSheetGridManager(gridManager);
-        changeStyleComboBox.getItems().addAll(1,2,3,4);
+        changeStyleComboBox.getItems().addAll(1,2,3);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null) {
                 applyStyles(newValue);
@@ -133,16 +133,16 @@ public class MainController {
                 protected SheetDTO call() throws Exception {
                     updateMessage("Fetching file...");
                     updateProgress(0.2, 1);
-                    Thread.sleep(1000); // Simulating some work
+                    Thread.sleep(1000);
 
                     updateMessage("Loading sheet data...");
                     updateProgress(0.6, 1);
                     SheetDTO sheetDTO = engine.loadSheetFile(file.getAbsolutePath());
-                    Thread.sleep(1000); // Simulating some work
+                    Thread.sleep(1000);// Simulating some work
 
                     updateMessage("Creating sheet grid...");
                     updateProgress(0.8, 1);
-                    Thread.sleep(1000); // Simulating some work
+                    Thread.sleep(1000);
 
                     updateMessage("Sheet loaded successfully!");
                     updateProgress(1, 1);
@@ -258,9 +258,9 @@ public class MainController {
     }
 
 
-    private void createRangeController() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+    private void createRangeController()  {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+        try{
             ScrollPane rangeView = loader.load();
             mainBorderPane.setRight(rangeView);
             rangeController = loader.getController();
@@ -269,6 +269,7 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     public void colorRangeCells(List<String> rangeCellIds) {

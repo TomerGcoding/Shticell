@@ -42,7 +42,10 @@ public class EffectiveValueImpl implements EffectiveValue, Serializable {
 
     @Override
     public String toString() {
-        return value.toString();
+        if (cellType == cellType.BOOLEAN) {
+            return value.toString().toUpperCase();
+        }
+        else return value.toString();
     }
 
     @Override

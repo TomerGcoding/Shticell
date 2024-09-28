@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 
-public class MainApp extends Application {
+public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -17,8 +17,10 @@ public class MainApp extends Application {
         load.getStyleClass().add("shticell");
         Scene scene = new Scene(load);
         primaryStage.setScene(scene);
+        primaryStage.setWidth(1000);
+        primaryStage.setHeight(800);
         primaryStage.setMinWidth(600);
-        primaryStage.setMinHeight(400);
+        primaryStage.setMinHeight(600);
         primaryStage.show();
     }
 
