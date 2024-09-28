@@ -1,2 +1,11 @@
 Manifest-Version: 1.0
-Class-Path: lib/angus-activation.jar lib/jakarta.activation-api.jar lib/jakarta.xml.bind-api.jar lib/jaxb-core.jar lib/jaxb-impl.jar lib/javafx-controls.jar lib/javafx-fxml.jar lib/javafx-base.jar
+Class-Path: lib\jaxb-ri-4.0.5\mod\angus-activation.jar
+            lib\jaxb-ri-4.0.5\mod\jakarta.activation-api.jar
+            lib\jaxb-ri-4.0.5\mod\jakarta.xml.bind-api.jar
+            lib\jaxb-ri-4.0.5\mod\jaxb-core.jar
+            lib\jaxb-ri-4.0.5\mod\jaxb-impl.jar
+            lib\jaxb-ri-4.0.5\mod\jaxb-jxc.jar
+            lib\jaxb-ri-4.0.5\mod\jaxb-xjc.jar
+
+
+
