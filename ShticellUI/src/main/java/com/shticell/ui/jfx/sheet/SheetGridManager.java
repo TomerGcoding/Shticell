@@ -62,15 +62,6 @@ public class SheetGridManager {
         scrollPane.setFitToWidth(true);
         sheetGridPane.prefWidthProperty().bind(scrollPane.widthProperty().subtract(0));
         sheetGridPane.prefHeightProperty().bind(scrollPane.heightProperty().subtract(0));
-//        scrollPane.setOnScroll(event -> {
-//            if (scrollPane.isHover()) {
-//                double deltaX = event.getDeltaX() / scrollPane.getContent().getBoundsInLocal().getWidth();
-//                double deltaY = event.getDeltaY() / scrollPane.getContent().getBoundsInLocal().getHeight();
-//                scrollPane.setHvalue(scrollPane.getHvalue() - deltaX);
-//                scrollPane.setVvalue(scrollPane.getVvalue() - deltaY);
-//                event.consume();
-//            }
-//        });
         mainController.getMainBorderPane().setCenter(scrollPane);
         AnimationManager.animateSheetPresentation(scrollPane);
     }
@@ -94,7 +85,6 @@ public class SheetGridManager {
 
 
     private void addColumnAndRowConstraints(int numColumns, int colWidth, int numRows, int rowHeight) {
-        // Constraints for columns and rows
         for (int i = 0; i <= numColumns; i++) {
             ColumnConstraints colConst = new ColumnConstraints();
             colConst.setPrefWidth(colWidth); // width of each column
@@ -110,16 +100,15 @@ public class SheetGridManager {
     }
 
     private void addColumnAndRowConstraintsReadOnly(GridPane gridPane,int numColumns, int colWidth, int numRows, int rowHeight) {
-        // Constraints for columns and rows
         for (int i = 0; i <= numColumns; i++) {
             ColumnConstraints colConst = new ColumnConstraints();
-            colConst.setPrefWidth(colWidth); // width of each column
+            colConst.setPrefWidth(colWidth);
             gridPane.getColumnConstraints().add(colConst);
         }
 
         for (int i = 0; i <= numRows; i++) {
             RowConstraints rowConst = new RowConstraints();
-            rowConst.setPrefHeight(rowHeight); // height of each row
+            rowConst.setPrefHeight(rowHeight);
             gridPane.getRowConstraints().add(rowConst);
         }
         gridPane.getColumnConstraints().getFirst().setPrefWidth(20);
@@ -307,25 +296,20 @@ public class SheetGridManager {
             }
         }
 
-        // Refresh the layout
         sheetGridPane.requestLayout();
     }
 
     public void setRowHeight(int rowIndex, double height) {
-        // Ensure the row constraints list is large enough
         while (sheetGridPane.getRowConstraints().size() <= rowIndex) {
             sheetGridPane.getRowConstraints().add(new RowConstraints());
         }
 
-        // Get the constraint for the specific row
         RowConstraints rowConstraints = sheetGridPane.getRowConstraints().get(rowIndex);
 
-        // Set the height
         rowConstraints.setPrefHeight(height);
         rowConstraints.setMinHeight(height);
         rowConstraints.setMaxHeight(height);
 
-        // Update the height of all cells in this row
         for (Node node : sheetGridPane.getChildren()) {
             Integer nodeRowIndex = GridPane.getRowIndex(node);
             if (nodeRowIndex != null && nodeRowIndex == rowIndex) {
@@ -336,7 +320,6 @@ public class SheetGridManager {
             }
         }
 
-        // Refresh the layout
         sheetGridPane.requestLayout();
     }
 

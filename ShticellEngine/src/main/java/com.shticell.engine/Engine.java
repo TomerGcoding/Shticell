@@ -34,6 +34,7 @@ public interface Engine {
 
     SheetDTO sortSheet(String rangeToSort,String columnsToSortBy);
 
-    SheetDTO filterSheet(String rangeToFilter,String columnsToFilterBy,String valuesToFilterBy);
+    SheetDTO filterSheet(String rangeToFilter,String columnsToFilterBy,List<String> valuesToFilterBy);
+
     List<String> getUniqueColumnValues(String columnId);
 }

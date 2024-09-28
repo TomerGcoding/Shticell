@@ -46,13 +46,13 @@ public class SheetFilterer {
         return rangeToFilterList;
     }
 
-    public SheetDTO filter(String filterValue) {
+    public SheetDTO filter(List<String> filterValues) {
         List<List<Cell>> filteredRows = new ArrayList<>();
 
         for (List<Cell> row : rangeToFilter) {
             Cell cellToFilter = getCellAtColumn(row, columnToFilterBy);
             cellToFilter.calculateEffectiveValue();
-            if (cellMatchesFilter(cellToFilter, filterValue)) {
+            if (cellMatchesFilter(cellToFilter, filterValues)) {
                 filteredRows.add(row);
             }
         }
@@ -85,7 +85,7 @@ public class SheetFilterer {
                 .orElse(new CellImpl(row.get(0).getCoordinate().getRow(), column, "", sheet.getVersion(), sheet));
     }
 
-    private boolean cellMatchesFilter(Cell cell, String filterValue) {
-        return cell.getEffectiveValue().getValue().toString().equalsIgnoreCase(filterValue);
+    private boolean cellMatchesFilter(Cell cell, List<String> filterValue) {
+        return filterValue.contains(cell.getEffectiveValue().getValue().toString());
     }
 }

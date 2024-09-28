@@ -142,7 +142,7 @@ public class EngineImpl implements Engine, Serializable {
     }
 
     @Override
-    public SheetDTO filterSheet(String rangeToFilter,String columnsToFilterBy,String valuesToFilterBy){
+    public SheetDTO filterSheet(String rangeToFilter,String columnsToFilterBy,List<String> valuesToFilterBy){
         if (sheet == null) {
             throw new IllegalStateException("No sheet is currently loaded.");
         }
