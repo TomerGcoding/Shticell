@@ -76,7 +76,7 @@ public class MainController {
 
     private UIModel uiModel;
 
-    private GridPane sheetGridPane = new GridPane();
+    private GridPane sheetGridPane  = new GridPane();;
 
     private SheetGridManager gridManager;
 
@@ -103,7 +103,7 @@ public class MainController {
         });
         versionSelectorComponentController.setEngine(engine);
         versionSelectorComponentController.setSheetGridManager(gridManager);
-        changeStyleComboBox.getItems().addAll(1,2,3,4);
+        changeStyleComboBox.getItems().addAll(1,2,3);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue != null) {
                 applyStyles(newValue);
@@ -133,16 +133,16 @@ public class MainController {
                 protected SheetDTO call() throws Exception {
                     updateMessage("Fetching file...");
                     updateProgress(0.2, 1);
-                    Thread.sleep(1000); // Simulating some work
+                    Thread.sleep(1000);
 
                     updateMessage("Loading sheet data...");
                     updateProgress(0.6, 1);
                     SheetDTO sheetDTO = engine.loadSheetFile(file.getAbsolutePath());
-                    Thread.sleep(1000); // Simulating some work
+                    Thread.sleep(1000);// Simulating some work
 
                     updateMessage("Creating sheet grid...");
                     updateProgress(0.8, 1);
-                    Thread.sleep(1000); // Simulating some work
+                    Thread.sleep(1000);
 
                     updateMessage("Sheet loaded successfully!");
                     updateProgress(1, 1);
@@ -258,10 +258,10 @@ public class MainController {
     }
 
 
-    private void createRangeController() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
-            ScrollPane rangeView = loader.load();
+    private void createRangeController()  {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+        try{
+            VBox rangeView = loader.load();
             mainBorderPane.setRight(rangeView);
             rangeController = loader.getController();
             rangeController.setEngine(engine);
@@ -269,6 +269,7 @@ public class MainController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     public void colorRangeCells(List<String> rangeCellIds) {
@@ -289,13 +290,12 @@ public class MainController {
     }
 
     private void initializeAnimationsCheckbox() {
-        animationsCheckbox.setSelected(false);  // Set to unchecked by default
+        animationsCheckbox.setSelected(false);
         animationsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             AnimationManager.setAnimationsEnabled(newValue);
             if (newValue) {
                 AnimationManager.animateShticellLabel(shticellLabel);
             } else {
-                // Reset the Shticell label
                 shticellLabel.setTextFill(Color.BLACK);
                 shticellLabel.setRotate(0);
             }
@@ -384,10 +384,9 @@ public class MainController {
         TextField columnsField = new TextField();
         columnsField.setPromptText("e.g., C");
 
-        // Use a ListView to allow multiple selections
         ListView<String> uniqueValuesListView = new ListView<>();
         uniqueValuesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        uniqueValuesListView.setDisable(true);  // Initially disabled until values are loaded
+        uniqueValuesListView.setDisable(true);
 
         Label filterLabel = new Label("Unique Values:");
 
@@ -400,7 +399,6 @@ public class MainController {
 
         dialog.getDialogPane().setContent(grid);
 
-        // Listener for when the user enters a column name to filter by
         columnsField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.isEmpty()) {
                 try {
@@ -408,7 +406,7 @@ public class MainController {
 
                     uniqueValuesListView.getItems().clear();
                     uniqueValuesListView.getItems().addAll(uniqueValues);
-                    uniqueValuesListView.setDisable(false);  // Enable the list view once values are loaded
+                    uniqueValuesListView.setDisable(false);
 
                 } catch (Exception ex) {
                     showErrorAlert("Fetching Unique Values", "An error occurred while fetching unique values: " + ex.getMessage());

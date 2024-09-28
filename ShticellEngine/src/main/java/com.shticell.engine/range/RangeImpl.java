@@ -8,6 +8,7 @@ import com.shticell.engine.sheet.api.Sheet;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.sheet.coordinate.CoordinateFactory;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.engine.sheet.impl.SheetProperties;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,6 +39,11 @@ public class RangeImpl implements Range, Serializable {
         int endRow = Math.max(startIndex[0], endIndex[0]);
         int startCol = Math.min(startIndex[1], endIndex[1]);
         int endCol = Math.max(startIndex[1], endIndex[1]);
+
+        if (!sheet.getProperties().isCoordinateLegal(startRow, startCol) ||
+                !sheet.getProperties().isCoordinateLegal(endRow, endCol)) {
+            throw new IllegalArgumentException();
+        }
 
         for (int row = startRow; row <= endRow; row++) {
             for (int col = startCol; col <= endCol; col++) {

@@ -15,7 +15,6 @@ public class AndExpression implements Expression {
         EffectiveValue leftValue = left.eval();
         EffectiveValue rightValue = right.eval();
         try {
-            // Ensure the expressions evaluate to Booleans
             Boolean result = leftValue.extractValueWithExpectation(Boolean.class) && rightValue.extractValueWithExpectation(Boolean.class);
             return new EffectiveValueImpl(CellType.BOOLEAN, result);
         } catch (Exception e) {

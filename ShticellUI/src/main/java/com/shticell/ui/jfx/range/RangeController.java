@@ -12,19 +12,7 @@ import javafx.scene.layout.VBox;
 public class RangeController {
 
     @FXML
-    private Accordion activeRangeAccordion;
-
-    @FXML
-    private TitledPane activeRangesTitledPane;
-
-    @FXML
-    private Label daleteNameLabel;
-
-    @FXML
     private TextField deleteNameTextField;
-
-    @FXML
-    private Button deleteRangeBtn;
 
     @FXML
     private TextField insertNameTextField;
@@ -37,7 +25,7 @@ public class RangeController {
 
     private Engine engine;
 
-    private MainController mainController; // Reference to MainController
+    private MainController mainController;
 
     public void setEngine(Engine engine) {
         this.engine = engine;
@@ -56,6 +44,8 @@ public class RangeController {
             Label newLabel = new Label(rangeDTO.getName());
             vboxInsideTitledPane.getChildren().add(newLabel);
             newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(rangeDTO.getCellsIdInRange()));
+            insertNameTextField.clear();
+            insertRangeTextField.clear();
         }
       catch (Exception e){
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -81,6 +71,7 @@ void deleteRange(ActionEvent event) {
                 }
             }
         }
+        deleteNameTextField.clear();
     } catch (Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
@@ -98,5 +89,6 @@ void deleteRange(ActionEvent event) {
             newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(range.getCellsIdInRange()));
         }
     }
+
 }
 

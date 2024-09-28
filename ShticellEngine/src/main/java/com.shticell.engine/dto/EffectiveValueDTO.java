@@ -23,5 +23,10 @@ public class EffectiveValueDTO implements Serializable {
     }
 
     @Override
-    public String toString() {return value.toString();}
+    public String toString() {
+        if (cellType == CellType.BOOLEAN) {
+            return value.toString().toUpperCase();
+        }
+        else return value.toString();
+    }
 }

@@ -1,8 +1,137 @@
+.root {
+    -fx-background-color: #f0f4f8;
+    -fx-font-family: "Arial", sans-serif;
+}
 
+.label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333;
+}
 
-#file-path {
-    -fx-text-fill: blue;
-    -fx-font-family: "Arial";
-    -fx-font-size: 14px;
+#shticellLabel {
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
+    -fx-text-fill: #4a90e2;
+    -fx-effect: dropshadow(gaussian, rgba(74,144,226,0.4), 5, 0, 1, 1);
+}
+
+.combo-box {
+    -fx-background-color: #fff;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+
+}
+
+.combo-box:focused {
+    -fx-border-color: #4a90e2;
+    -fx-background-color: #f0faff;
+}
+
+.button {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 5 12;
+    -fx-font-size: 12px;
+}
+
+.button:hover {
+    -fx-background-color: #357ab7;
+}
+
+.button:disabled {
+    -fx-background-color: #ccc;
+    -fx-text-fill: #777;
+}
+
+#updateSelectedCellValueButton {
+    -fx-background-color: #5bc236;
+}
+
+#updateSelectedCellValueButton:disabled {
+    -fx-background-color: #b5e0a0;
+}
+
+
+.tab-pane {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-tab-max-width: 150;
+    -fx-tab-min-height: 30;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #e9f3ff;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+}
+
+/* TextFields */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+
+}
+
+.text-field:focused {
+    -fx-border-color: #4a90e2;
+}
+
+.progress-bar {
+    -fx-accent: #4a90e2;
+}
+
+.progress-bar:indeterminate {
+    -fx-accent: #4a90e2;
+}
+
+.progress-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #4a90e2;
+}
+
+.check-box {
+    -fx-text-fill: #333;
+}
+
+.hbox {
+    -fx-spacing: 10;
+}
+
+.vbox {
+    -fx-spacing: 10;
+}
+
+#sortSheetButton, #filterSheetButton {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-font-size: 12px;
+}
+
+#sortSheetButton:hover, #filterSheetButton:hover {
+    -fx-background-color: #357ab7;
+}
+
+.grid-pane .cell {
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-alignment: center;
+    -fx-padding: 4;
+    -fx-font-size: 11px;
+}
+
+.grid-pane .header {
+    -fx-background-color: #e9f3ff;
+    -fx-font-weight: bold;
+    -fx-border-color: #4a90e2;
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-font-size: 12px;
+
 }

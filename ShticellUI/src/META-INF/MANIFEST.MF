@@ -1,12 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: com.shticell.ui.Main
-Class-Path: ShticellEngine.jar
-            lib\javafx-sdk-22.0.2\lib\javafx.base.jar
-            lib\javafx-sdk-22.0.2\lib\javafx.controls.jar
-            lib\javafx-sdk-22.0.2\lib\javafx.fxml.jar
-            lib\javafx-sdk-22.0.2\lib\javafx.graphics.jar
-            lib\javafx-sdk-22.0.2\lib\javafx.swing.jar
-            lib\javafx-sdk-22.0.2\lib\javafx.web.jar
-            lib\javafx-sdk-22.0.2\lib\javafx-swt.jar
+
 
 

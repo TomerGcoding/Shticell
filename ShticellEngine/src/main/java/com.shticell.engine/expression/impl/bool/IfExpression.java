@@ -19,15 +19,12 @@ public class IfExpression implements Expression {
 
     @Override
     public EffectiveValue eval() {
-        // Evaluate the condition
         EffectiveValue conditionValue = condition.eval();
 
-        // Check if the condition is a Boolean
         if (conditionValue.getCellType() != CellType.BOOLEAN) {
             return new EffectiveValueImpl(CellType.UNKNOWN, "!UNDEFINED!");
         }
 
-        // Determine the outcome based on the condition
         boolean conditionResult = (Boolean) conditionValue.getValue();
         EffectiveValue result;
 
@@ -37,7 +34,6 @@ public class IfExpression implements Expression {
             result = elseExpression.eval();
         }
 
-        // Ensure both expressions return the same type
         if (!result.getCellType().equals(result.getCellType())) {
             return new EffectiveValueImpl(CellType.UNKNOWN, "!UNDEFINED!");
         }
@@ -47,7 +43,6 @@ public class IfExpression implements Expression {
 
     @Override
     public CellType getFunctionResultType() {
-        // Return the result type of the thenExpression and elseExpression
         return thenExpression.getFunctionResultType();
     }
 
