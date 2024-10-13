@@ -80,7 +80,7 @@ public class MainController {
     private Button updateSelectedCellValueButton;
 
     private GridPane loginComponent;
-    private LoginController logicController;
+//    private LoginController logicController;
 
     private Engine engine = new EngineImpl();
 
@@ -125,19 +125,19 @@ public class MainController {
         createRangeController();
 
     }
-    private void loadLoginPage() {
-        URL loginPageUrl = getClass().getResource(LOGIN_PAGE_FXML_RESOURCE_LOCATION);
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader();
-            fxmlLoader.setLocation(loginPageUrl);
-            loginComponent = fxmlLoader.load();
-            logicController = fxmlLoader.getController();
-            logicController.setMainController(this);
-            setMainPanelTo(loginComponent);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void loadLoginPage() {
+//        URL loginPageUrl = getClass().getResource(LOGIN_PAGE_FXML_RESOURCE_LOCATION);
+//        try {
+//            FXMLLoader fxmlLoader = new FXMLLoader();
+//            fxmlLoader.setLocation(loginPageUrl);
+//            loginComponent = fxmlLoader.load();
+//            logicController = fxmlLoader.getController();
+//            logicController.setMainController(this);
+//            setMainPanelTo(loginComponent);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
     private void setMainPanelTo(Parent pane) {
         mainBorderPane.getChildren().clear();
         mainBorderPane.getChildren().add(pane);
@@ -495,7 +495,7 @@ public class MainController {
         return mainBorderPane;
     }
 
-    public void updateHttpLine(String data)
+    public void updateHttpLine(String data){}
 
 }
 

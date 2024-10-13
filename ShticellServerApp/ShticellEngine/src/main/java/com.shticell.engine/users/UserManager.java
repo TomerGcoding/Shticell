@@ -9,6 +9,7 @@ public class UserManager {
     private final Set<String> usersSet;
 
     public UserManager() {
+        System.out.println("UserManager constructor called");
         usersSet = new HashSet<>();
     }
 

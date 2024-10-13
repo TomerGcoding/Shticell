@@ -18,17 +18,35 @@ public class ServletUtils {
     the actual fetch of them is remained un-synchronized for performance POV
      */
     private static final Object userManagerLock = new Object();
-    private static final Object chatManagerLock = new Object();
+   // private static final Object chatManagerLock = new Object();
 
     public static UserManager getUserManager(ServletContext servletContext) {
 
         synchronized (userManagerLock) {
+            // Check once inside the synchronized block
             if (servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME) == null) {
-                servletContext.setAttribute(USER_MANAGER_ATTRIBUTE_NAME, new UserManager());
+                try {
+                    System.out.println("Creating new UserManager");
+                    UserManager userManager = new UserManager();
+                    System.out.println("UserManager created");
+                    servletContext.setAttribute(USER_MANAGER_ATTRIBUTE_NAME, userManager);
+                    System.out.println("UserManager attribute set in ServletContext");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Failed to create UserManager");
+                    throw new RuntimeException("Failed to set UserManager attribute in ServletContext", e);
+                }
+                catch (Throwable t) {
+                    t.printStackTrace();
+                    System.out.println("A non-exception error occurred during UserManager creation");
+                    throw new RuntimeException("Non-exception error during UserManager creation", t);
+                }
             }
         }
+
         return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
     }
+
 
 //    public static SheetManager getSheetManager(ServletContext servletContext) {
 //        synchronized (chatManagerLock) {

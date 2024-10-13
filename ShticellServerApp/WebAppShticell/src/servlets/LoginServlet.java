@@ -13,16 +13,20 @@ import static constants.Constants.*;
 
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("LoginServlet: doGet");
         response.setContentType("text/plain;charset=UTF-8");
-
         String usernameFromSession = SessionUtils.getUsername(request);
+        System.out.println("LoginServlet: usernameFromSession: " + usernameFromSession);
         UserManager userManager = ServletUtils.getUserManager(getServletContext());
+        System.out.println("Im before the if");
 
-        if (usernameFromSession == null) { //user is not logged in yet
-
+        if (usernameFromSession == null) {
+            System.out.println("LoginServlet: usernameFromSession is null");
             String usernameFromParameter = request.getParameter(USERNAME);
+            System.out.println("LoginServlet: usernameFromParameter: " + usernameFromParameter);
             if (usernameFromParameter == null || usernameFromParameter.isEmpty()) {
                 //no username in session and no username in parameter - not standard situation. it's a conflict
 
@@ -32,18 +36,6 @@ public class LoginServlet extends HttpServlet {
                 //normalize the username value
                 usernameFromParameter = usernameFromParameter.trim();
 
-                /*
-                One can ask why not enclose all the synchronizations inside the userManager object ?
-                Well, the atomic action we need to perform here includes both the question (isUserExists) and (potentially) the insertion
-                of a new user (addUser). These two actions needs to be considered atomic, and synchronizing only each one of them, solely, is not enough.
-                (of course there are other more sophisticated and performable means for that (atomic objects etc) but these are not in our scope)
-
-                The synchronized is on this instance (the servlet).
-                As the servlet is singleton - it is promised that all threads will be synchronized on the very same instance (crucial here)
-
-                A better code would be to perform only as little and as necessary things we need here inside the synchronized block and avoid
-                do here other not related actions (such as response setup. this is shown here in that manner just to stress this issue
-                 */
                 synchronized (this) {
                     if (userManager.isUserExists(usernameFromParameter)) {
                         String errorMessage = "Username " + usernameFromParameter + " already exists. Please enter a different username.";

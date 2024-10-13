@@ -2,7 +2,7 @@ package com.shticell.ui.jfx.login;
 
 
 import com.shticell.ui.jfx.main.MainController;
-import chat.client.util.http.HttpClientUtil;
+//import chat.client.util.http.HttpClientUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -11,6 +11,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 
 public class LoginController {
 
@@ -20,7 +27,7 @@ public class LoginController {
     @FXML
     public Label errorMessageLabel;
 
-    private MainController MainController;
+    private MainController mainController;
 
     private final StringProperty errorMessageProperty = new SimpleStringProperty();
 
@@ -32,24 +39,67 @@ public class LoginController {
 //                        updateHttpStatusLine(line)));
     }
 
-
-
-    @FXML
-    private void userNameKeyTyped(KeyEvent event) {
-        errorMessageProperty.set("");
-    }
-
-    @FXML
-    private void quitButtonClicked(ActionEvent e) {
-        Platform.exit();
-    }
-
-    private void updateHttpStatusLine(String data) {
-        MainController.updateHttpLine(data);
-    }
-
-    public void setMainController(MainController MainController) {
-        this.MainController = MainController;
-    }
+//    @FXML
+//    private void loginButtonClicked(ActionEvent event) {
+//
+//        String userName = userNameTextField.getText();
+//        if (userName.isEmpty()) {
+//            errorMessageProperty.set("User name is empty. You can't login with empty user name");
+//            return;
+//        }
+//
+//        //noinspection ConstantConditions
+//        String finalUrl = HttpUrl
+//                .parse(Constants.LOGIN_PAGE)
+//                .newBuilder()
+//                .addQueryParameter("username", userName)
+//                .build()
+//                .toString();
+//
+//        updateHttpStatusLine("New request is launched for: " + finalUrl);
+//
+//        HttpClientUtil.runAsync(finalUrl, new Callback() {
+//
+//            @Override
+//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+//                Platform.runLater(() ->
+//                        errorMessageProperty.set("Something went wrong: " + e.getMessage())
+//                );
+//            }
+//
+//            @Override
+//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+//                if (response.code() != 200) {
+//                    String responseBody = response.body().string();
+//                    Platform.runLater(() ->
+//                            errorMessageProperty.set("Something went wrong: " + responseBody)
+//                    );
+//                } else {
+//                    Platform.runLater(() -> {
+//                        chatAppMainController.updateUserName(userName);
+//                        chatAppMainController.switchToChatRoom();
+//                    });
+//                }
+//            }
+//        });
+//    }
+//
+//    @FXML
+//    private void userNameKeyTyped(KeyEvent event) {
+//        errorMessageProperty.set("");
+//    }
+//
+//    @FXML
+//    private void quitButtonClicked(ActionEvent e) {
+//        Platform.exit();
+//    }
+//
+//    private void updateHttpStatusLine(String data) {
+//        chatAppMainController.updateHttpLine(data);
+//    }
+//
+//    public void setChatAppMainController(MainController MainController) {
+//        this.mainController = MainController;
+//    }
 }
 
