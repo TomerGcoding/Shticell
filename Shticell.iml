@@ -10,5 +10,6 @@
     <orderEntry type="library" name="JavaFX" level="project" />
     <orderEntry type="library" name="JAXB" level="project" />
     <orderEntry type="library" name="ShticellUI" level="project" />
+    <orderEntry type="module" module-name="ShticellEngine" />
   </component>
 </module>
