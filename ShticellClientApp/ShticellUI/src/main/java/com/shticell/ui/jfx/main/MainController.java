@@ -8,6 +8,8 @@ import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
 import com.shticell.ui.jfx.version.VersionController;
 import com.shticell.ui.jfx.range.RangeController;
+import static com.shticell.ui.jfx.utils.Constants.*;
+import com.shticell.ui.jfx.login.*;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -16,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.layout.BorderPane;
@@ -25,9 +28,13 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 
 
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
+
+//import static com.shticell.ui.jfx.utils.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
 
 public class MainController {
 
@@ -72,6 +79,9 @@ public class MainController {
     @FXML
     private Button updateSelectedCellValueButton;
 
+    private GridPane loginComponent;
+    private LoginController logicController;
+
     private Engine engine = new EngineImpl();
 
     private UIModel uiModel;
@@ -114,6 +124,27 @@ public class MainController {
         initializeFilterSheetButton();
         createRangeController();
 
+    }
+    private void loadLoginPage() {
+        URL loginPageUrl = getClass().getResource(LOGIN_PAGE_FXML_RESOURCE_LOCATION);
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(loginPageUrl);
+            loginComponent = fxmlLoader.load();
+            logicController = fxmlLoader.getController();
+            logicController.setMainController(this);
+            setMainPanelTo(loginComponent);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private void setMainPanelTo(Parent pane) {
+        mainBorderPane.getChildren().clear();
+        mainBorderPane.getChildren().add(pane);
+        AnchorPane.setBottomAnchor(pane, 1.0);
+        AnchorPane.setTopAnchor(pane, 1.0);
+        AnchorPane.setLeftAnchor(pane, 1.0);
+        AnchorPane.setRightAnchor(pane, 1.0);
     }
 
     @FXML
@@ -463,6 +494,9 @@ public class MainController {
     public BorderPane getMainBorderPane() {
         return mainBorderPane;
     }
+
+    public void updateHttpLine(String data)
+
 }
 
 

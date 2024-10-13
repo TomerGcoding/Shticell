@@ -1,6 +1,5 @@
 package com.shticell.ui.jfx.sheet;
 
-import com.shticell.ui.jfx.main.AnimationManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -8,7 +7,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 public class ContextMenuFactory {
-    private SheetGridManager gridManager;
+    private final SheetGridManager gridManager;
 
     public ContextMenuFactory(SheetGridManager gridManager) {
         this.gridManager = gridManager;
