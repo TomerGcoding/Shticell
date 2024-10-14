@@ -1,16 +1,80 @@
+.root {
+    -fx-background-color: #f0f4f8;
+    -fx-font-family: "Arial", sans-serif;
+}
 
-.error-label {
-    -fx-text-fill: RED;
-    -fx-font-weight: BOLD;
+.label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333;
+}
+
+.combo-box {
+    -fx-background-color: #fff;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+
+}
+
+.combo-box:focused {
+    -fx-border-color: #4a90e2;
+    -fx-background-color: #f0faff;
+}
+
+.button {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+    -fx-border-radius: 5;
+    -fx-padding: 5 12;
     -fx-font-size: 12px;
 }
 
-.main-action-button {
-    -fx-text-fill: GREEN;
-    -fx-font-size: 20px;
-    -fx-font-weight: BOLD;
+.button:hover {
+    -fx-background-color: #357ab7;
 }
 
-#quit-button {
-    -fx-text-fill: RED;
+.button:disabled {
+    -fx-background-color: #ccc;
+    -fx-text-fill: #777;
+}
+
+
+
+.tab-pane {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-tab-max-width: 150;
+    -fx-tab-min-height: 30;
+}
+
+.tab-pane .tab {
+    -fx-background-color: #e9f3ff;
+}
+
+.tab-pane .tab:selected {
+    -fx-background-color: #4a90e2;
+    -fx-text-fill: white;
+}
+
+/* TextFields */
+.text-field {
+    -fx-background-color: white;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5;
+
+}
+
+.text-field:focused {
+    -fx-border-color: #4a90e2;
+}
+
+
+.hbox {
+    -fx-spacing: 10;
+}
+
+.vbox {
+    -fx-spacing: 10;
+}
+
+
 }

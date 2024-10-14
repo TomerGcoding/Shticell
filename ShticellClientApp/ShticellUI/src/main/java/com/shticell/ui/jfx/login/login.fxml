@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="1.7976931348623157E308" spacing="3.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chat.client.component.users.UsersListController">
-    <children>
-        <Label fx:id="chatUsersLabel" text="Chat Users:">
-            <font>
-                <Font name="System Bold" size="16.0" />
-            </font>
-            <VBox.margin>
-                <Insets bottom="8.0" top="8.0" />
-            </VBox.margin></Label>
-        <ListView fx:id="usersListView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="200.0" minWidth="100.0" prefWidth="150.0">
-            <VBox.margin>
-                <Insets />
-            </VBox.margin></ListView>
-    </children>
-    <padding>
-        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-    </padding>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="502.0" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@login.css">
+   <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="193.0" text="Log In to Shticell">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+         <children>
+            <Label contentDisplay="CENTER" prefHeight="18.0" prefWidth="76.0" text="User Name" HBox.hgrow="ALWAYS">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+            </Label>
+            <TextField fx:id="userNameTextField" onKeyTyped="#userNameKeyTyped" />
+         </children>
+      </HBox>
+      <Button fx:id="logInBtn" mnemonicParsing="false" onAction="#loginButtonClicked" text="Log In" textAlignment="RIGHT">
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </Button>
+      <Label fx:id="errorMessageLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="531.0" style="-fx-text-fill: red;" styleClass="error-header" />
+   </children>
 </VBox>

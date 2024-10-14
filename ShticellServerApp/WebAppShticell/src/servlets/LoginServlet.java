@@ -19,12 +19,9 @@ public class LoginServlet extends HttpServlet {
         System.out.println("LoginServlet: doGet");
         response.setContentType("text/plain;charset=UTF-8");
         String usernameFromSession = SessionUtils.getUsername(request);
-        System.out.println("LoginServlet: usernameFromSession: " + usernameFromSession);
         UserManager userManager = ServletUtils.getUserManager(getServletContext());
-        System.out.println("Im before the if");
 
         if (usernameFromSession == null) {
-            System.out.println("LoginServlet: usernameFromSession is null");
             String usernameFromParameter = request.getParameter(USERNAME);
             System.out.println("LoginServlet: usernameFromParameter: " + usernameFromParameter);
             if (usernameFromParameter == null || usernameFromParameter.isEmpty()) {
@@ -54,12 +51,14 @@ public class LoginServlet extends HttpServlet {
 
                         //redirect the request to the chat room - in order to actually change the URL
                         System.out.println("On login, request URI is: " + request.getRequestURI());
+                        response.getWriter().print("User" + usernameFromSession + " logged in right now");
                         response.setStatus(HttpServletResponse.SC_OK);
                     }
                 }
             }
         } else {
             //user is already logged in
+            response.getWriter().print("User" + usernameFromSession + " is already logged in");
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }

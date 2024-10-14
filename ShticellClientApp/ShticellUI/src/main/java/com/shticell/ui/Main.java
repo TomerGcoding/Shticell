@@ -13,7 +13,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Shticell");
 
-        Parent load = FXMLLoader.load(getClass().getResource("jfx/main/main.fxml"));
+        Parent load = FXMLLoader.load(getClass().getResource("jfx/login/login.fxml"));
         load.getStyleClass().add("shticell");
         Scene scene = new Scene(load);
         primaryStage.setScene(scene);
