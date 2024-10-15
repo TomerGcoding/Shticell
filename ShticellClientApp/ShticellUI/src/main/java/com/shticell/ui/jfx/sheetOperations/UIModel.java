@@ -1,4 +1,4 @@
-package com.shticell.ui.jfx.main;
+package com.shticell.ui.jfx.sheetOperations;
 
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import javafx.beans.property.*;

@@ -3,9 +3,9 @@ package com.shticell.ui.jfx.sheet;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
-import com.shticell.ui.jfx.main.AnimationManager;
-import com.shticell.ui.jfx.main.MainController;
-import com.shticell.ui.jfx.main.UIModel;
+import com.shticell.ui.jfx.sheetOperations.AnimationManager;
+import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
+import com.shticell.ui.jfx.sheetOperations.UIModel;
 import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -21,14 +21,14 @@ import java.util.Objects;
 
 public class SheetGridManager {
 
-    private final MainController mainController;
+    private final SheetOperationController mainController;
     private final ContextMenuFactory contextMenuFactory;
     private final GridPane sheetGridPane;
     private final UIModel uiModel;
     private final Map<String, Label> cellIDtoLabel;
     private String activeStyleSheet;
 
-    public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, MainController mainController) {
+    public SheetGridManager(GridPane sheetGridPane, UIModel uiModel, SheetOperationController mainController) {
         this.sheetGridPane = sheetGridPane;
         this.activeStyleSheet = "sheet1.css";
         this.sheetGridPane.getStylesheets().add(Objects.requireNonNull(getClass().getResource(activeStyleSheet)).toExternalForm());

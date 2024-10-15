@@ -1,4 +1,4 @@
-package com.shticell.ui.jfx.main;
+package com.shticell.ui.jfx.sheetOperations;
 
 import javafx.animation.*;
 import javafx.scene.Node;

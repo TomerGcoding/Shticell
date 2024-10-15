@@ -3,7 +3,7 @@ package com.shticell.ui.jfx.range;
 import com.shticell.engine.Engine;
 import com.shticell.engine.dto.RangeDTO;
 import com.shticell.engine.dto.SheetDTO;
-import com.shticell.ui.jfx.main.MainController;
+import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -25,13 +25,13 @@ public class RangeController {
 
     private Engine engine;
 
-    private MainController mainController;
+    private SheetOperationController mainController;
 
     public void setEngine(Engine engine) {
         this.engine = engine;
     }
 
-    public void setMainController(MainController mainController) {
+    public void setMainController(SheetOperationController mainController) {
         this.mainController = mainController;
     }
 
