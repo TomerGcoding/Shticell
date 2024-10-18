@@ -1,6 +1,8 @@
 package utils;
 
 
+import com.shticell.engine.Engine;
+import com.shticell.engine.EngineImpl;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 //import com.shticell.engine.chat.ChatManager;
@@ -10,15 +12,15 @@ import static constants.Constants.INT_PARAMETER_ERROR;
 
 public class ServletUtils {
 
-    private static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
-    private static final String CHAT_MANAGER_ATTRIBUTE_NAME = "chatManager";
+    public static final String USER_MANAGER_ATTRIBUTE_NAME = "userManager";
+    public static final String ENGINE_ATTRIBUTE_NAME = "engine";
 
     /*
     Note how the synchronization is done only on the question and\or creation of the relevant managers and once they exists -
     the actual fetch of them is remained un-synchronized for performance POV
      */
     private static final Object userManagerLock = new Object();
-   // private static final Object chatManagerLock = new Object();
+    private static final Object engineLock = new Object();
 
     public static UserManager getUserManager(ServletContext servletContext) {
 
@@ -45,6 +47,27 @@ public class ServletUtils {
         }
 
         return (UserManager) servletContext.getAttribute(USER_MANAGER_ATTRIBUTE_NAME);
+    }
+
+    public static EngineImpl getEngine(ServletContext servletContext) {
+        try {
+            synchronized (engineLock) {
+                if (servletContext.getAttribute(ENGINE_ATTRIBUTE_NAME) == null) {
+                    servletContext.setAttribute(ENGINE_ATTRIBUTE_NAME, new EngineImpl());
+                }
+            }
+            return (EngineImpl) servletContext.getAttribute(ENGINE_ATTRIBUTE_NAME);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to create Engine");
+            throw new RuntimeException("Failed to set Engine attribute in ServletContext", e);
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+            System.out.println("A non-exception error occurred during Engine creation");
+            throw new RuntimeException("Non-exception error during Engine creation", t);
+        }
     }
 
 

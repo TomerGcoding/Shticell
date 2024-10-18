@@ -1,15 +1,12 @@
 package com.shticell.ui.jfx.utils.http;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
+import okhttp3.*;
 
 import java.util.function.Consumer;
 
 public class HttpClientUtil {
     private final static SimpleCookieManager simpleCookieManager = new SimpleCookieManager();
-    private final static OkHttpClient HTTP_CLIENT =
+    public final static OkHttpClient HTTP_CLIENT =
             new OkHttpClient.Builder()
                     .cookieJar(simpleCookieManager)
                     .followRedirects(false)
@@ -32,6 +29,23 @@ public class HttpClientUtil {
 
         call.enqueue(callback);
     }
+
+    public static void runAsync(String finalUrl, Callback callback, RequestBody body) {
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .post(body)
+                .build();
+
+        Call call = HttpClientUtil.HTTP_CLIENT.newCall(request);
+
+        call.enqueue(callback);
+    }
+
+    public static OkHttpClient getHttpClient() {
+        return HTTP_CLIENT;
+    }
+
+
 
     public static void shutdown() {
         System.out.println("Shutting down HTTP CLIENT");

@@ -42,10 +42,10 @@ public class SheetGridManager {
         sheetGridPane.getChildren().clear();
         sheetGridPane.getColumnConstraints().clear();
         sheetGridPane.getRowConstraints().clear();
-        int numRows = sheet.getProperties().getNumRows();
-        int numColumns = sheet.getProperties().getNumCols();
-        int rowHeight = sheet.getProperties().getRowHeight();
-        int colWidth = sheet.getProperties().getColWidth();
+        int numRows = sheet.getNumRows();
+        int numColumns = sheet.getNumColumns();
+        int rowHeight = sheet.getRowHeight();
+        int colWidth = sheet.getColWidth();
 
         addColumnAndRowConstraints(numColumns, colWidth, numRows, rowHeight);
         addColumnsAndRowHeaders(numColumns, colWidth, numRows, rowHeight);
@@ -67,16 +67,14 @@ public class SheetGridManager {
         gridPane.getColumnConstraints().clear();
         gridPane.getRowConstraints().clear();
 
-        int numRows = sheet.getProperties().getNumRows();
-        int numColumns = sheet.getProperties().getNumCols();
-        int rowHeight = sheet.getProperties().getRowHeight();
-        int colWidth = sheet.getProperties().getColWidth();
+        int numRows = sheet.getNumRows();
+        int numColumns = sheet.getNumColumns();
+        int rowHeight = sheet.getRowHeight();
+        int colWidth = sheet.getColWidth();
 
         addColumnAndRowConstraintsReadOnly(gridPane,numColumns, colWidth, numRows, rowHeight);
         addColumnsAndRowHeadersReadOnly(gridPane,numColumns, colWidth, numRows, rowHeight);
         populateReadOnlySheetGridPane(gridPane,sheet, numColumns, colWidth, numRows, rowHeight);
-
-
     }
 
 

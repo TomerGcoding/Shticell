@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.util.List;
+
 public class RangeController {
 
     @FXML
@@ -55,6 +57,7 @@ public class RangeController {
         alert.showAndWait();
     }
 }
+
 
 @FXML
 void deleteRange(ActionEvent event) {

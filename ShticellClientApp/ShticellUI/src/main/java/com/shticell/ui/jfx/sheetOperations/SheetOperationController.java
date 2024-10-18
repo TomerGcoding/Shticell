@@ -2,11 +2,13 @@ package com.shticell.ui.jfx.sheetOperations;
 
 import com.shticell.engine.Engine;
 import com.shticell.engine.EngineImpl;
+import com.google.gson.Gson;
 import com.shticell.engine.dto.CellDTO;
 import com.shticell.engine.dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.ui.jfx.main.MainController;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
+import com.shticell.ui.jfx.utils.http.HttpClientUtil;
 import com.shticell.ui.jfx.version.VersionController;
 import com.shticell.ui.jfx.range.RangeController;
 import javafx.application.Platform;
@@ -17,22 +19,24 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
-
-
+import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
-//import static com.shticell.ui.jfx.utils.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
+import static com.shticell.ui.jfx.utils.Constants.*;
 
 public class SheetOperationController {
 
@@ -78,9 +82,6 @@ public class SheetOperationController {
     private Button updateSelectedCellValueButton;
 
     private GridPane loginComponent;
-//    private LoginController logicController;
-
-    private Engine engine = new EngineImpl();
 
     private UIModel uiModel;
 
@@ -95,6 +96,8 @@ public class SheetOperationController {
     private RangeController rangeController;
 
     private MainController mainController;
+
+    private Engine engine = new EngineImpl();
 
     @FXML
     private void initialize() {
@@ -111,7 +114,6 @@ public class SheetOperationController {
                 newValue.setId("selected-cell");
             }
         });
-        versionSelectorComponentController.setEngine(engine);
         versionSelectorComponentController.setSheetGridManager(gridManager);
         changeStyleComboBox.getItems().addAll(1,2,3);
         changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -123,9 +125,7 @@ public class SheetOperationController {
         initializeSortSheetButton();
         initializeFilterSheetButton();
         createRangeController();
-
     }
-
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
@@ -148,7 +148,7 @@ public class SheetOperationController {
 
                     updateMessage("Loading sheet data...");
                     updateProgress(0.6, 1);
-                    SheetDTO sheetDTO = engine.loadSheetFile(file.getAbsolutePath());
+                    SheetDTO sheetDTO = uploadFile(file);
                     Thread.sleep(1000);// Simulating some work
 
                     updateMessage("Creating sheet grid...");
@@ -170,12 +170,12 @@ public class SheetOperationController {
                     chosenFileFullPathLabel.setVisible(true);
                     uiModel.isLoadingProperty().set(false);
                     uiModel.fullPathProperty().setValue(file.getAbsolutePath());
-                    uiModel.nameProperty().setValue(engine.showSheet().getSheetName());
+                    uiModel.nameProperty().setValue(sheetDTO.getSheetName());
                     uiModel.selectedCellIdProperty().set(null);
                     uiModel.selectedCellOriginalValueProperty().set(null);
                     uiModel.selectedCellVersionProperty().set(0);
                     versionSelectorComponentController.clearAllVersions();
-                    versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
+                    versionSelectorComponentController.addVersion(sheetDTO.getCurrVersion());
                     uiModel.isFileSelectedProperty().setValue(true);
                     gridManager.createSheetGridPane(sheetDTO);
                     sheetTab.setContent(sheetGridPane);
@@ -192,7 +192,7 @@ public class SheetOperationController {
                     uiModel.isLoadingProperty().set(false);
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Error");
-                    alert.setHeaderText("Failed to load file:");
+                     alert.setHeaderText("Failed to load file:");
                     alert.setContentText(loadTask.getException().getMessage());
                     alert.showAndWait();
                 });
@@ -205,7 +205,6 @@ public class SheetOperationController {
             loadThread.start();
         }
     }
-
 
     @FXML
     public void updateSelectedCellValue(ActionEvent event) {
@@ -237,7 +236,6 @@ public class SheetOperationController {
             alert.showAndWait();
         }
     }
-  
     private boolean isCellChanged(String cellId){
         CellDTO cell = engine.getCellInfo(cellId);
         boolean changed = true;
@@ -252,52 +250,30 @@ public class SheetOperationController {
     }
 
 
-    public void addMouseClickEventForCell(String cellID, Label label) {
-        label.setOnMouseClicked(event->{
-            gridManager.resetCellBorders();
-            selectedCell.set(label);
-            int cellRow = CoordinateFormatter.cellIdToIndex(cellID)[0];
-            int cellCol = CoordinateFormatter.cellIdToIndex(cellID)[1];
-            SheetDTO sheetDTO = engine.showSheet();
-            CellDTO cell = sheetDTO.getCell(cellRow, cellCol);
-            uiModel.selectedCellOriginalValueProperty().set(cell == null?"": cell.getOriginalValue());
-            uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
-            uiModel.selectedCellIdProperty().set(cellID);
-            gridManager.highlightDependenciesAndInfluences(cell);
-            AnimationManager.animateCellSelection(label);
-        });
-    }
+    private SheetDTO uploadFile(File file) throws IOException {
+        RequestBody body =
+                new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("XMLFile", file.getName(), RequestBody.create(file, MediaType.parse("text/xml")))
+                        .build();
+
+        String finalUrl = HttpUrl
+                .parse(BASE_URL + UPLOAD_FILE_PAGE)
+                .newBuilder()
+                .toString();
+
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .post(body)
+                .build();
 
 
-    private void createRangeController()  {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
-        try{
-            VBox rangeView = loader.load();
-            mainBorderPane.setRight(rangeView);
-            rangeController = loader.getController();
-            rangeController.setEngine(engine);
-            rangeController.setMainController(this);
-        } catch (IOException e) {
-            e.printStackTrace();
+        try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+            return new Gson().fromJson(response.body().string(), SheetDTO.class);
         }
-
-    }
-
-    public void colorRangeCells(List<String> rangeCellIds) {
-        gridManager.colorRangeCells(rangeCellIds);
-    }
-
-    private void changeShticellStyle(int selectedStyle) {
-        applyStyles(selectedStyle);
-    }
-
-    private void applyStyles(int styleNumber) {
-        String mainStylesheet = String.format("main%d.css", styleNumber);
-
-        mainBorderPane.getStylesheets().clear();
-        mainBorderPane.getStylesheets().add(getClass().getResource(mainStylesheet).toExternalForm());
-
-        gridManager.setSheetStyle(styleNumber);
     }
 
     private void initializeAnimationsCheckbox() {
@@ -448,6 +424,9 @@ public class SheetOperationController {
             }
         });
     }
+    public void colorRangeCells(List<String> rangeCellIds) {
+        gridManager.colorRangeCells(rangeCellIds);
+    }
 
 
 
@@ -475,11 +454,47 @@ public class SheetOperationController {
         return mainBorderPane;
     }
 
-
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
 
+    private void createRangeController()  {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
+        try{
+            VBox rangeView = loader.load();
+            mainBorderPane.setRight(rangeView);
+            rangeController = loader.getController();
+            rangeController.setEngine(engine);
+            rangeController.setMainController(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void applyStyles(int styleNumber) {
+        String mainStylesheet = String.format("main%d.css", styleNumber);
+
+        mainBorderPane.getStylesheets().clear();
+        mainBorderPane.getStylesheets().add(getClass().getResource(mainStylesheet).toExternalForm());
+
+        gridManager.setSheetStyle(styleNumber);
+    }
+
+
+    public void addMouseClickEventForCell(String cellID, Label label) {
+        label.setOnMouseClicked(event->{
+            gridManager.resetCellBorders();
+            selectedCell.set(label);
+            int cellRow = CoordinateFormatter.cellIdToIndex(cellID)[0];
+            int cellCol = CoordinateFormatter.cellIdToIndex(cellID)[1];
+            SheetDTO sheetDTO = engine.showSheet();
+            CellDTO cell = sheetDTO.getCell(cellRow, cellCol);
+            uiModel.selectedCellOriginalValueProperty().set(cell == null?"": cell.getOriginalValue());
+            uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
+            uiModel.selectedCellIdProperty().set(cellID);
+            gridManager.highlightDependenciesAndInfluences(cell);
+            AnimationManager.animateCellSelection(label);
+        });
+    }
 }
-
-
