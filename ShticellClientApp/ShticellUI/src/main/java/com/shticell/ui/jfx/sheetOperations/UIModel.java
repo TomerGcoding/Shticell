@@ -58,6 +58,7 @@ public class UIModel {
             }
         }
     }
+
     public BooleanProperty isLoadingProperty() {
         return isLoading;
     }

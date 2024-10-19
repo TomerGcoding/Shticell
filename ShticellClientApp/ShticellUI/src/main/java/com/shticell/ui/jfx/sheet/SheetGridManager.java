@@ -327,4 +327,8 @@ public class SheetGridManager {
             }
         }
     }
+
+    public Map<String, Label> getCellIDtoLabel() {
+        return cellIDtoLabel;
+    }
 }

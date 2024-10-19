@@ -33,6 +33,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,11 +89,11 @@ public class SheetOperationController {
 
     private UIModel uiModel;
 
-    private GridPane sheetGridPane  = new GridPane();;
+    private GridPane sheetGridPane  = new GridPane();
 
     private SheetGridManager gridManager;
 
-    private Map<String,Label> cellIDtoLabel = new HashMap<>();
+    private Map<String,Label> cellIDtoLabel = null;
 
     private ObjectProperty<Label> selectedCell;
 
@@ -101,6 +102,8 @@ public class SheetOperationController {
     private MainController mainController;
 
     private Engine engine = new EngineImpl();
+
+    private SheetDTO sheet;
 
     @FXML
     private void initialize() {
@@ -209,6 +212,7 @@ public class SheetOperationController {
         }
     }
 
+
     @FXML
     public void updateSelectedCellValue(ActionEvent event) {
         try {
@@ -217,19 +221,51 @@ public class SheetOperationController {
             }
             if(isCellChanged(currentCellLabel.getText())) {
 
-                engine.setCell(currentCellLabel.getText(), selectedCellOriginalValueTextField.getText());
-                versionSelectorComponentController.addVersion(engine.showSheet().getCurrVersion());
-                SheetDTO updatedSheet = engine.showSheet();
-                CellDTO updatedCell = updatedSheet.getCell(CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[0],
-                        CoordinateFormatter.cellIdToIndex(currentCellLabel.getText())[1]);
+                String cellId = currentCellLabel.getText();
+                String cellValue = selectedCellOriginalValueTextField.getText();
+
+                String finalUrl = HttpUrl
+                        .parse(BASE_URL + UPDATE_CELL)
+                        .newBuilder()
+                        .addQueryParameter("cellId", cellId)
+                        .addQueryParameter("cellValue", cellValue)
+                        .build()
+                        .toString();
+
+                Request request = new Request.Builder()
+                        .url(finalUrl)
+                        .get()
+                        .build();
+
+
+                try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
+                    if (!response.isSuccessful()) {
+                        throw new IOException("Eror while update cell " + response);
+                    }
+
+                    String responseBody = response.body().string();
+
+                    System.out.println(responseBody);
+
+                    Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+                            .create();
+
+                    this.sheet = gson.fromJson(responseBody, SheetDTO.class);
+                }
+
+                versionSelectorComponentController.addVersion(sheet.getCurrVersion());
+                CellDTO updatedCell = sheet.getCell(cellId);
                 uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
                 uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
                 uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
 
                 for (String influencedCellId : updatedCell.getInfluencingOn()) {
-                    uiModel.cellIdProperty(influencedCellId).setValue(cellIDtoLabel.get(influencedCellId).getText());
+
+                    uiModel.cellIdProperty(influencedCellId).setValue(sheet.getCell(influencedCellId).getEffectiveValue().toString());
                 }
             }
+
         } catch (Exception e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -239,7 +275,7 @@ public class SheetOperationController {
         }
     }
     private boolean isCellChanged(String cellId){
-        CellDTO cell = engine.getCellInfo(cellId);
+        CellDTO cell = sheet.getCell(cellId);
         boolean changed = true;
         if(cell == null) {
             return true;
@@ -287,7 +323,8 @@ public class SheetOperationController {
 
 
             // Deserialize the response into SheetDTO
-            return gson.fromJson(responseBody, SheetDTO.class);
+            this.sheet = gson.fromJson(responseBody, SheetDTO.class);
+            return sheet;
         }
     }
 
@@ -503,13 +540,17 @@ public class SheetOperationController {
             selectedCell.set(label);
             int cellRow = CoordinateFormatter.cellIdToIndex(cellID)[0];
             int cellCol = CoordinateFormatter.cellIdToIndex(cellID)[1];
-            SheetDTO sheetDTO = engine.showSheet();
-            CellDTO cell = sheetDTO.getCell(cellRow, cellCol);
+            CellDTO cell = sheet.getCell(cellRow, cellCol);
             uiModel.selectedCellOriginalValueProperty().set(cell == null?"": cell.getOriginalValue());
             uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
             uiModel.selectedCellIdProperty().set(cellID);
             gridManager.highlightDependenciesAndInfluences(cell);
             AnimationManager.animateCellSelection(label);
         });
+    }
+
+    public void initCellIdToLabelMap(Map<String, Label> celltoLabel) {
+
+
     }
 }

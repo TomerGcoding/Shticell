@@ -9,4 +9,5 @@ public class Constants {
     public final static String LOGIN_PAGE = "/login";
     public final static String SHEET_OPERATION_PAGE = "/sheetOperation";
     public final static String UPLOAD_FILE_PAGE = "/loadSheet";
+    public final static String UPDATE_CELL = "/updateCell";
 }
