@@ -7,11 +7,13 @@
         <element id="directory" name="classes">
           <element id="module-output" name="WebAppShticell" />
           <element id="module-output" name="ShticellEngine" />
+          <element id="module-output" name="ShticellDTO" />
         </element>
         <element id="directory" name="lib">
           <element id="artifact" artifact-name="ShticellEngine" />
           <element id="library" level="project" name="JAXB" />
           <element id="library" level="project" name="GSON" />
+          <element id="artifact" artifact-name="ShticellDTO" />
         </element>
       </element>
     </root>

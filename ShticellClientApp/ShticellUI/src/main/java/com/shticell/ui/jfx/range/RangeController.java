@@ -1,15 +1,13 @@
 package com.shticell.ui.jfx.range;
 
 import com.shticell.engine.Engine;
-import com.shticell.engine.dto.RangeDTO;
-import com.shticell.engine.dto.SheetDTO;
+import dto.RangeDTO;
+import dto.SheetDTO;
 import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-
-import java.util.List;
 
 public class RangeController {
 

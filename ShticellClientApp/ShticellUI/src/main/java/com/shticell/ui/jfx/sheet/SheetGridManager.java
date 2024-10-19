@@ -1,7 +1,7 @@
 package com.shticell.ui.jfx.sheet;
 
-import com.shticell.engine.dto.CellDTO;
-import com.shticell.engine.dto.SheetDTO;
+import dto.CellDTO;
+import dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.ui.jfx.sheetOperations.AnimationManager;
 import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
@@ -226,9 +226,7 @@ public class SheetGridManager {
 
     public void highlightDependenciesAndInfluences(CellDTO cellDTO) {
         if (cellDTO != null) {
-            for (CellDTO dependencyCell : cellDTO.getDependsOn()) {
-                String dependencyCellId = CoordinateFormatter.indexToCellId(dependencyCell.getCoordinate().getRow(),
-                        dependencyCell.getCoordinate().getColumn());
+            for (String dependencyCellId : cellDTO.getDependsOn()) {
                 Label dependencyLabel = cellIDtoLabel.get(dependencyCellId);
                 if (dependencyLabel != null) {
                     dependencyLabel.getStyleClass().add("dependency-cell");
@@ -236,9 +234,7 @@ public class SheetGridManager {
 
                 }
             }
-            for (CellDTO influencedCell : cellDTO.getInfluencingOn()) {
-                String influencedCellId = CoordinateFormatter.indexToCellId(influencedCell.getCoordinate().getRow(),
-                        influencedCell.getCoordinate().getColumn());
+            for (String influencedCellId : cellDTO.getInfluencingOn()) {
                 Label influencedLabel = cellIDtoLabel.get(influencedCellId);
                 if (influencedLabel != null) {
                     influencedLabel.getStyleClass().add("influence-cell");

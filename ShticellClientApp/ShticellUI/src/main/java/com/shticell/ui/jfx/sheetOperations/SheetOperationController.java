@@ -1,16 +1,20 @@
 package com.shticell.ui.jfx.sheetOperations;
 
+import com.google.gson.GsonBuilder;
 import com.shticell.engine.Engine;
 import com.shticell.engine.EngineImpl;
 import com.google.gson.Gson;
-import com.shticell.engine.dto.CellDTO;
-import com.shticell.engine.dto.SheetDTO;
+import dto.CellDTO;
+import dto.CoordinateDTO;
+import dto.SheetDTO;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.ui.jfx.main.MainController;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
 import com.shticell.ui.jfx.utils.http.HttpClientUtil;
 import com.shticell.ui.jfx.version.VersionController;
 import com.shticell.ui.jfx.range.RangeController;
+import dto.json.CoordinateDTOSerializer;
+import dto.json.SheetDTODeserializer;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -29,7 +33,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import okhttp3.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -223,9 +226,8 @@ public class SheetOperationController {
                 uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
                 uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
 
-                for (CellDTO influencedCell : updatedCell.getInfluencingOn()) {
-                    String influencedCellId = influencedCell.getId();
-                    uiModel.cellIdProperty(influencedCellId).setValue(influencedCell.getEffectiveValue().toString());
+                for (String influencedCellId : updatedCell.getInfluencingOn()) {
+                    uiModel.cellIdProperty(influencedCellId).setValue(cellIDtoLabel.get(influencedCellId).getText());
                 }
             }
         } catch (Exception e) {
@@ -272,11 +274,24 @@ public class SheetOperationController {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-            return new Gson().fromJson(response.body().string(), SheetDTO.class);
+
+            // Read the response body once
+            String responseBody = response.body().string();
+
+            // Print the response
+            System.out.println(responseBody);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+                    .create();
+
+
+            // Deserialize the response into SheetDTO
+            return gson.fromJson(responseBody, SheetDTO.class);
         }
     }
 
-    private void initializeAnimationsCheckbox() {
+        private void initializeAnimationsCheckbox() {
         animationsCheckbox.setSelected(false);
         animationsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             AnimationManager.setAnimationsEnabled(newValue);

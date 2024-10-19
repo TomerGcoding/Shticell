@@ -3,6 +3,9 @@ package com.shticell.ui.jfx.utils.http;
 import okhttp3.*;
 
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 public class HttpClientUtil {
     private final static SimpleCookieManager simpleCookieManager = new SimpleCookieManager();
@@ -12,6 +15,9 @@ public class HttpClientUtil {
                     .followRedirects(false)
                     .build();
 
+    public HttpClientUtil(){
+        Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
+    }
     public static void setCookieManagerLoggingFacility(Consumer<String> logConsumer) {
         simpleCookieManager.setLogData(logConsumer);
     }

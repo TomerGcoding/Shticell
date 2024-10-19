@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="JAXB" level="project" />
     <orderEntry type="library" name="GSON" level="project" />
+    <orderEntry type="module" module-name="ShticellDTO" />
   </component>
 </module>

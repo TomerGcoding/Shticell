@@ -1,18 +1,12 @@
 package com.shticell.ui.jfx.version;
 
 import com.shticell.engine.Engine;
-import com.shticell.engine.dto.CellDTO;
-import com.shticell.engine.dto.SheetDTO;
-import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import dto.SheetDTO;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
