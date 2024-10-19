@@ -328,7 +328,7 @@ public class SheetOperationController {
         }
     }
 
-        private void initializeAnimationsCheckbox() {
+    private void initializeAnimationsCheckbox() {
         animationsCheckbox.setSelected(false);
         animationsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
             AnimationManager.setAnimationsEnabled(newValue);
@@ -380,9 +380,38 @@ public class SheetOperationController {
         Optional<Pair<String, String>> result = dialog.showAndWait();
 
         result.ifPresent(pair -> {
-            try {
-                SheetDTO sortedSheet = engine.sortSheet(pair.getKey(), pair.getValue());
-                showSortedSheetDialog(sortedSheet);
+                String range = pair.getKey();
+                String columns = pair.getValue();
+
+                String finalUrl = HttpUrl
+                        .parse(BASE_URL + SORT_SHEET)
+                        .newBuilder()
+                        .addQueryParameter("rangeToSort", range)
+                        .addQueryParameter("columnsToSortBy", columns)
+                        .build()
+                        .toString();
+
+                Request request = new Request.Builder()
+                        .url(finalUrl)
+                        .get()
+                        .build();
+
+
+                try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
+                    if (!response.isSuccessful()) {
+                        throw new IOException("Eror while update cell " + response);
+                    }
+
+                    String responseBody = response.body().string();
+
+                    System.out.println(responseBody);
+
+                    Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+                            .create();
+
+                    SheetDTO sortedSheet = gson.fromJson(responseBody, SheetDTO.class);
+                    showSortedSheetDialog(sortedSheet);
             } catch (Exception ex) {
                 showErrorAlert("Sorting Error", "An error occurred while sorting the sheet: " + ex.getMessage());
             }

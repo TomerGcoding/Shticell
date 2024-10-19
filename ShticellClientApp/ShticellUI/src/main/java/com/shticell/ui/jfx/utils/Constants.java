@@ -10,4 +10,5 @@ public class Constants {
     public final static String SHEET_OPERATION_PAGE = "/sheetOperation";
     public final static String UPLOAD_FILE_PAGE = "/loadSheet";
     public final static String UPDATE_CELL = "/updateCell";
+    public final static String SORT_SHEET = "/sortSheet";
 }
