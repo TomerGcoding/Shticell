@@ -30,6 +30,7 @@ public class SortSheetServlet extends HttpServlet {
             Type sheetType = new TypeToken<SheetDTO>() {
             }.getType();
             String json = new Gson().toJson(sheetDTO, sheetType);
+            resp.setContentType("text/plain;charset=UTF-8");
             PrintWriter out = resp.getWriter();
             out.write(json);
             out.flush();

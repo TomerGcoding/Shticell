@@ -232,6 +232,10 @@ public class SheetOperationController {
                         .build()
                         .toString();
 
+                //async
+
+                //sync
+
                 Request request = new Request.Builder()
                         .url(finalUrl)
                         .get()
@@ -382,40 +386,89 @@ public class SheetOperationController {
         result.ifPresent(pair -> {
                 String range = pair.getKey();
                 String columns = pair.getValue();
+                sortSheetRequest(range, columns);
+            });
+    }
 
-                String finalUrl = HttpUrl
-                        .parse(BASE_URL + SORT_SHEET)
-                        .newBuilder()
-                        .addQueryParameter("rangeToSort", range)
-                        .addQueryParameter("columnsToSortBy", columns)
-                        .build()
-                        .toString();
+    private void sortSheetRequest(String range, String columns) {
+        String finalUrl = HttpUrl
+                .parse(BASE_URL + SORT_SHEET)
+                .newBuilder()
+                .addQueryParameter("rangeToSort", range)
+                .addQueryParameter("columnsToSortBy", columns)
+                .build()
+                .toString();
 
-                Request request = new Request.Builder()
-                        .url(finalUrl)
-                        .get()
-                        .build();
+        //async
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
 
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    showErrorAlert("Sorting Error", "An error occurred while filtering the sheet: " + e.getMessage());
+                });
+            }
 
-                try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        throw new IOException("Eror while update cell " + response);
-                    }
-
-                    String responseBody = response.body().string();
-
-                    System.out.println(responseBody);
-
-                    Gson gson = new GsonBuilder()
-                            .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
-                            .create();
-
-                    SheetDTO sortedSheet = gson.fromJson(responseBody, SheetDTO.class);
-                    showSortedSheetDialog(sortedSheet);
-            } catch (Exception ex) {
-                showErrorAlert("Sorting Error", "An error occurred while sorting the sheet: " + ex.getMessage());
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() != 200) {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            showErrorAlert("Sortin Error", "An error occurred while filtering the sheet " + responseBody);
+                        }
+                        catch (Exception e)
+                        {
+                            showErrorAlert("Sorting Error", "An error occurred while filtering the sheet: " + e.getMessage());
+                        }
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            Gson gson = new GsonBuilder()
+                                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+                                    .create();
+                            SheetDTO sortedSheet = gson.fromJson(responseBody, SheetDTO.class);
+                            showSortedSheetDialog(sortedSheet);
+                        }
+                        catch (Exception e)
+                        {
+                            showErrorAlert("Sorting Error", "An error occurred while filtering the sheet: " + e.getMessage());
+                        }
+                    });
+                }
             }
         });
+
+
+
+        //sync
+        Request request = new Request.Builder()
+                .url(finalUrl)
+                .get()
+                .build();
+
+
+        try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Eror while update cell " + response);
+            }
+
+            String responseBody = response.body().string();
+
+            System.out.println(responseBody);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+                    .create();
+
+            SheetDTO sortedSheet = gson.fromJson(responseBody, SheetDTO.class);
+            showSortedSheetDialog(sortedSheet);
+        } catch (Exception ex) {
+            showErrorAlert("Sorting Error", "An error occurred while sorting the sheet: " + ex.getMessage());
+
+        }
     }
 
     private void showSortedSheetDialog(SheetDTO sortedSheet) {
@@ -470,7 +523,7 @@ public class SheetOperationController {
         columnsField.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.isEmpty()) {
                 try {
-                    List<String> uniqueValues = engine.getUniqueColumnValues(newValue.trim());
+                    List<String> uniqueValues = sheet.getUniqueColumnValues(newValue.trim());
 
                     uniqueValuesListView.getItems().clear();
                     uniqueValuesListView.getItems().addAll(uniqueValues);
@@ -498,18 +551,70 @@ public class SheetOperationController {
             try {
                 String range = pair.getKey();
                 List<String> selectedValues = pair.getValue();
-                SheetDTO filteredSheet = engine.filterSheet(range, columnsField.getText(), selectedValues);
-                showFilteredSheetDialog(filteredSheet);
+                String columns = columnsField.getText();
+                System.out.println(columns);
+                filterSheetRequest(range, columns, selectedValues);
             } catch (Exception ex) {
                 showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + ex.getMessage());
             }
         });
     }
+
+    private void filterSheetRequest(String range, String columns, List<String> selectedValues) {
+        String finalUrl = HttpUrl
+                .parse(BASE_URL + FILTER_SHEET)
+                .newBuilder()
+                .addQueryParameter("rangeToFilter", range)
+                .addQueryParameter("columnToFilterBy", columns)
+                .build()
+                .toString();
+
+        Gson gsn = new Gson();
+
+        String json = gsn.toJson(selectedValues);
+        RequestBody body = RequestBody.create(json, MediaType.get("application/json"));
+
+        //async
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + e.getMessage());
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() != 200) {
+                    String responseBody = response.body().string();
+                    Platform.runLater(() -> {
+                                showErrorAlert("Filtering Error", "An error occurred while filtering the sheet " + responseBody);
+                            });
+                } else {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            System.out.println(responseBody);
+                            Gson gson = new GsonBuilder()
+                                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+                                    .create();
+                            SheetDTO filteredSheet = gson.fromJson(responseBody, SheetDTO.class);
+                            showFilteredSheetDialog(filteredSheet);
+                        }
+                        catch (Exception e)
+                        {
+                            showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + e.getMessage());
+                        }
+                    });
+                }
+            }
+        }, body);
+    }
+
     public void colorRangeCells(List<String> rangeCellIds) {
         gridManager.colorRangeCells(rangeCellIds);
     }
-
-
 
     private void showFilteredSheetDialog(SheetDTO filteredSheet) {
         Dialog<Void> dialog = new Dialog<>();
@@ -578,8 +683,4 @@ public class SheetOperationController {
         });
     }
 
-    public void initCellIdToLabelMap(Map<String, Label> celltoLabel) {
-
-
-    }
 }
