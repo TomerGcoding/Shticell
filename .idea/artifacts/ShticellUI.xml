@@ -9,6 +9,7 @@
       <element id="library" level="project" name="JavaFX" />
       <element id="library" level="project" name="JAXB" />
       <element id="library" level="project" name="ShticellEngine" />
+      <element id="artifact" artifact-name="ShticellDTO" />
     </root>
   </artifact>
 </component>
