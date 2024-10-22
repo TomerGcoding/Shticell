@@ -1,6 +1,5 @@
 package com.shticell.ui.jfx.version;
 
-import com.shticell.engine.Engine;
 import dto.SheetDTO;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
 import javafx.fxml.FXML;
@@ -14,7 +13,6 @@ import javafx.stage.Stage;
 public class VersionController {
 
     private SheetGridManager sheetGridManager;
-    private Engine engine;
     @FXML
     private ComboBox<Integer> versionSelectorComboBox;
     private VersionRequests requests;
@@ -28,10 +26,6 @@ public class VersionController {
         });
         requests = new VersionRequests(this);
 
-    }
-
-    public void setEngine(Engine engine) {
-        this.engine = engine;
     }
 
     public void setSheetGridManager(SheetGridManager sheetGridManager) {

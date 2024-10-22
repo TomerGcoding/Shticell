@@ -12,6 +12,23 @@ public class CoordinateDTO {
         this.column = column;
     }
 
+    public static String indexToCellId(int row, int column) {
+        String columnLabel = getColumnLabel(column);
+        int rowLabel = row + 1;
+        return columnLabel + rowLabel;
+    }
+    private static String getColumnLabel(int columnIndex) {
+        StringBuilder columnLabel = new StringBuilder();
+
+        while (columnIndex >= 0) {
+            int remainder = columnIndex % 26;
+            columnLabel.insert(0, (char) ('A' + remainder));
+            columnIndex = (columnIndex / 26) - 1;
+        }
+
+        return columnLabel.toString();
+    }
+
     public int getRow() {
         return row;
     }

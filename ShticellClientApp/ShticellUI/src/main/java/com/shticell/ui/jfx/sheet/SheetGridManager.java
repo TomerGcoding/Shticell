@@ -1,8 +1,8 @@
 package com.shticell.ui.jfx.sheet;
 
 import dto.CellDTO;
+import dto.CoordinateDTO;
 import dto.SheetDTO;
-import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.ui.jfx.sheetOperations.AnimationManager;
 import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import com.shticell.ui.jfx.sheetOperations.UIModel;
@@ -173,7 +173,7 @@ public class SheetGridManager {
     private void populateSheetGridPane(SheetDTO sheet, int numColumns, int colWidth, int numRows, int rowHeight) {
         for (int row = 1; row <= numRows; row++) {
             for (int col = 1; col <= numColumns; col++) {
-                String cellID = CoordinateFormatter.indexToCellId(row - 1, col - 1);
+                String cellID = CoordinateDTO.indexToCellId(row - 1, col - 1);
                 StringProperty currentCellProperty = uiModel.cellIdProperty(cellID);
                 Label label = new Label();
                 label.textProperty().bind(currentCellProperty);
@@ -197,7 +197,7 @@ public class SheetGridManager {
     private void populateReadOnlySheetGridPane(GridPane gridPane, SheetDTO sheet, int numColumns, int colWidth, int numRows, int rowHeight) {
         for (int row = 1; row <= numRows; row++) {
             for (int col = 1; col <= numColumns; col++) {
-                String cellID = CoordinateFormatter.indexToCellId(row - 1, col - 1);
+                String cellID = CoordinateDTO.indexToCellId(row - 1, col - 1);
                 CellDTO cellDTO = sheet.getCell(row - 1, col - 1);
                 Label label = new Label();
                 if(cellDTO!=null){
