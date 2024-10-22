@@ -12,4 +12,7 @@ public class Constants {
     public final static String UPDATE_CELL = "/updateCell";
     public final static String SORT_SHEET = "/sortSheet";
     public final static String FILTER_SHEET = "/filterSheet";
+    public final static String ADD_RANGE = "/addRange";
+    public final static String DELETE_RANGE = "/deleteRange";
+    public final static String SHOW_VERSION = "/showVersion";
 }

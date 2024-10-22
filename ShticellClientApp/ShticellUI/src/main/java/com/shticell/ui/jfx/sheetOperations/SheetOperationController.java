@@ -1,19 +1,15 @@
 package com.shticell.ui.jfx.sheetOperations;
 
 import com.google.gson.GsonBuilder;
-import com.shticell.engine.Engine;
-import com.shticell.engine.EngineImpl;
 import com.google.gson.Gson;
 import dto.CellDTO;
 import dto.CoordinateDTO;
 import dto.SheetDTO;
-import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
 import com.shticell.ui.jfx.main.MainController;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
 import com.shticell.ui.jfx.utils.http.HttpClientUtil;
 import com.shticell.ui.jfx.version.VersionController;
 import com.shticell.ui.jfx.range.RangeController;
-import dto.json.CoordinateDTOSerializer;
 import dto.json.SheetDTODeserializer;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -33,20 +29,15 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import okhttp3.*;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
-
 import static com.shticell.ui.jfx.utils.Constants.*;
-
 public class SheetOperationController {
 
     @FXML
     private CheckBox animationsCheckbox;
-
     @FXML
     private Button filterSheetButton;
     @FXML
@@ -61,15 +52,12 @@ public class SheetOperationController {
     private AnchorPane versionSelectorComponent;
     @FXML
     private ProgressBar progressBar;
-
     @FXML
     private Label shticellLabel;
     @FXML
     private Label progressLabel;
-
     @FXML
     private Label chosenFileFullPathLabel;
-
     @FXML
     private Label currentCellLabel;
     @FXML
@@ -85,28 +73,19 @@ public class SheetOperationController {
     @FXML
     private Button updateSelectedCellValueButton;
 
-    private GridPane loginComponent;
-
-    private UIModel uiModel;
-
-    private GridPane sheetGridPane  = new GridPane();
-
-    private SheetGridManager gridManager;
-
-    private Map<String,Label> cellIDtoLabel = null;
-
-    private ObjectProperty<Label> selectedCell;
-
-    private RangeController rangeController;
-
     private MainController mainController;
-
-    private Engine engine = new EngineImpl();
-
+    private GridPane loginComponent;
+    private UIModel uiModel;
+    private GridPane sheetGridPane  = new GridPane();
+    private SheetGridManager gridManager;
+    private ObjectProperty<Label> selectedCell;
+    private RangeController rangeController;
     private SheetDTO sheet;
+    private SheetRequests requests = new SheetRequests();
 
     @FXML
     private void initialize() {
+        requests.setController(this);
         uiModel = new UIModel(chosenFileFullPathLabel, sheetTab,updateSelectedCellValueButton,sheetGridPane,currentCellLabel,selectedCellOriginalValueTextField,
                 currentCellVersionLabel,versionSelectorComponent, sortSheetButton,filterSheetButton);
         gridManager = new SheetGridManager(sheetGridPane,uiModel, this);
@@ -146,15 +125,15 @@ public class SheetOperationController {
             progressLabel.setVisible(true);
             progressLabel.setManaged(true);
             uiModel.isLoadingProperty().set(true);
-            Task<SheetDTO> loadTask = new Task<SheetDTO>() {
-                protected SheetDTO call() throws Exception {
+            Task<Void> loadTask = new Task<>() {
+                protected Void call() throws Exception {
                     updateMessage("Fetching file...");
                     updateProgress(0.2, 1);
                     Thread.sleep(1000);
 
                     updateMessage("Loading sheet data...");
                     updateProgress(0.6, 1);
-                    SheetDTO sheetDTO = uploadFile(file);
+                    requests.uploadFile(file);
                     Thread.sleep(1000);// Simulating some work
 
                     updateMessage("Creating sheet grid...");
@@ -163,11 +142,11 @@ public class SheetOperationController {
 
                     updateMessage("Sheet loaded successfully!");
                     updateProgress(1, 1);
-                    return sheetDTO;
+                    return null;
                 }
             };
             loadTask.setOnSucceeded(e -> {
-                SheetDTO sheetDTO = loadTask.getValue();
+                loadTask.getValue();
                 Platform.runLater(() -> {
                     progressBar.setVisible(false);
                     progressBar.setManaged(false);
@@ -176,16 +155,16 @@ public class SheetOperationController {
                     chosenFileFullPathLabel.setVisible(true);
                     uiModel.isLoadingProperty().set(false);
                     uiModel.fullPathProperty().setValue(file.getAbsolutePath());
-                    uiModel.nameProperty().setValue(sheetDTO.getSheetName());
+                    uiModel.nameProperty().setValue(sheet.getSheetName());
                     uiModel.selectedCellIdProperty().set(null);
                     uiModel.selectedCellOriginalValueProperty().set(null);
                     uiModel.selectedCellVersionProperty().set(0);
                     versionSelectorComponentController.clearAllVersions();
-                    versionSelectorComponentController.addVersion(sheetDTO.getCurrVersion());
+                    versionSelectorComponentController.addVersion(sheet.getCurrVersion());
                     uiModel.isFileSelectedProperty().setValue(true);
-                    gridManager.createSheetGridPane(sheetDTO);
+                    gridManager.createSheetGridPane(sheet);
                     sheetTab.setContent(sheetGridPane);
-                    rangeController.addLoadedRange(sheetDTO);
+                    rangeController.addLoadedRange(sheet);
                 });
             });
             loadTask.setOnFailed(e -> {
@@ -212,72 +191,79 @@ public class SheetOperationController {
         }
     }
 
-
     @FXML
     public void updateSelectedCellValue(ActionEvent event) {
-        try {
-            if (selectedCell.get()==null) {
+            if (selectedCell.get() == null) {
                 throw new IllegalStateException("Please select a cell to update.");
             }
-            if(isCellChanged(currentCellLabel.getText())) {
-
+            if (isCellChanged(currentCellLabel.getText())) {
+                try {
                 String cellId = currentCellLabel.getText();
                 String cellValue = selectedCellOriginalValueTextField.getText();
+                requests.updateCellRequest(cellId, cellValue);
+            }
 
-                String finalUrl = HttpUrl
-                        .parse(BASE_URL + UPDATE_CELL)
-                        .newBuilder()
-                        .addQueryParameter("cellId", cellId)
-                        .addQueryParameter("cellValue", cellValue)
-                        .build()
-                        .toString();
+//                String finalUrl = HttpUrl
+//                        .parse(BASE_URL + UPDATE_CELL)
+//                        .newBuilder()
+//                        .addQueryParameter("cellId", cellId)
+//                        .addQueryParameter("cellValue", cellValue)
+//                        .build()
+//                        .toString();
 
                 //async
 
+
                 //sync
 
-                Request request = new Request.Builder()
-                        .url(finalUrl)
-                        .get()
-                        .build();
-
-
-                try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        throw new IOException("Eror while update cell " + response);
-                    }
-
-                    String responseBody = response.body().string();
-
-                    System.out.println(responseBody);
-
-                    Gson gson = new GsonBuilder()
-                            .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
-                            .create();
-
-                    this.sheet = gson.fromJson(responseBody, SheetDTO.class);
-                }
-
-                versionSelectorComponentController.addVersion(sheet.getCurrVersion());
-                CellDTO updatedCell = sheet.getCell(cellId);
-                uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
-                uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
-                uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
-
-                for (String influencedCellId : updatedCell.getInfluencingOn()) {
-
-                    uiModel.cellIdProperty(influencedCellId).setValue(sheet.getCell(influencedCellId).getEffectiveValue().toString());
+//                Request request = new Request.Builder()
+//                        .url(finalUrl)
+//                        .get()
+//                        .build();
+//
+//
+//                try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
+//                    if (!response.isSuccessful()) {
+//                        throw new IOException("Eror while update cell " + response);
+//                    }
+//
+//                    String responseBody = response.body().string();
+//
+//                    System.out.println(responseBody);
+//
+//                    Gson gson = new GsonBuilder()
+//                            .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+//                            .create();
+//
+//                    this.sheet = gson.fromJson(responseBody, SheetDTO.class);
+//                }
+                catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Failed to update Cell:");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
                 }
             }
+        }
 
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Failed to update Cell:");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+    protected void showUpdatedSheet(String cellId) {
+        versionSelectorComponentController.addVersion(sheet.getCurrVersion());
+        CellDTO updatedCell = sheet.getCell(cellId);
+        uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
+        uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
+        uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
+
+        for (String influencedCellId : updatedCell.getInfluencingOn()) {
+            uiModel.cellIdProperty(influencedCellId).setValue(sheet.getCell(influencedCellId).getEffectiveValue().toString());
         }
     }
+
+
+    public void setSheet (SheetDTO sheet) {
+        this.sheet = sheet;
+    }
+
     private boolean isCellChanged(String cellId){
         CellDTO cell = sheet.getCell(cellId);
         boolean changed = true;
@@ -289,47 +275,6 @@ public class SheetOperationController {
             changed = false;
         }
         return changed;
-    }
-
-
-    private SheetDTO uploadFile(File file) throws IOException {
-        RequestBody body =
-                new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("XMLFile", file.getName(), RequestBody.create(file, MediaType.parse("text/xml")))
-                        .build();
-
-        String finalUrl = HttpUrl
-                .parse(BASE_URL + UPLOAD_FILE_PAGE)
-                .newBuilder()
-                .toString();
-
-        Request request = new Request.Builder()
-                .url(finalUrl)
-                .post(body)
-                .build();
-
-
-        try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
-            }
-
-            // Read the response body once
-            String responseBody = response.body().string();
-
-            // Print the response
-            System.out.println(responseBody);
-
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
-                    .create();
-
-
-            // Deserialize the response into SheetDTO
-            this.sheet = gson.fromJson(responseBody, SheetDTO.class);
-            return sheet;
-        }
     }
 
     private void initializeAnimationsCheckbox() {
@@ -386,92 +331,11 @@ public class SheetOperationController {
         result.ifPresent(pair -> {
                 String range = pair.getKey();
                 String columns = pair.getValue();
-                sortSheetRequest(range, columns);
+                requests.sortSheetRequest(range, columns);
             });
     }
 
-    private void sortSheetRequest(String range, String columns) {
-        String finalUrl = HttpUrl
-                .parse(BASE_URL + SORT_SHEET)
-                .newBuilder()
-                .addQueryParameter("rangeToSort", range)
-                .addQueryParameter("columnsToSortBy", columns)
-                .build()
-                .toString();
-
-        //async
-        HttpClientUtil.runAsync(finalUrl, new Callback() {
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() -> {
-                    showErrorAlert("Sorting Error", "An error occurred while filtering the sheet: " + e.getMessage());
-                });
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() != 200) {
-                    Platform.runLater(() -> {
-                        try {
-                            String responseBody = response.body().string();
-                            showErrorAlert("Sortin Error", "An error occurred while filtering the sheet " + responseBody);
-                        }
-                        catch (Exception e)
-                        {
-                            showErrorAlert("Sorting Error", "An error occurred while filtering the sheet: " + e.getMessage());
-                        }
-                    });
-                } else {
-                    Platform.runLater(() -> {
-                        try {
-                            String responseBody = response.body().string();
-                            Gson gson = new GsonBuilder()
-                                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
-                                    .create();
-                            SheetDTO sortedSheet = gson.fromJson(responseBody, SheetDTO.class);
-                            showSortedSheetDialog(sortedSheet);
-                        }
-                        catch (Exception e)
-                        {
-                            showErrorAlert("Sorting Error", "An error occurred while filtering the sheet: " + e.getMessage());
-                        }
-                    });
-                }
-            }
-        });
-
-
-
-        //sync
-        Request request = new Request.Builder()
-                .url(finalUrl)
-                .get()
-                .build();
-
-
-        try (Response response = HttpClientUtil.getHttpClient().newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Eror while update cell " + response);
-            }
-
-            String responseBody = response.body().string();
-
-            System.out.println(responseBody);
-
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
-                    .create();
-
-            SheetDTO sortedSheet = gson.fromJson(responseBody, SheetDTO.class);
-            showSortedSheetDialog(sortedSheet);
-        } catch (Exception ex) {
-            showErrorAlert("Sorting Error", "An error occurred while sorting the sheet: " + ex.getMessage());
-
-        }
-    }
-
-    private void showSortedSheetDialog(SheetDTO sortedSheet) {
+    protected void showSortedSheetDialog(SheetDTO sortedSheet) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Sorted Sheet");
         GridPane grid = new GridPane();
@@ -524,6 +388,7 @@ public class SheetOperationController {
             if (!newValue.isEmpty()) {
                 try {
                     List<String> uniqueValues = sheet.getUniqueColumnValues(newValue.trim());
+                    System.out.println("uniqu values in showFilterDialog: " + uniqueValues);
 
                     uniqueValuesListView.getItems().clear();
                     uniqueValuesListView.getItems().addAll(uniqueValues);
@@ -553,70 +418,18 @@ public class SheetOperationController {
                 List<String> selectedValues = pair.getValue();
                 String columns = columnsField.getText();
                 System.out.println(columns);
-                filterSheetRequest(range, columns, selectedValues);
+                requests.filterSheetRequest(range, columns, selectedValues);
             } catch (Exception ex) {
                 showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + ex.getMessage());
             }
         });
     }
 
-    private void filterSheetRequest(String range, String columns, List<String> selectedValues) {
-        String finalUrl = HttpUrl
-                .parse(BASE_URL + FILTER_SHEET)
-                .newBuilder()
-                .addQueryParameter("rangeToFilter", range)
-                .addQueryParameter("columnToFilterBy", columns)
-                .build()
-                .toString();
-
-        Gson gsn = new Gson();
-
-        String json = gsn.toJson(selectedValues);
-        RequestBody body = RequestBody.create(json, MediaType.get("application/json"));
-
-        //async
-        HttpClientUtil.runAsync(finalUrl, new Callback() {
-
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Platform.runLater(() -> {
-                    showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + e.getMessage());
-                });
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                if (response.code() != 200) {
-                    String responseBody = response.body().string();
-                    Platform.runLater(() -> {
-                                showErrorAlert("Filtering Error", "An error occurred while filtering the sheet " + responseBody);
-                            });
-                } else {
-                    Platform.runLater(() -> {
-                        try {
-                            String responseBody = response.body().string();
-                            System.out.println(responseBody);
-                            Gson gson = new GsonBuilder()
-                                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
-                                    .create();
-                            SheetDTO filteredSheet = gson.fromJson(responseBody, SheetDTO.class);
-                            showFilteredSheetDialog(filteredSheet);
-                        }
-                        catch (Exception e)
-                        {
-                            showErrorAlert("Filtering Error", "An error occurred while filtering the sheet: " + e.getMessage());
-                        }
-                    });
-                }
-            }
-        }, body);
-    }
-
     public void colorRangeCells(List<String> rangeCellIds) {
         gridManager.colorRangeCells(rangeCellIds);
     }
 
-    private void showFilteredSheetDialog(SheetDTO filteredSheet) {
+    protected void showFilteredSheetDialog(SheetDTO filteredSheet) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Filtered Sheet");
         GridPane grid = new GridPane();
@@ -628,7 +441,7 @@ public class SheetOperationController {
         dialog.showAndWait();
     }
 
-    private void showErrorAlert(String title, String content) {
+    protected void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -640,17 +453,12 @@ public class SheetOperationController {
         return mainBorderPane;
     }
 
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
     private void createRangeController()  {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
         try{
             VBox rangeView = loader.load();
             mainBorderPane.setRight(rangeView);
             rangeController = loader.getController();
-            rangeController.setEngine(engine);
             rangeController.setMainController(this);
         } catch (IOException e) {
             e.printStackTrace();
@@ -667,13 +475,12 @@ public class SheetOperationController {
         gridManager.setSheetStyle(styleNumber);
     }
 
-
     public void addMouseClickEventForCell(String cellID, Label label) {
         label.setOnMouseClicked(event->{
             gridManager.resetCellBorders();
             selectedCell.set(label);
-            int cellRow = CoordinateFormatter.cellIdToIndex(cellID)[0];
-            int cellCol = CoordinateFormatter.cellIdToIndex(cellID)[1];
+            int cellRow = CoordinateDTO.cellIdToIndex(cellID)[0];
+            int cellCol = CoordinateDTO.cellIdToIndex(cellID)[1];
             CellDTO cell = sheet.getCell(cellRow, cellCol);
             uiModel.selectedCellOriginalValueProperty().set(cell == null?"": cell.getOriginalValue());
             uiModel.selectedCellVersionProperty().set(cell == null? 0:cell.getVersion());
@@ -683,4 +490,7 @@ public class SheetOperationController {
         });
     }
 
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
 }

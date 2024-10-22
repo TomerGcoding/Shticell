@@ -13,24 +13,15 @@ public class RangeController {
 
     @FXML
     private TextField deleteNameTextField;
-
     @FXML
     private TextField insertNameTextField;
-
     @FXML
     private TextField insertRangeTextField;
-
     @FXML
     private VBox vboxInsideTitledPane;
 
-    private Engine engine;
-
+    private final RangeRequests requests = new RangeRequests(this);
     private SheetOperationController mainController;
-
-    public void setEngine(Engine engine) {
-        this.engine = engine;
-    }
-
     public void setMainController(SheetOperationController mainController) {
         this.mainController = mainController;
     }
@@ -40,12 +31,8 @@ public class RangeController {
         try {
             String rangeName = insertNameTextField.getText();
             String rangeCells = insertRangeTextField.getText();
-            RangeDTO rangeDTO = engine.addRange(rangeName, rangeCells);
-            Label newLabel = new Label(rangeDTO.getName());
-            vboxInsideTitledPane.getChildren().add(newLabel);
-            newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(rangeDTO.getCellsIdInRange()));
-            insertNameTextField.clear();
-            insertRangeTextField.clear();
+            requests.addRangeRequest(rangeName, rangeCells);
+          //  RangeDTO rangeDTO = engine.addRange(rangeName, rangeCells);
         }
       catch (Exception e){
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -56,12 +43,20 @@ public class RangeController {
     }
 }
 
+    protected void showRange(RangeDTO range){
+    Label newLabel = new Label(range.getName());
+    vboxInsideTitledPane.getChildren().add(newLabel);
+    newLabel.setOnMouseClicked(e -> mainController.colorRangeCells(range.getCellsIdInRange()));
+    insertNameTextField.clear();
+    insertRangeTextField.clear();
+}
 
-@FXML
-void deleteRange(ActionEvent event) {
+
+    @FXML
+    void deleteRange(ActionEvent event) {
     String rangeName = deleteNameTextField.getText();
     try {
-        engine.removeRange(rangeName);
+        requests.deleteRangeRequest(rangeName);
 
         for (javafx.scene.Node node : vboxInsideTitledPane.getChildren()) {
             if (node instanceof Label) {
@@ -91,5 +86,12 @@ void deleteRange(ActionEvent event) {
         }
     }
 
+    public void showErrorAlert(String filteringError, String s) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(filteringError);
+        alert.setContentText(s);
+        alert.showAndWait();
+    }
 }
 
