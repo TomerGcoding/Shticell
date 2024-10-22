@@ -22,13 +22,15 @@ import static utils.ServletUtils.getEngine;
 @WebServlet (name = "DeleteRangeServlet", urlPatterns = "/deleteRange")
 public class DeleteRangeServlet extends  HttpServlet {
     private final static String RANGE = "range";
+    private final static String SHEET_NAME = "sheetName";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String sheetName = request.getParameter(SHEET_NAME);
         String range = request.getParameter(RANGE);
         Engine engine = getEngine(getServletContext());
         try {
-            engine.removeRange(range);
+            engine.removeRange(sheetName, range);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
