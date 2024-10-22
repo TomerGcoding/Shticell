@@ -5,6 +5,7 @@ import dto.SheetDTO;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
@@ -16,6 +17,7 @@ public class VersionController {
     private Engine engine;
     @FXML
     private ComboBox<Integer> versionSelectorComboBox;
+    private VersionRequests requests;
 
     @FXML
     private void initialize() {
@@ -24,6 +26,8 @@ public class VersionController {
                 showSelectedVersion(newValue);
             }
         });
+        requests = new VersionRequests(this);
+
     }
 
     public void setEngine(Engine engine) {
@@ -44,12 +48,11 @@ public class VersionController {
 
     private void showSelectedVersion(Integer selectedVersion) {
         if (versionSelectorComboBox.getValue() != null) {
-            SheetDTO sheetDTO = engine.showChosenVersion(selectedVersion);
-            showSheetPopup(sheetDTO);
+            requests.showVersion(selectedVersion);
         }
     }
 
-    private void showSheetPopup(SheetDTO sheetDTO) {
+    protected void showSheetPopup(SheetDTO sheetDTO) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Sheet Version " + sheetDTO.getCurrVersion());
@@ -62,5 +65,11 @@ public class VersionController {
         popupStage.showAndWait();
     }
 
-
+    public void showErrorAlert(String filteringError, String s) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(filteringError);
+        alert.setContentText(s);
+        alert.showAndWait();
+    }
 }
