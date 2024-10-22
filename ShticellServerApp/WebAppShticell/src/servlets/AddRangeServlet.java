@@ -32,6 +32,7 @@ public class AddRangeServlet extends  HttpServlet {
              out.write(json);
              out.flush();
              out.close();
+
          }
          catch (Exception e) {
              resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -40,6 +41,7 @@ public class AddRangeServlet extends  HttpServlet {
              out.flush();
              out.close();
          }
+
      }
 
 }

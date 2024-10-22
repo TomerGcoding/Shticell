@@ -21,10 +21,11 @@ public class RangeRequests {
         this.controller = controller;
     }
 
-    protected void addRangeRequest(String rangeName, String rangeCells) {
+    protected void addRangeRequest(String sheetName, String rangeName, String rangeCells) {
         String finalUrl = HttpUrl
                 .parse(BASE_URL + ADD_RANGE)
                 .newBuilder()
+                .addQueryParameter("sheetName",sheetName)
                 .addQueryParameter("range", rangeName)
                 .addQueryParameter("rangeCells", rangeCells)
                 .build()
@@ -69,10 +70,11 @@ public class RangeRequests {
         });
     }
 
-    protected void deleteRangeRequest (String rangeName) {
+    protected void deleteRangeRequest (String sheetName, String rangeName) {
         String finalUrl = HttpUrl
                 .parse(BASE_URL + DELETE_RANGE)
                 .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
                 .addQueryParameter("range", rangeName)
                 .build()
                 .toString();

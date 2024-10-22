@@ -30,7 +30,7 @@ public class RangeController {
         try {
             String rangeName = insertNameTextField.getText();
             String rangeCells = insertRangeTextField.getText();
-            requests.addRangeRequest(rangeName, rangeCells);
+            requests.addRangeRequest(mainController.getSheet().getSheetName(), rangeName, rangeCells);
           //  RangeDTO rangeDTO = engine.addRange(rangeName, rangeCells);
         }
       catch (Exception e){
@@ -55,7 +55,7 @@ public class RangeController {
     void deleteRange(ActionEvent event) {
     String rangeName = deleteNameTextField.getText();
     try {
-        requests.deleteRangeRequest(rangeName);
+        requests.deleteRangeRequest(mainController.getSheet().getSheetName(), rangeName);
 
         for (javafx.scene.Node node : vboxInsideTitledPane.getChildren()) {
             if (node instanceof Label) {

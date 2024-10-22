@@ -24,11 +24,12 @@ public class SheetRequests {
         this.controller = controller;
     }
 
-    protected void filterSheetRequest(String range, String columns, List<String> selectedValues) {
+    protected void filterSheetRequest(String sheetName, String range, String columns, List<String> selectedValues) {
         System.out.println("in filterSheetRequest, columns: " + columns);
         String finalUrl = HttpUrl
                 .parse(BASE_URL + FILTER_SHEET)
                 .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
                 .addQueryParameter("rangeToFilter", range)
                 .addQueryParameter("columnToFilterBy", columns)
                 .build()
@@ -110,6 +111,7 @@ public class SheetRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
 
                             // Print the response - for DEBUG
                             System.out.println(responseBody);
@@ -132,10 +134,11 @@ public class SheetRequests {
 
     }
 
-    protected void sortSheetRequest(String range, String columns) {
+    protected void sortSheetRequest(String sheetName, String range, String columns) {
         String finalUrl = HttpUrl
                 .parse(BASE_URL + SORT_SHEET)
                 .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
                 .addQueryParameter("rangeToSort", range)
                 .addQueryParameter("columnsToSortBy", columns)
                 .build()
@@ -157,6 +160,7 @@ public class SheetRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
                             controller.showErrorAlert("Sortin Error", "An error occurred while filtering the sheet " + responseBody);
                         }
                         catch (Exception e)
@@ -168,6 +172,7 @@ public class SheetRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
                                     .create();
@@ -186,10 +191,11 @@ public class SheetRequests {
 
       }
 
-    protected void updateCellRequest(String cellId, String cellValue) {
+    protected void updateCellRequest(String sheetName, String cellId, String cellValue) {
         String finalUrl = HttpUrl
                 .parse(BASE_URL + UPDATE_CELL)
                 .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
                 .addQueryParameter("cellId", cellId)
                 .addQueryParameter("cellValue", cellValue)
                 .build()
@@ -211,6 +217,7 @@ public class SheetRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
                             controller.showErrorAlert("Update Error", "An error occurred while updating the cell " + responseBody);
                         } catch (Exception e) {
                             controller.showErrorAlert("Update Error", "An error occurred while updating the cell: " + e.getMessage());
@@ -220,6 +227,7 @@ public class SheetRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
                                     .create();

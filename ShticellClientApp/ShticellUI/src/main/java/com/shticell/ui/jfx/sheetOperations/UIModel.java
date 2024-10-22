@@ -39,7 +39,7 @@ public class UIModel {
         fileFullPathLabel.textProperty().bind( this.fullPath );
         sheetNameTab.textProperty().bind( this.name );
         updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
-        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not().or(this.isLoading));
         selectedCellOriginalValueTextField.disableProperty().bind(this.isLoading);
         sheetNameTab.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
         currentCellLabel.textProperty().bind( this.selectedCellId );
