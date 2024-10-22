@@ -1,6 +1,6 @@
 package com.shticell.ui.jfx.sheetOperations;
 
-import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import dto.CoordinateDTO;
 import javafx.beans.property.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -53,7 +53,7 @@ public class UIModel {
         cellIdtoCellValue = new HashMap<>();
         for (int row = 0; row < sheetGridPane.getRowCount(); row++) {
             for (int col = 0; col < sheetGridPane.getColumnCount() ; col++) {
-                String cellID = CoordinateFormatter.indexToCellId(row,col);
+                String cellID = CoordinateDTO.indexToCellId(row,col);
                 cellIdtoCellValue.put(cellID,new SimpleStringProperty(""));
             }
         }
