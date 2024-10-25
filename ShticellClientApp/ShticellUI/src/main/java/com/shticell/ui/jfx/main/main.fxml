@@ -1,48 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ScrollPane?>
 
-<SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="447.0" prefWidth="454.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.main.MainController">
-  <items>
-    <AnchorPane maxHeight="30.0" minHeight="40.0" minWidth="500.0" prefHeight="70.0" prefWidth="500.0">
-         <children>
-            <GridPane alignment="CENTER" prefHeight="30.0" prefWidth="502.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="411.0" minWidth="10.0" prefWidth="411.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="158.0" minWidth="0.0" prefWidth="0.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label fx:id="userNameLabel" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="35.0" prefWidth="456.0" text="Shticell">
-                     <font>
-                        <Font name="System Bold Italic" size="24.0" />
-                     </font>
-                     <padding>
-                        <Insets left="104.0" />
-                     </padding>
-                  </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="104.0" text="Hello, User!" GridPane.columnIndex="1">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-               </children>
-            </GridPane>
-         </children>
-      </AnchorPane>
-       <AnchorPane id="mainPanel" prefHeight="335.0" prefWidth="500.0">
-         <children>
-            <Label />
-         </children>
-      </AnchorPane>
-  </items>
-</SplitPane>
+<ScrollPane fx:id="mainPanel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" />

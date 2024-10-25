@@ -1,5 +1,6 @@
 package com.shticell.ui.jfx.main;
 
+import com.shticell.ui.jfx.sheetsManagement.SheetsManagementController;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -21,28 +22,16 @@ import static com.shticell.ui.jfx.utils.Constants.*;
 public class MainController {
 
     @FXML
-    private AnchorPane mainPanel;
+    private ScrollPane mainPanel;
 
-    @FXML
-    private Label userNameLabel;
+    private SheetOperationController SheetOperationComponentController = null;
+    private final SheetsManagementController sheetsManagementComponentController = null;
 
-    private VBox loginComponent;
-    private LoginController loginComponentController;
-
-    private ScrollPane SheetOperationComponent;
-    private SheetOperationController SheetOperationComponentController;
-
-    private final StringProperty currentUserName;
-
-    public MainController() {
-        currentUserName = new SimpleStringProperty("User");
-    }
 
     @FXML
     public void initialize() {
-        userNameLabel.textProperty().bind(Bindings.concat("Hello, ", currentUserName + "!"));
-        loadLoginPage();
-        loadSheetOperationPage();
+        loadSheetsManagementController();
+        loadSheetOperationController();
     }
 
     private void loadSheetOperationPage() {
@@ -50,7 +39,7 @@ public class MainController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader();
             fxmlLoader.setLocation(SheetOperationPageUrl);
-            SheetOperationComponent = fxmlLoader.load();
+            Object SheetOperationComponent = fxmlLoader.load();
             SheetOperationComponentController = fxmlLoader.getController();
             SheetOperationComponentController.setMainController(this);
             setMainPanelTo(SheetOperationComponent);

@@ -72,6 +72,8 @@ public class SheetOperationController {
     private TabPane sheetTabPane;
     @FXML
     private Button updateSelectedCellValueButton;
+    @FXML
+    private Label userNameLabel;
 
     private MainController mainController;
     private GridPane loginComponent;
@@ -225,7 +227,6 @@ public class SheetOperationController {
             uiModel.cellIdProperty(influencedCellId).setValue(sheet.getCell(influencedCellId).getEffectiveValue().toString());
         }
     }
-
 
     public void setSheet (SheetDTO sheet) {
         this.sheet = sheet;
@@ -462,6 +463,8 @@ public class SheetOperationController {
     }
 
     public SheetDTO getSheet() {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(sheetGridPane);
         return sheet;
     }
 }

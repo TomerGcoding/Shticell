@@ -31,7 +31,7 @@
                         </Label>
                      </children>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" minWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                  <HBox alignment="CENTER_LEFT" minWidth="200.0" prefHeight="27.0" prefWidth="302.0" spacing="10.0" VBox.vgrow="ALWAYS">
                      <children>
                         <ComboBox fx:id="changeStyleComboBox" minWidth="50.0" prefHeight="25.0" promptText="Sthicell Styles" />
                         <CheckBox fx:id="animationsCheckbox" alignment="CENTER" minWidth="50.0" prefHeight="27.0" text="Activate animations" HBox.hgrow="ALWAYS">
@@ -39,6 +39,7 @@
                               <Insets />
                            </HBox.margin>
                         </CheckBox>
+                        <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="628.0" text="Hello, User!" />
                      </children>
                   </HBox>
                   <HBox prefHeight="81.0" prefWidth="874.0" spacing="10.0" VBox.vgrow="ALWAYS">
