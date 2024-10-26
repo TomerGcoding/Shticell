@@ -11,6 +11,7 @@ import com.shticell.engine.utils.VersionShower;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +23,10 @@ public class EngineImpl implements Engine, Serializable {
     private Map<String, Sheet> sheets = new HashMap<>();
     private  final SheetLoader sheetLoader = new SheetLoader();
     private final Map<String, Map<Integer, SheetDTO>> avilableVersions = new HashMap<>();
+    private Map <String, String> sheetNameToUser = new HashMap<>();
 
     @Override
-    public SheetDTO loadSheetFile(String filePath) throws JAXBException {
+    public SheetDTO loadSheetFile(String filePath, String userName) throws JAXBException {
         sheetLoader.loadSheetFile(filePath);
         Sheet sheet = sheetLoader.getSheet();
         if (sheets.containsKey(sheet.getSheetName())) {
@@ -34,6 +36,7 @@ public class EngineImpl implements Engine, Serializable {
         Map <Integer,SheetDTO> versions = new HashMap<>();
         versions.put(sheet.getVersion(),sheetToDTO(sheet));
         avilableVersions.put(sheet.getSheetName(), versions);
+        sheetNameToUser .put(sheet.getSheetName(),userName);
         return sheetToDTO(sheet);
     }
 
@@ -130,5 +133,28 @@ public class EngineImpl implements Engine, Serializable {
         return filterer.filter(valuesToFilterBy);
 
     }
+
+    @Override
+    public Map<String,List<SheetDTO>> getAllSheets(){
+        Map<String,List<SheetDTO>> allSheets = new HashMap<>();
+
+        for (Map.Entry<String,Sheet> entry : sheets.entrySet()){
+            String sheetName = entry.getKey();
+            String userName = sheetNameToUser.get(sheetName);
+
+            if (!allSheets.containsKey(userName)){
+                List<SheetDTO> sheetsForUser = new ArrayList<>();
+                sheetsForUser.add(sheetToDTO(entry.getValue()));
+                allSheets.put(userName, sheetsForUser);
+            }
+            else {
+                List<SheetDTO> sheets = allSheets.get(userName);
+                sheets.add(sheetToDTO(entry.getValue()));
+                allSheets.put(userName,sheets);
+            }
+        }
+        return allSheets;
+    }
+
 
 }

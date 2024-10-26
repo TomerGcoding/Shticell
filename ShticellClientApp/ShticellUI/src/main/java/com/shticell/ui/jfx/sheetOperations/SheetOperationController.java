@@ -83,6 +83,7 @@ public class SheetOperationController {
     private ObjectProperty<Label> selectedCell;
     private RangeController rangeController;
     private SheetDTO sheet;
+    private Map<String, SheetDTO> sheetNameTosheet = new HashMap<>();
     private SheetRequests requests = new SheetRequests();
 
     @FXML
@@ -466,5 +467,9 @@ public class SheetOperationController {
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(sheetGridPane);
         return sheet;
+    }
+
+    public void addSheet(SheetDTO sheet) {
+        sheetNameTosheet.put(sheet.getSheetName(), sheet);
     }
 }

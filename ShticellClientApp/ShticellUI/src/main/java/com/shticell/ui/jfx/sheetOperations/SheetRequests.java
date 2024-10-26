@@ -2,7 +2,6 @@ package com.shticell.ui.jfx.sheetOperations;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import com.shticell.ui.jfx.utils.http.HttpClientUtil;
 import dto.SheetDTO;
 import dto.json.SheetDTODeserializer;

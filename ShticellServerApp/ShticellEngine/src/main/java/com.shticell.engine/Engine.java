@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface Engine {
 
-    SheetDTO loadSheetFile(String filePath) throws JAXBException;
+    SheetDTO loadSheetFile(String filePath, String userName) throws JAXBException;
 
     SheetDTO showSheet(String sheetName);
 
@@ -29,4 +29,5 @@ public interface Engine {
 
     SheetDTO filterSheet(String sheetName, String rangeToFilter,String columnsToFilterBy,List<String> valuesToFilterBy);
 
+    Map<String,List<SheetDTO>>  getAllSheets();
 }
