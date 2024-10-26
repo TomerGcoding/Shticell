@@ -50,10 +50,12 @@ public class SheetsManagementController {
     @FXML
     private Label userNameLabel;
 
+
     private SheetOperationController sheetOperationController;
     private MainController mainController;
     private Map<String, SheetDTO> sheets = new HashMap<>();
     private ManagementRequests requests;
+
 
     @FXML
     private void initialize()

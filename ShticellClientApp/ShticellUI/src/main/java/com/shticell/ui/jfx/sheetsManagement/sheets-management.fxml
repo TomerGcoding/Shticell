@@ -1,103 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.layout.StackPane?>
-
-<BorderPane prefHeight="200.0" prefWidth="200.0" stylesheets="@css.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.sheetsManagement.SheetsManagementController">
+<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@css.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="com.shticell.ui.jfx.sheetsManagement.SheetsManagementController">
    <top>
-      <VBox prefHeight="82.0" prefWidth="598.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="82.0" prefWidth="800.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" prefHeight="21.0" prefWidth="870.0">
+            <!-- Header Section - Shticell Label in its own HBox -->
+            <HBox alignment="CENTER" maxHeight="Infinity" maxWidth="Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="50.0" prefWidth="800.0">
                <children>
                   <Label fx:id="shticellLabel" alignment="CENTER" prefHeight="30.0" prefWidth="128.0" text="Shticell" textAlignment="CENTER" HBox.hgrow="ALWAYS">
                      <font>
                         <Font name="System Bold Italic" size="23.0" />
                      </font>
                   </Label>
-                  <HBox prefHeight="81.0" prefWidth="874.0" spacing="10.0" VBox.vgrow="ALWAYS">
-                     <children>
-                        <Button fx:id="loadXMLFileButton" minWidth="100.0" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" HBox.hgrow="ALWAYS" />
-                        <StackPane HBox.hgrow="ALWAYS">
-                           <Label fx:id="chosenFileFullPathLabel" minWidth="80.0" prefHeight="24.0" prefWidth="638.0" text="No File Currently Loaded" />
-                           <ProgressBar fx:id="progressBar" managed="false" prefWidth="400.0" progress="0.0" visible="false" />
-                           <Label fx:id="progressLabel" managed="false" text="" textFill="black" visible="false" />
-                        </StackPane>
-                     </children>
-                  </HBox>
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" minWidth="200.0" prefHeight="27.0" prefWidth="302.0" spacing="10.0">
+
+            <!-- Load XML and Hello, User! Section -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0" prefWidth="800.0" >
                <children>
-                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" prefHeight="18.0" prefWidth="628.0" text="Hello, User!" />
+                  <Button fx:id="loadXMLFileButton" minWidth="100.0" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" />
+                  <StackPane HBox.hgrow="ALWAYS">
+                     <Label fx:id="chosenFileFullPathLabel" minWidth="80.0" prefHeight="24.0" text="No File Currently Loaded" />
+                     <ProgressBar fx:id="progressBar" managed="false" prefWidth="400.0" progress="0.0" visible="false" />
+                     <Label fx:id="progressLabel" managed="false" text="" textFill="black" visible="false" />
+                  </StackPane>
+                  <!-- Aligning the User Name label to the rightmost, but ensuring it fits the window -->
+                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" text="Hello, User!" style="-fx-alignment: CENTER_RIGHT;" maxWidth="200.0" HBox.hgrow="ALWAYS"/>
                </children>
             </HBox>
          </children>
       </VBox>
    </top>
+
    <center>
-      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="800.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER" prefHeight="40.0" prefWidth="598.0">
-               <children>
-                  <Label fx:id="activeSheetLabel" text="Active Sheets">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <GridPane fx:id="activeSheetsGridPaneComponent" alignment="CENTER" gridLinesVisible="true">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="202.0" text="Sheet Name" />
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="202.0" text="Uploaded By" GridPane.columnIndex="1" />
-                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="200.0" text="Sheet Size" GridPane.columnIndex="2" />
-               </children>
-            </GridPane>
-            <HBox alignment="CENTER" prefHeight="43.0" prefWidth="598.0">
-               <children>
-                  <Label fx:id="permissionLabel" text="Permissions">
-                     <font>
-                        <Font size="13.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <GridPane alignment="CENTER" gridLinesVisible="true">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-               <children>
-                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="202.0" text="User Name" />
-                  <Label fx:id="permissionsGridPaneComponent" alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="202.0" text="Permission" GridPane.columnIndex="1" />
-                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="200.0" text="Approved By Owner?" GridPane.columnIndex="2" />
-               </children>
-            </GridPane>
+            <!-- Table for Active Sheets -->
+            <Label fx:id="activeSheetLabel" text="Active Sheets" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <TableView fx:id="activeSheetsTable" VBox.vgrow="ALWAYS" prefHeight="300.0" prefWidth="800.0">
+               <columns>
+                  <TableColumn fx:id="sheetNameColumn" text="Sheet Name" prefWidth="300.0">
+                     <cellValueFactory>
+                        <PropertyValueFactory property="sheetName" />
+                     </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn fx:id="uploadedByColumn" text="Uploaded By" prefWidth="200.0">
+                     <cellValueFactory>
+                        <PropertyValueFactory property="uploadedBy" />
+                     </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn fx:id="sheetSizeColumn" text="Sheet Size" prefWidth="200.0">
+                     <cellValueFactory>
+                        <PropertyValueFactory property="sheetSize" />
+                     </cellValueFactory>
+                  </TableColumn>
+               </columns>
+            </TableView>
+
+            <!-- Table for Permissions -->
+            <Label fx:id="permissionLabel" text="Permissions" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <TableView fx:id="permissionsTable" VBox.vgrow="ALWAYS" prefHeight="300.0" prefWidth="800.0">
+               <columns>
+                  <TableColumn fx:id="userNameColumn" text="User Name" prefWidth="300.0">
+                     <cellValueFactory>
+                        <PropertyValueFactory property="userName" />
+                     </cellValueFactory>
+                  </TableColumn>
+                  <TableColumn fx:id="permissionColumn" text="Permission" prefWidth="300.0">
+                     <cellValueFactory>
+                        <PropertyValueFactory property="permission" />
+                     </cellValueFactory>
+                  </TableColumn>
+               </columns>
+            </TableView>
          </children>
       </VBox>
    </center>
 </BorderPane>
-

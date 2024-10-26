@@ -58,7 +58,7 @@ public class Main extends Application {
             URL mainFXML = getClass().getResource(MAIN_PAGE_FXML_RESOURCE_LOCATION);
             loader.setLocation(mainFXML);
             Parent root = loader.load();
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, 820, 620);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Shticell - Application");
 
