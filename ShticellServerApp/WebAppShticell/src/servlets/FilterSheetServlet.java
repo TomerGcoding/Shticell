@@ -20,12 +20,13 @@ import static utils.ServletUtils.getEngine;
 
 @WebServlet (name = "FilterSheetServlet", urlPatterns = "/filterSheet")
 public class FilterSheetServlet extends HttpServlet {
-
+    private final static String SHEET_NAME = "sheetName";
     private static  final String RANGE_TO_FILTER = "rangeToFilter";
     private static final String COLUMNS_TO_FILTER_BY = "columnToFilterBy";
 
     @Override
     protected void doPost (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String sheetName = request.getParameter(SHEET_NAME);
         String range = request.getParameter(RANGE_TO_FILTER);
         String columns = request.getParameter(COLUMNS_TO_FILTER_BY);
         StringBuilder jsonBody = new StringBuilder();
@@ -42,7 +43,7 @@ public class FilterSheetServlet extends HttpServlet {
 
         Engine engine = getEngine(getServletContext());
         try {
-            SheetDTO sheetDTO = engine.filterSheet(range, columns, values);
+            SheetDTO sheetDTO = engine.filterSheet(sheetName, range, columns, values);
             Type sheetType = new TypeToken<SheetDTO>() {
             }.getType();
             String jsonResponse = new Gson().toJson(sheetDTO, sheetType);

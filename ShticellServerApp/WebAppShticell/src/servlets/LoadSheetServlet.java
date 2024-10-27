@@ -36,7 +36,7 @@ public class LoadSheetServlet extends HttpServlet {
         Engine engine = getEngine(getServletContext());
         try {
             // Load the sheet and send response as JSON
-            SheetDTO sheetDTO = engine.loadSheetFile(xmlFile.getAbsolutePath());
+            SheetDTO sheetDTO = engine.loadSheetFile(xmlFile.getAbsolutePath(), "tempName");
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");  // Set encoding
             PrintWriter out = response.getWriter();

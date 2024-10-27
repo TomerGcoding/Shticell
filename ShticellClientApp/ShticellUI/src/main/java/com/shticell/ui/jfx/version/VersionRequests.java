@@ -21,11 +21,12 @@ public class VersionRequests {
         this.controller = controller;
     }
 
-    public void showVersion(int version)
+    public void showVersion(String sheetName, int version)
     {
         String finalUrl = HttpUrl
                 .parse(BASE_URL +SHOW_VERSION)
                 .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
                 .addQueryParameter("version", String.valueOf(version))
                 .build()
                 .toString();

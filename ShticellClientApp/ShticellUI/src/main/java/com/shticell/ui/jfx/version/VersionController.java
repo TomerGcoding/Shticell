@@ -1,5 +1,6 @@
 package com.shticell.ui.jfx.version;
 
+import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import dto.SheetDTO;
 import com.shticell.ui.jfx.sheet.SheetGridManager;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.stage.Stage;
 
 public class VersionController {
 
+    private SheetOperationController mainController;
     private SheetGridManager sheetGridManager;
     @FXML
     private ComboBox<Integer> versionSelectorComboBox;
@@ -42,7 +44,8 @@ public class VersionController {
 
     private void showSelectedVersion(Integer selectedVersion) {
         if (versionSelectorComboBox.getValue() != null) {
-            requests.showVersion(selectedVersion);
+            String sheetName = mainController.getSheet().getSheetName();
+            requests.showVersion(sheetName, selectedVersion);
         }
     }
 
@@ -65,5 +68,9 @@ public class VersionController {
         alert.setHeaderText(filteringError);
         alert.setContentText(s);
         alert.showAndWait();
+    }
+
+    public void setMainController(SheetOperationController sheetOperationController) {
+        mainController = sheetOperationController;
     }
 }

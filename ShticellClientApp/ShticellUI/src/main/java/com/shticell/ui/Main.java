@@ -9,8 +9,7 @@ import com.shticell.ui.jfx.login.LoginController;
 
 import java.net.URL;
 
-import static com.shticell.ui.jfx.utils.Constants.LOGIN_PAGE_FXML_RESOURCE_LOCATION;
-import static com.shticell.ui.jfx.utils.Constants.SHEET_OPERATION_PAGE_FXML_RESOURCE_LOCATION;
+import static com.shticell.ui.jfx.utils.Constants.*;
 import static com.shticell.ui.jfx.utils.http.HttpClientUtil.shutdown;
 
 
@@ -33,8 +32,8 @@ public class Main extends Application {
         root.getStyleClass().add("shticell");
         Scene scene = new Scene(root, 500, 400);
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(600);
-        primaryStage.setMinHeight(600);
+        primaryStage.setMinWidth(400);
+        primaryStage.setMinHeight(400);
 
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
@@ -56,10 +55,10 @@ public class Main extends Application {
     private void showMainApp() {
         try {
             FXMLLoader loader = new FXMLLoader();
-            URL mainFXML = getClass().getResource(SHEET_OPERATION_PAGE_FXML_RESOURCE_LOCATION);
+            URL mainFXML = getClass().getResource(MAIN_PAGE_FXML_RESOURCE_LOCATION);
             loader.setLocation(mainFXML);
             Parent root = loader.load();
-            Scene scene = new Scene(root, 800, 600);
+            Scene scene = new Scene(root, 820, 620);
             primaryStage.setScene(scene);
             primaryStage.setTitle("Shticell - Application");
 

@@ -17,16 +17,18 @@ import static utils.ServletUtils.getEngine;
 
 @WebServlet (name = "SortSheetServlet", urlPatterns = "/sortSheet")
 public class SortSheetServlet extends HttpServlet {
+    private final static String SHEET_NAME = "sheetName";
     private static final String RANGE_TO_SORT = "rangeToSort";
     private static final String COLUMNS_TO_SORT_BY = "columnsToSortBy";
 
     @Override
     protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String sheetName = req.getParameter(SHEET_NAME);
         String rangeToSort = req.getParameter(RANGE_TO_SORT);
         String columnToSortBy = req.getParameter(COLUMNS_TO_SORT_BY);
         Engine engine = getEngine(getServletContext());
         try {
-            SheetDTO sheetDTO = engine.sortSheet(rangeToSort, columnToSortBy);
+            SheetDTO sheetDTO = engine.sortSheet(sheetName, rangeToSort, columnToSortBy);
             Type sheetType = new TypeToken<SheetDTO>() {
             }.getType();
             String json = new Gson().toJson(sheetDTO, sheetType);

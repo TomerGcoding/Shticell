@@ -14,22 +14,25 @@ import static utils.ServletUtils.getEngine;
 
 @WebServlet (name = "AddRangeServlet", urlPatterns = "/addRange")
 public class AddRangeServlet extends  HttpServlet {
+     private final static String SHEET_NAME = "sheetName";
      private final static String RANGE = "range";
      private final static String RANGE_CELLS = "rangeCells";
 
      @Override
      protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+         String sheetName = req.getParameter(SHEET_NAME);
          String newRange = req.getParameter(RANGE);
          String rangeCells = req.getParameter(RANGE_CELLS);
          Engine engine = getEngine(getServletContext());
          try {
-             RangeDTO rangeDTO = engine.addRange(newRange, rangeCells);
+             RangeDTO rangeDTO = engine.addRange(sheetName, newRange, rangeCells);
              String json = new Gson().toJson(rangeDTO, RangeDTO.class);
              resp.setContentType("text/plain;charset=UTF-8");
              PrintWriter out = resp.getWriter();
              out.write(json);
              out.flush();
              out.close();
+
          }
          catch (Exception e) {
              resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -38,6 +41,7 @@ public class AddRangeServlet extends  HttpServlet {
              out.flush();
              out.close();
          }
+
      }
 
 }

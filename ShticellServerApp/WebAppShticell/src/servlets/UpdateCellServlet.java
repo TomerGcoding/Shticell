@@ -17,6 +17,7 @@ import static utils.ServletUtils.getEngine;
 
 @WebServlet(name = "UpdateCellServlet", urlPatterns = {"/updateCell"})
 public class UpdateCellServlet extends HttpServlet {
+    private final static String SHEET_NAME = "sheetName";
     private static final String CELL_ID = "cellId";
     private static final String CELL_NEW_VALUE = "cellValue";
 
@@ -24,14 +25,15 @@ public class UpdateCellServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        String sheetName = request.getParameter(SHEET_NAME);
         String cellId = request.getParameter(CELL_ID);
         String cellValue = request.getParameter(CELL_NEW_VALUE);
         Engine engine = getEngine(getServletContext());
 
         try {
             System.out.println("trying to update cell in server");
-            engine.setCell(cellId, cellValue);
-            SheetDTO sheetDTO = engine.showSheet();
+            engine.setCell(sheetName, cellId, cellValue);
+            SheetDTO sheetDTO = engine.showSheet(sheetName);
             Type sheetType = new TypeToken<SheetDTO>() {}.getType();
             String json = new Gson().toJson(sheetDTO, sheetType);
             PrintWriter out = response.getWriter();

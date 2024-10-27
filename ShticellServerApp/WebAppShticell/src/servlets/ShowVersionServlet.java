@@ -22,13 +22,15 @@ import static utils.ServletUtils.getEngine;
 public class ShowVersionServlet extends HttpServlet {
 
     private static final String VERSION = "version";
+    private final static String SHEET_NAME = "sheetName";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
        try {
+           String sheetName = request.getParameter(SHEET_NAME);
            int version = Integer.parseInt(request.getParameter(VERSION));
            Engine engine = getEngine(getServletContext());
-           SheetDTO sheetDTO = engine.showChosenVersion(version);
+           SheetDTO sheetDTO = engine.showChosenVersion(sheetName, version);
            Type sheetType = new TypeToken<SheetDTO>() {
            }.getType();
            String json = new Gson().toJson(sheetDTO, sheetType);
