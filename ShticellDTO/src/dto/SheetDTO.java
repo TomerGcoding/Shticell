@@ -12,6 +12,7 @@ public class SheetDTO implements Serializable {
     private int currVersion;
     private String sheetName;
     private SheetPropertiesDTO properties;
+    private String uploadedBy;
 
     public SheetDTO() {
         this.activeCells = null;
@@ -98,4 +99,16 @@ public class SheetDTO implements Serializable {
         return values;
     }
 
+    public String getUploadedBy() {
+        return "danielle sheetDTO";
+    }
+
+    public String getSize() {
+        return (properties.getNumRows() + " x " + properties.getNumCols());
+    }
+
+    public void setUploadedBy(String userName) {
+        uploadedBy = userName;
+
+    }
 }

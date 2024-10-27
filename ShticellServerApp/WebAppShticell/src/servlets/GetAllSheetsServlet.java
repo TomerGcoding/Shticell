@@ -31,6 +31,7 @@ public class GetAllSheetsServlet extends HttpServlet
 
         try {
             Map<String, List<SheetDTO>> sheets = engine.getAllSheets();
+            System.out.println("sheets from getAllSheets servlet: " + sheets);
             String json = new Gson().toJson(sheets);
             PrintWriter out = response.getWriter();
             out.write(json);

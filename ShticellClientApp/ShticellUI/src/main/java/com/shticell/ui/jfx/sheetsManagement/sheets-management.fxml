@@ -32,7 +32,6 @@
                <children>
                   <Button fx:id="loadXMLFileButton" minWidth="100.0" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" />
                   <StackPane HBox.hgrow="ALWAYS">
-                     <Label fx:id="chosenFileFullPathLabel" minWidth="80.0" prefHeight="24.0" text="No File Currently Loaded" />
                      <ProgressBar fx:id="progressBar" managed="false" prefWidth="400.0" progress="0.0" visible="false" />
                      <Label fx:id="progressLabel" managed="false" text="" textFill="black" visible="false" />
                   </StackPane>

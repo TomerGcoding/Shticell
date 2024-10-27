@@ -23,7 +23,7 @@ public class UIModel {
     private StringProperty selectedCellId;
     private StringProperty selectedCellOriginalValue;
 
-    public UIModel(Label fileFullPathLabel, Tab sheetNameTab,
+    public UIModel(Tab sheetNameTab,
                    Button updateSelectedCellValueButton, GridPane sheetGridPane,
                    Label currentCellLabel, TextField selectedCellOriginalValueTextField,
                    Label lastVersionUpdateLabel, AnchorPane versionSelectorComponent,
@@ -36,7 +36,6 @@ public class UIModel {
         this.selectedCellOriginalValue = new SimpleStringProperty( );
         this.selectedCellVersion = new SimpleIntegerProperty();
         this.isLoading = new SimpleBooleanProperty( false );
-        fileFullPathLabel.textProperty().bind( this.fullPath );
         sheetNameTab.textProperty().bind( this.name );
         updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
         versionSelectorComponent.disableProperty().bind( this.isFileSelected.not().or(this.isLoading));

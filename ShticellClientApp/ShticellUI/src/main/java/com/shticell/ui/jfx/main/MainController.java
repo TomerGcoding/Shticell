@@ -45,6 +45,7 @@ public class MainController {
             sheetsManagementComponent = fxmlLoader.load();
             sheetsManagementController = fxmlLoader.getController();
             sheetsManagementController.setMainController(this);
+            sheetsManagementController.setSheetOperationController(sheetOperationController);
             setMainPanelTo(sheetsManagementComponent);
         } catch (IOException e) {
             e.printStackTrace();
@@ -63,7 +64,7 @@ public class MainController {
             e.printStackTrace();
         }
     }
-    private void setMainPanelTo(Parent pane) {
+    public void setMainPanelTo(Parent pane) {
         mainPanel.setContent(pane);
     }
 

@@ -1,8 +1,7 @@
 package com.shticell.ui.jfx.sheetsManagement;
+
 import com.shticell.ui.jfx.main.MainController;
-import com.shticell.ui.jfx.sheet.SheetGridManager;
 import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
-import com.shticell.ui.jfx.sheetOperations.UIModel;
 import dto.SheetDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,7 +9,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
@@ -24,10 +22,13 @@ public class SheetsManagementController {
     private Label activeSheetLabel;
 
     @FXML
-    private GridPane  activeSheetsGridPaneComponent ;
-
+    private TableView<SheetDTO> activeSheetsTable;
     @FXML
-    private Label chosenFileFullPathLabel;
+    private TableColumn<SheetDTO, String> sheetNameColumn;
+    @FXML
+    private TableColumn<SheetDTO, String> uploadedByColumn;
+    @FXML
+    private TableColumn<SheetDTO, String> sheetSizeColumn;
 
     @FXML
     private Button loadXMLFileButton;
@@ -50,72 +51,132 @@ public class SheetsManagementController {
     @FXML
     private Label userNameLabel;
 
-
     private SheetOperationController sheetOperationController;
     private MainController mainController;
     private Map<String, SheetDTO> sheets = new HashMap<>();
     private ManagementRequests requests;
 
-
     @FXML
-    private void initialize()
-    {
+    private void initialize() {
         requests = new ManagementRequests(this);
+        initializeSheetsTable();
         requests.getActiveSheets();
-        updateSheetsTable();
     }
 
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
     }
 
-    protected void showErrorAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    public void setSheetOperationController(SheetOperationController sheetOperationController) {
+        this.sheetOperationController = sheetOperationController;
     }
 
-    public void addSheet(SheetDTO sheet, String userName) {
-        mainController.getSheetOperationController().addSheet(sheet);
-        addSheetToTable(sheet.getSheetName(), userName);
-    }
+    private void initializeSheetsTable() {
+        // Setting up the TableView columns
+        sheetNameColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSheetName()));
+        uploadedByColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getUploadedBy()));
+        sheetSizeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(String.valueOf(cellData.getValue().getSize())));
 
-    public void updateSheetsTable () {
-        requests.getActiveSheets();
-    }
-
-    public void populateSheetsTable(Map<String, List<SheetDTO>> sheets) {
-        for (Map.Entry<String, List<SheetDTO>> entry : sheets.entrySet()) {
-            String userName = entry.getKey();
-            for (SheetDTO sheet : entry.getValue()) {
-                String sheetName = sheet.getSheetName();
-                addSheetToTable(sheetName, userName);
+        // Set up click listener for selecting a sheet
+        activeSheetsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                sheetOperationController.loadSheet(newSelection);
+                sheetOperationController.show();
             }
-        }
-    }
-
-    public void addSheetToTable(String sheetName, String userName) {
-        // Get the next available row index
-        int newRowIndex = activeSheetsGridPaneComponent.getRowCount();
-
-        // Create the new elements to add
-        Label sheetNameLabel = new Label(sheetName);
-        Label userNameLabel = new Label(userName);
-        CheckBox checkBox = new CheckBox();
-
-        // Add the elements to the new row
-        activeSheetsGridPaneComponent.add(sheetNameLabel, 0, newRowIndex); // Column 0
-        activeSheetsGridPaneComponent.add(userNameLabel, 1, newRowIndex);  // Column 1
-        activeSheetsGridPaneComponent.add(checkBox, 2, newRowIndex);
-
-        // Column 2
+        });
     }
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
-        mainController.getSheetOperationController().loadXMLFile(event);
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open XML file");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML files", "*.xml"));
+        File file = fileChooser.showOpenDialog(null);
 
+        if (file != null) {
+            progressBar.setVisible(true);
+            progressBar.setManaged(true);
+            progressLabel.setVisible(true);
+            progressLabel.setManaged(true);
+
+            uploadFile(file);
+        }
     }
+
+    private void uploadFile(File file) {
+        Task<Void> loadTask = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                updateMessage("Fetching file...");
+                updateProgress(0.2, 1);
+                Thread.sleep(1000);
+
+                updateMessage("Loading sheet data...");
+                updateProgress(0.6, 1);
+
+                // Call the uploadFile method in requests and handle callbacks
+                requests.uploadFile(file, new ManagementRequests.UploadCallback() {
+                    @Override
+                    public void onUploadSuccess(SheetDTO sheet) {
+                        Platform.runLater(() -> {
+                            progressBar.setVisible(false);
+                            progressBar.setManaged(false);
+                            progressLabel.setVisible(false);
+                            progressLabel.setManaged(false);
+
+                            // Add the sheet to the table
+                            addSheet(sheet, "Uploaded User");  // Replace with the actual user name if needed
+                        });
+                    }
+
+                    @Override
+                    public void onUploadFailed(String errorMessage) {
+                        Platform.runLater(() -> {
+                            progressBar.setVisible(false);
+                            progressBar.setManaged(false);
+                            progressLabel.setVisible(false);
+                            progressLabel.setManaged(false);
+                            showErrorAlert("Upload Error", errorMessage);
+                        });
+                    }
+                });
+
+                Thread.sleep(1000);
+                updateMessage("File upload successful!");
+                updateProgress(1, 1);
+                return null;
+            }
+        };
+
+        progressBar.progressProperty().bind(loadTask.progressProperty());
+        progressLabel.textProperty().bind(loadTask.messageProperty());
+
+        Thread loadThread = new Thread(loadTask);
+        loadThread.setDaemon(true);
+        loadThread.start();
+    }
+
+    public void addSheet(SheetDTO sheet, String userName) {
+        sheet.setUploadedBy(userName);
+        activeSheetsTable.getItems().add(sheet);
+    }
+
+    public void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    // Populate the TableView with sheets from the server
+    public void populateSheetsTable(Map<String, List<SheetDTO>> sheets) {
+        for (Map.Entry<String, List<SheetDTO>> entry : sheets.entrySet()) {
+            String userName = entry.getKey();
+            for (SheetDTO sheet : entry.getValue()) {
+                addSheet(sheet, userName);
+            }
+        }
+    }
+
+
 }

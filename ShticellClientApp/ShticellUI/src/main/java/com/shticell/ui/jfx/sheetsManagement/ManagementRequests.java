@@ -1,10 +1,10 @@
 package com.shticell.ui.jfx.sheetsManagement;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
+import com.shticell.ui.jfx.sheetsManagement.SheetsManagementController;
 import com.shticell.ui.jfx.utils.http.HttpClientUtil;
 import dto.SheetDTO;
+import dto.json.MapOfSheetsDeserializer;
 import dto.json.SheetDTODeserializer;
 import javafx.application.Platform;
 import okhttp3.*;
@@ -26,8 +26,7 @@ public class ManagementRequests {
         this.controller = controller;
     }
 
-
-    protected void uploadFile(File file) throws IOException {
+    protected void uploadFile(File file, UploadCallback callback) throws IOException {
         RequestBody body =
                 new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
@@ -39,13 +38,14 @@ public class ManagementRequests {
                 .newBuilder()
                 .toString();
 
-        //async
+        // async HTTP request
         HttpClientUtil.runAsync(finalUrl, new Callback() {
 
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() -> {
                     controller.showErrorAlert("Upload Error", "An error occurred while uploading the file: " + e.getMessage());
+                    callback.onUploadFailed(e.getMessage());  // Notify failure
                 });
             }
 
@@ -54,7 +54,8 @@ public class ManagementRequests {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
                     Platform.runLater(() -> {
-                        controller.showErrorAlert("Upload Error", "An error occurred while uploading the file " + responseBody);
+                        controller.showErrorAlert("Upload Error", "An error occurred while uploading the file: " + responseBody);
+                        callback.onUploadFailed(responseBody);  // Notify failure
                     });
                 } else {
                     Platform.runLater(() -> {
@@ -62,35 +63,34 @@ public class ManagementRequests {
                             String responseBody = response.body().string();
                             response.close();
 
-                            // Print the response - for DEBUG
-                            System.out.println(responseBody);
-
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
                                     .create();
 
                             SheetDTO sheet = gson.fromJson(responseBody, SheetDTO.class);
-                            controller.addSheet(sheet , "fakeUserName: in management");
-                        }
-                        catch (Exception e)
-                        {
+                            callback.onUploadSuccess(sheet);  // Notify success
+                        } catch (Exception e) {
                             controller.showErrorAlert("Upload Error", "An error occurred while uploading the file: " + e.getMessage());
+                            callback.onUploadFailed(e.getMessage());  // Notify failure
                         }
                     });
                 }
             }
         }, body);
+    }
 
+    public interface UploadCallback {
+        void onUploadSuccess(SheetDTO sheet);
+        void onUploadFailed(String errorMessage);
     }
 
     public void getActiveSheets() {
-
         String finalUrl = HttpUrl
                 .parse(BASE_URL + GET_ALL_SHEETS)
                 .newBuilder()
                 .toString();
 
-        //async
+        // async
         HttpClientUtil.runAsync(finalUrl, new Callback() {
 
             @Override
@@ -102,18 +102,27 @@ public class ManagementRequests {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String responseBody = response.body().string();
+                response.close();
+
                 if (response.code() != 200) {
-                    String responseBody = response.body().string();
                     Platform.runLater(() -> {
                         controller.showErrorAlert("Update Sheets", "An error occurred while trying to update available sheets " + responseBody);
                     });
                 } else {
                     Platform.runLater(() -> {
                         try {
-                            String responseBody = response.body().string();
-                            response.close();
-                            Map<String, List<SheetDTO>> sheets = new Gson().fromJson(responseBody, new TypeToken<Map<String, List<SheetDTO>>>(){}.getType());
+                            System.out.println("get sheets response body (200ok) : " + responseBody);
+
+                            // Use Gson with the custom deserializer to parse the response
+                            Map<String, List<SheetDTO>> sheets = new GsonBuilder()
+                                    .registerTypeAdapter(new TypeToken<Map<String, List<SheetDTO>>>(){}.getType(), new MapOfSheetsDeserializer())
+                                    .create()
+                                    .fromJson(responseBody, new TypeToken<Map<String, List<SheetDTO>>>(){}.getType());
+
+                            // Populate the table with the parsed sheets
                             controller.populateSheetsTable(sheets);
+
                         } catch (Exception e) {
                             controller.showErrorAlert("Update Sheets", "An error occurred while trying to update available sheets " + e.getMessage());
                         }
