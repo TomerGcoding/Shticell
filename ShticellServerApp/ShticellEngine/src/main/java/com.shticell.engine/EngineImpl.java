@@ -1,5 +1,6 @@
 package com.shticell.engine;
 
+import com.shticell.engine.accessPermission.SheetUserAccessManager;
 import dto.RangeDTO;
 import dto.SheetDTO;
 import com.shticell.engine.range.Range;
@@ -8,6 +9,7 @@ import com.shticell.engine.utils.SheetFilterer;
 import com.shticell.engine.utils.SheetLoader;
 import com.shticell.engine.utils.SheetSorter;
 import com.shticell.engine.utils.VersionShower;
+import com.shticell.engine.accessPermission.UserAccessPermission;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.*;
@@ -16,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.shticell.engine.accessPermission.AccessPermisionType.OWNER;
+import static com.shticell.engine.accessPermission.AccessPermissionStatus.APPROVED;
 import static com.shticell.engine.utils.DTOCreator.rangeToDTO;
 import static com.shticell.engine.utils.DTOCreator.sheetToDTO;
 
@@ -24,20 +28,31 @@ public class EngineImpl implements Engine, Serializable {
     private  final SheetLoader sheetLoader = new SheetLoader();
     private final Map<String, Map<Integer, SheetDTO>> avilableVersions = new HashMap<>();
     private Map <String, String> sheetNameToUser = new HashMap<>();
+    private final Map<String, SheetUserAccessManager> sheetNameToSheetUserAccessManager = new HashMap<>();
 
     @Override
     public SheetDTO loadSheetFile(String filePath, String userName) throws JAXBException {
         sheetLoader.loadSheetFile(filePath);
         Sheet sheet = sheetLoader.getSheet();
-        if (sheets.containsKey(sheet.getSheetName())) {
-            throw new IllegalArgumentException("Sheet with the name " + sheet.getSheetName() + " already exists.");
+        synchronized (this) {
+            if (sheets.containsKey(sheet.getSheetName())) {
+                throw new IllegalArgumentException("Sheet with the name " + sheet.getSheetName() + " already exists.");
+            }
+            this.sheets.put(sheet.getSheetName(), sheet);
         }
-        this.sheets.put(sheet.getSheetName(), sheet);
         Map <Integer,SheetDTO> versions = new HashMap<>();
         versions.put(sheet.getVersion(),sheetToDTO(sheet));
         avilableVersions.put(sheet.getSheetName(), versions);
         sheetNameToUser .put(sheet.getSheetName(),userName);
+        setSheetOwner(sheet, userName);
         return sheetToDTO(sheet);
+    }
+
+    private void setSheetOwner(Sheet sheet, String userName) {
+        Object AccessPermission;
+        SheetUserAccessManager sheetUserAccessManager = new SheetUserAccessManager(sheet);
+        sheetUserAccessManager.addUserAccessPermission(new UserAccessPermission(userName, OWNER, APPROVED));
+        sheetNameToSheetUserAccessManager.put(sheet.getSheetName(), sheetUserAccessManager);
     }
 
     @Override
@@ -50,7 +65,6 @@ public class EngineImpl implements Engine, Serializable {
         }
         return sheetToDTO(sheets.get(sheetName));
     }
-
 
     @Override
     public void setCell(String sheetName, String cellId, String cellValue) {
@@ -136,6 +150,7 @@ public class EngineImpl implements Engine, Serializable {
 
     @Override
     public Map<String,List<SheetDTO>> getAllSheets(){
+        
         Map<String,List<SheetDTO>> allSheets = new HashMap<>();
 
         for (Map.Entry<String,Sheet> entry : sheets.entrySet()){
