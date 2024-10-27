@@ -23,6 +23,7 @@ import static utils.ServletUtils.getEngine;
 public class DeleteRangeServlet extends  HttpServlet {
     private final static String RANGE = "range";
     private final static String SHEET_NAME = "sheetName";
+    private static final Object lock = new Object();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -30,7 +31,9 @@ public class DeleteRangeServlet extends  HttpServlet {
         String range = request.getParameter(RANGE);
         Engine engine = getEngine(getServletContext());
         try {
-            engine.removeRange(sheetName, range);
+            synchronized (lock) {
+                engine.removeRange(sheetName, range);
+            }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -20,6 +20,7 @@ public class UpdateCellServlet extends HttpServlet {
     private final static String SHEET_NAME = "sheetName";
     private static final String CELL_ID = "cellId";
     private static final String CELL_NEW_VALUE = "cellValue";
+    private static final Object lock = new Object();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -32,7 +33,8 @@ public class UpdateCellServlet extends HttpServlet {
 
         try {
             System.out.println("trying to update cell in server");
-            engine.setCell(sheetName, cellId, cellValue);
+            synchronized (lock) {
+                engine.setCell(sheetName, cellId, cellValue);}
             SheetDTO sheetDTO = engine.showSheet(sheetName);
             Type sheetType = new TypeToken<SheetDTO>() {}.getType();
             String json = new Gson().toJson(sheetDTO, sheetType);

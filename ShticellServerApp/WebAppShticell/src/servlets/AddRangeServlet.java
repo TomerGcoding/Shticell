@@ -17,6 +17,7 @@ public class AddRangeServlet extends  HttpServlet {
      private final static String SHEET_NAME = "sheetName";
      private final static String RANGE = "range";
      private final static String RANGE_CELLS = "rangeCells";
+     private static final Object lock = new Object();
 
      @Override
      protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -25,13 +26,15 @@ public class AddRangeServlet extends  HttpServlet {
          String rangeCells = req.getParameter(RANGE_CELLS);
          Engine engine = getEngine(getServletContext());
          try {
-             RangeDTO rangeDTO = engine.addRange(sheetName, newRange, rangeCells);
-             String json = new Gson().toJson(rangeDTO, RangeDTO.class);
-             resp.setContentType("text/plain;charset=UTF-8");
-             PrintWriter out = resp.getWriter();
-             out.write(json);
-             out.flush();
-             out.close();
+             synchronized (lock) {
+                 RangeDTO rangeDTO = engine.addRange(sheetName, newRange, rangeCells);
+                 String json = new Gson().toJson(rangeDTO, RangeDTO.class);
+                 resp.setContentType("text/plain;charset=UTF-8");
+                 PrintWriter out = resp.getWriter();
+                 out.write(json);
+                 out.flush();
+                 out.close();
+             }
 
          }
          catch (Exception e) {
