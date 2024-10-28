@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import java.io.File;
 import java.util.HashMap;
@@ -29,6 +30,8 @@ public class SheetsManagementController {
     private TableColumn<SheetDTO, String> uploadedByColumn;
     @FXML
     private TableColumn<SheetDTO, String> sheetSizeColumn;
+    @FXML
+    private TableColumn<SheetDTO, Void> actionColumn;  // New column for the "Open Sheet" button
 
     @FXML
     private Button loadXMLFileButton;
@@ -74,16 +77,40 @@ public class SheetsManagementController {
     private void initializeSheetsTable() {
         // Setting up the TableView columns
         sheetNameColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSheetName()));
-        uploadedByColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getUploadedBy()));
+        uploadedByColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getOwner()));
         sheetSizeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(String.valueOf(cellData.getValue().getSize())));
 
-        // Set up click listener for selecting a sheet
-        activeSheetsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                sheetOperationController.loadSheet(newSelection);
-                sheetOperationController.show();
+        // Set up the "Open Sheet" button column
+        actionColumn = new TableColumn<>("Actions");
+        actionColumn.setCellFactory(createButtonCellFactory());
+        activeSheetsTable.getColumns().add(actionColumn);
+    }
+
+    // Create a cell factory that adds a button to each row
+    private Callback<TableColumn<SheetDTO, Void>, TableCell<SheetDTO, Void>> createButtonCellFactory() {
+        return param -> new TableCell<>() {
+            private final Button openButton = new Button("Open Sheet");
+
+            {
+                openButton.setOnAction(event -> {
+                    SheetDTO sheet = getTableView().getItems().get(getIndex());
+                    if (sheet != null) {
+                        sheetOperationController.loadSheet(sheet);
+                        sheetOperationController.show();
+                    }
+                });
             }
-        });
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(openButton);
+                }
+            }
+        };
     }
 
     @FXML
@@ -125,7 +152,7 @@ public class SheetsManagementController {
                             progressLabel.setManaged(false);
 
                             // Add the sheet to the table
-                            addSheet(sheet, "Uploaded User");  // Replace with the actual user name if needed
+                            addSheet(sheet);  // Replace with the actual user name if needed
                         });
                     }
 
@@ -156,8 +183,8 @@ public class SheetsManagementController {
         loadThread.start();
     }
 
-    public void addSheet(SheetDTO sheet, String userName) {
-        sheet.setUploadedBy(userName);
+    public void addSheet(SheetDTO sheet) {
+        sheet.setOwner();
         activeSheetsTable.getItems().add(sheet);
     }
 
@@ -168,15 +195,14 @@ public class SheetsManagementController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     // Populate the TableView with sheets from the server
     public void populateSheetsTable(Map<String, List<SheetDTO>> sheets) {
         for (Map.Entry<String, List<SheetDTO>> entry : sheets.entrySet()) {
             String userName = entry.getKey();
             for (SheetDTO sheet : entry.getValue()) {
-                addSheet(sheet, userName);
+                addSheet(sheet);
             }
         }
     }
-
-
 }

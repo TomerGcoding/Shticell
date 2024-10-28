@@ -1,5 +1,6 @@
 package com.shticell.engine.sheet.impl;
 
+import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
 import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.range.Range;
 import com.shticell.engine.range.RangeImpl;
@@ -21,12 +22,14 @@ public class SheetImpl implements Sheet, Serializable {
     private static int currVersion = 0;
     private final String sheetName;
     private final SheetProperties properties;
+    private SheetUserAccessManager userAccessManager;
 
     public SheetImpl(String sheetName, int rows, int columns, int rowHeight, int columnWidth) {
         this.activeCells = new HashMap<>();
         this.activeRanges = new HashMap<>();
         this.sheetName = sheetName;
         this.properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
+        this.userAccessManager = new SheetUserAccessManager();
         currVersion = 0;
     }
 
@@ -270,5 +273,13 @@ public class SheetImpl implements Sheet, Serializable {
         return values;
     }
 
+    @Override
+    public SheetUserAccessManager getSheetUserAccessManager() {
+        return userAccessManager;
+    }
 
+    @Override
+    public void setSheetOwner(String userName){
+        userAccessManager.setOwner(userName);
+    }
 }

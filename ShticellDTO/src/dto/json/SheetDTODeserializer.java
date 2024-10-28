@@ -30,8 +30,11 @@ public class SheetDTODeserializer implements JsonDeserializer<SheetDTO> {
         String sheetName = jsonObject.get("sheetName").getAsString();
         SheetPropertiesDTO properties = context.deserialize(jsonObject.get("properties"), SheetPropertiesDTO.class);
 
-        // Return new SheetDTO
-        return new SheetDTO(activeCells, activeRanges, currVersion, sheetName, properties);
+        // Deserialize the new field, SheetUsersAccessDTO
+        SheetUsersAccessDTO sheetUsersAccess = context.deserialize(jsonObject.get("sheetUsersAccess"), SheetUsersAccessDTO.class);
+
+        // Return new SheetDTO with the new field included
+        return new SheetDTO(activeCells, activeRanges, currVersion, sheetName, properties, sheetUsersAccess);
     }
 
     // Helper method to parse a coordinate from the key (e.g., "6,4")
@@ -42,4 +45,3 @@ public class SheetDTODeserializer implements JsonDeserializer<SheetDTO> {
         return new CoordinateDTO(row, column);
     }
 }
-

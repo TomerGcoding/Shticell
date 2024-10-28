@@ -50,7 +50,7 @@ public class LoadSheetServlet extends HttpServlet {
             out.flush();
             out.close();
         } catch (Exception e) {
-            // Send detailed error response
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             PrintWriter out = response.getWriter();
             out.write("Failed to load sheet file: " + e.getMessage());
