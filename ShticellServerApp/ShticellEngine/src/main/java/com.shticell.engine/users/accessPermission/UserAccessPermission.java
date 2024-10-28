@@ -1,6 +1,8 @@
 package com.shticell.engine.users.accessPermission;
 
-public class UserAccessPermission {
+import java.io.Serializable;
+
+public class UserAccessPermission implements Serializable {
     private final String username;
     private  AccessPermisionType accessPermisionType;
     private  AccessPermissionStatus accessPermissionStatus;

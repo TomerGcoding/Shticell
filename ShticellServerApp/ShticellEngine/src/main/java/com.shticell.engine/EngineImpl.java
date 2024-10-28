@@ -26,7 +26,6 @@ public class EngineImpl implements Engine, Serializable {
     private Map<String, Sheet> sheets = new HashMap<>();
     private  final SheetLoader sheetLoader = new SheetLoader();
     private final Map<String, Map<Integer, SheetDTO>> avilableVersions = new HashMap<>();
-    private Map <String, String> sheetNameToUser = new HashMap<>();
     private final Map<String, SheetUserAccessManager> sheetNameToSheetUserAccessManager = new HashMap<>();
     private final UserManager userManager = new UserManager();
 
@@ -34,6 +33,7 @@ public class EngineImpl implements Engine, Serializable {
     public SheetDTO loadSheetFile(String filePath, String userName) throws JAXBException {
         sheetLoader.loadSheetFile(filePath);
         Sheet sheet = sheetLoader.getSheet();
+        setSheetOwner(sheet, userName);
         synchronized (this) {
             if (sheets.containsKey(sheet.getSheetName())) {
                 throw new IllegalArgumentException("Sheet with the name " + sheet.getSheetName() + " already exists.");
@@ -44,15 +44,11 @@ public class EngineImpl implements Engine, Serializable {
         versions.put(sheet.getVersion(),sheetToDTO(sheet));
         avilableVersions.put(sheet.getSheetName(), versions);
         sheet.getSheetUserAccessManager().addUserAccessPermission(new UserAccessPermission(userName, OWNER, APPROVED));
-        setSheetOwner(sheet, userName);
         return sheetToDTO(sheet);
     }
 
     private void setSheetOwner(Sheet sheet, String userName) {
-        Object AccessPermission;
-        SheetUserAccessManager sheetUserAccessManager = new SheetUserAccessManager();
-        sheetUserAccessManager.addUserAccessPermission(new UserAccessPermission(userName, OWNER, APPROVED));
-        sheetNameToSheetUserAccessManager.put(sheet.getSheetName(), sheetUserAccessManager);
+        sheet.setSheetOwner(userName);
     }
 
     @Override

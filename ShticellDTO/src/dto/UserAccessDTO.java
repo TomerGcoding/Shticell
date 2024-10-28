@@ -6,18 +6,18 @@ public class UserAccessDTO implements Serializable {
 
     private String userName;
     private String accessPermission;
-    private String AccessPermissionStatus;
+    private String accessPermissionStatus;
 
     public UserAccessDTO() {
         this.userName = null;
         this.accessPermission = null;
-        this.AccessPermissionStatus = null;
+        this.accessPermissionStatus = null;
     }
 
     public UserAccessDTO(String userName, String accessPermission, String AccessPermissionStatus) {
         this.userName = userName;
         this.accessPermission = accessPermission;
-        this.accessPermission = AccessPermissionStatus;
+        this.accessPermissionStatus = AccessPermissionStatus;
     }
 
     public String getUserName() {
@@ -29,6 +29,6 @@ public class UserAccessDTO implements Serializable {
     }
 
     public String getAccessPermissionStatus() {
-        return AccessPermissionStatus;
+        return accessPermissionStatus;
     }
 }

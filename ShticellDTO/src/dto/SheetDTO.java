@@ -13,7 +13,7 @@ public class SheetDTO implements Serializable {
     private String sheetName;
     private SheetPropertiesDTO properties;
     private SheetUsersAccessDTO sheetUsersAccess;
-    private String uploadedBy;
+    private String owner;
 
     public SheetDTO() {
         this.activeCells = null;
@@ -21,7 +21,7 @@ public class SheetDTO implements Serializable {
         this.currVersion = 0;
         this.sheetName = null;
         this.properties = null;
-        this.sheetUsersAccess = null;
+        this.owner = null;
     }
 
     public SheetDTO(Map<CoordinateDTO, CellDTO> activeCells,
@@ -36,6 +36,7 @@ public class SheetDTO implements Serializable {
         this.sheetName = sheetName;
         this.properties = properties;
         this.sheetUsersAccess = sheetUsersAccess;
+        this.owner = setOwner();
     }
 
     public SheetPropertiesDTO getProperties() {
@@ -98,20 +99,24 @@ public class SheetDTO implements Serializable {
                 values.add(cell.getEffectiveValue().getValue().toString());
             }
         }
-        System.out.println("unique values in getUnique value: " + values);
+    //    System.out.println("unique values in getUnique value: " + values);
         return values;
     }
 
-    public String getUploadedBy() {
-        return "danielle sheetDTO";
+    public String getOwner() {
+        return owner;
     }
 
     public String getSize() {
         return (properties.getNumRows() + " x " + properties.getNumCols());
     }
 
-    public void setUploadedBy(String userName) {
-        this.uploadedBy = userName;
-
+    public String setOwner() {
+        for (UserAccessDTO userAccess : sheetUsersAccess.getUsersAccess()) {
+            if (userAccess.getAccessPermission().equals("Owner")) {
+               return this.owner = userAccess.getUserName();
+            }
+        }
+        throw new IllegalArgumentException("Owner not found in sheet users, problem found in SheetDTO setOwner");
     }
 }

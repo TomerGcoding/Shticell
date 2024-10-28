@@ -1,22 +1,24 @@
 package com.shticell.engine.users.accessPermission;
 
-public enum AccessPermissionStatus {
+import java.io.Serializable;
+
+public enum AccessPermissionStatus implements Serializable {
     PENDING {
         @Override
         public String toString() {
-            return "PENDING";
+            return "Pending";
         }
     },
     APPROVED {
         @Override
         public String toString() {
-            return "APPROVED";
+            return "Approved";
         }
     },
     REJECTED {
         @Override
         public String toString() {
-            return "REJECTED";
+            return "Rejected";
         }
     };
 }

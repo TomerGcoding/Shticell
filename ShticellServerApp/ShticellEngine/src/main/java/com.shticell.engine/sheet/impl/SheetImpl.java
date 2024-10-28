@@ -30,7 +30,7 @@ public class SheetImpl implements Sheet, Serializable {
         this.sheetName = sheetName;
         this.properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
         this.userAccessManager = new SheetUserAccessManager();
-        this.currVersion = 0;
+        currVersion = 0;
     }
 
 
@@ -276,5 +276,10 @@ public class SheetImpl implements Sheet, Serializable {
     @Override
     public SheetUserAccessManager getSheetUserAccessManager() {
         return userAccessManager;
+    }
+
+    @Override
+    public void setSheetOwner(String userName){
+        userAccessManager.setOwner(userName);
     }
 }

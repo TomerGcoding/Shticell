@@ -1,28 +1,30 @@
 package com.shticell.engine.users.accessPermission;
 
-public enum AccessPermisionType {
+import java.io.Serializable;
+
+public enum AccessPermisionType implements Serializable {
     NONE {
         @Override
         public String toString() {
-            return "NONE";
+            return "None";
         }
     },
     READER {
         @Override
         public String toString() {
-            return "READ";
+            return "Reader";
         }
     },
     WRITER {
         @Override
         public String toString() {
-            return "WRITE";
+            return "Writer";
         }
     },
     OWNER {
         @Override
         public String toString() {
-            return "OWNER";
+            return "Owner";
         }
     };
 

@@ -77,7 +77,7 @@ public class SheetsManagementController {
     private void initializeSheetsTable() {
         // Setting up the TableView columns
         sheetNameColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSheetName()));
-        uploadedByColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getUploadedBy()));
+        uploadedByColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getOwner()));
         sheetSizeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(String.valueOf(cellData.getValue().getSize())));
 
         // Set up the "Open Sheet" button column
@@ -152,7 +152,7 @@ public class SheetsManagementController {
                             progressLabel.setManaged(false);
 
                             // Add the sheet to the table
-                            addSheet(sheet, "Uploaded User");  // Replace with the actual user name if needed
+                            addSheet(sheet);  // Replace with the actual user name if needed
                         });
                     }
 
@@ -183,8 +183,8 @@ public class SheetsManagementController {
         loadThread.start();
     }
 
-    public void addSheet(SheetDTO sheet, String userName) {
-        sheet.setUploadedBy(userName);
+    public void addSheet(SheetDTO sheet) {
+        sheet.setOwner();
         activeSheetsTable.getItems().add(sheet);
     }
 
@@ -201,7 +201,7 @@ public class SheetsManagementController {
         for (Map.Entry<String, List<SheetDTO>> entry : sheets.entrySet()) {
             String userName = entry.getKey();
             for (SheetDTO sheet : entry.getValue()) {
-                addSheet(sheet, userName);
+                addSheet(sheet);
             }
         }
     }

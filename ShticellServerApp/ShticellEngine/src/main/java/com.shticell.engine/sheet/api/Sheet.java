@@ -39,4 +39,6 @@ public interface Sheet {
     List<String> getUniqeColumnValues(String columnId);
 
     SheetUserAccessManager getSheetUserAccessManager();
+
+    void setSheetOwner(String userName);
 }
