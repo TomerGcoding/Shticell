@@ -1,11 +1,12 @@
 package com.shticell.engine;
 
-import dto.CellDTO;
+import com.shticell.engine.users.UserManager;
+import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
 import dto.RangeDTO;
 import dto.SheetDTO;
+import dto.SheetUsersAccessDTO;
 import jakarta.xml.bind.JAXBException;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -29,5 +30,11 @@ public interface Engine {
 
     SheetDTO filterSheet(String sheetName, String rangeToFilter,String columnsToFilterBy,List<String> valuesToFilterBy);
 
-    Map<String,List<SheetDTO>>  getAllSheets();
+    Map<String,List<SheetDTO>>  getAllSheets(String userName);
+
+    SheetUsersAccessDTO getSheetUsersAccess(String sheetName);
+    
+    void addUser(String userName);
+
+    UserManager getUserManager();
 }

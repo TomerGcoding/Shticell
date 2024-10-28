@@ -7,18 +7,12 @@ import com.shticell.engine.cell.api.Cell;
 import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.sheet.impl.SheetProperties;
-import dto.CellDTO;
-import dto.EffectiveValueDTO;
-import dto.RangeDTO;
-import dto.SheetDTO;
-import dto.CoordinateDTO;
-import dto.SheetPropertiesDTO;
+import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
+import com.shticell.engine.users.accessPermission.UserAccessPermission;
+import dto.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DTOCreator implements Serializable {
 
@@ -83,13 +77,14 @@ public class DTOCreator implements Serializable {
             RangeDTO rangeDTO = rangeToDTO(range, sheet);
             ranges.put(rangeDTO.getName(), rangeDTO);
         }
-
+        SheetUsersAccessDTO sheetUsersAccessDTO = sheetUsersAccessToDTO(sheet.getSheetUserAccessManager());
         SheetPropertiesDTO propertiesDTO = SheetPropertiesToDTO(sheet.getProperties());
         return new SheetDTO(cells,
                 ranges,
                 sheet.getVersion(),
                 sheet.getSheetName(),
-                propertiesDTO);
+                propertiesDTO,
+                sheetUsersAccessDTO);
     }
 
     private static SheetPropertiesDTO SheetPropertiesToDTO(SheetProperties properties) {
@@ -109,4 +104,17 @@ public class DTOCreator implements Serializable {
         }
         return new RangeDTO(range.getName(), cellDTOList, Ids);
     }
+
+    public static UserAccessDTO userAccessToDTO (UserAccessPermission userAccess) {
+        return new UserAccessDTO(userAccess.getUsername(), userAccess.getAccessPermisionType().toString(), userAccess.getAccessPermissionStatus().toString());
+    }
+
+    public static SheetUsersAccessDTO sheetUsersAccessToDTO (SheetUserAccessManager sheetUserAccessManager) {
+        Set<UserAccessDTO> userAccessDTOSet = new HashSet<>();
+        for (UserAccessPermission userAccess : sheetUserAccessManager.getSheetUserAccessManager(). values()) {
+            userAccessDTOSet.add(userAccessToDTO(userAccess));
+        }
+        return new SheetUsersAccessDTO(userAccessDTOSet);
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.shticell.engine.accessPermission;
+package com.shticell.engine.users.accessPermission;
 
 public class UserAccessPermission {
     private final String username;
@@ -30,4 +30,5 @@ public class UserAccessPermission {
     public void setAccessPermissionStatus(AccessPermissionStatus accessPermissionStatus) {
         this.accessPermissionStatus = accessPermissionStatus;
     }
+
 }

@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.SessionUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class GetAllSheetsServlet extends HttpServlet
         Engine engine = getEngine(getServletContext());
 
         try {
-            Map<String, List<SheetDTO>> sheets = engine.getAllSheets();
+            Map<String, List<SheetDTO>> sheets = engine.getAllSheets(SessionUtils.getUsername(request));
             System.out.println("sheets from getAllSheets servlet: " + sheets);
             String json = new Gson().toJson(sheets);
             PrintWriter out = response.getWriter();

@@ -1,23 +1,22 @@
-package com.shticell.engine.accessPermission;
+package com.shticell.engine.users.accessPermission;
 
 public enum AccessPermissionStatus {
     PENDING {
         @Override
-        public String getPermissionStatus() {
+        public String toString() {
             return "PENDING";
         }
     },
     APPROVED {
         @Override
-        public String getPermissionStatus() {
+        public String toString() {
             return "APPROVED";
         }
     },
     REJECTED {
         @Override
-        public String getPermissionStatus() {
+        public String toString() {
             return "REJECTED";
         }
     };
-    abstract public String getPermissionStatus();
 }

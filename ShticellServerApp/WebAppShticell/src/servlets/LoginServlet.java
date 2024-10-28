@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 
+import com.shticell.engine.Engine;
 import com.shticell.engine.users.UserManager;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,7 +20,8 @@ public class LoginServlet extends HttpServlet {
         System.out.println("LoginServlet: doGet");
         response.setContentType("text/plain;charset=UTF-8");
         String usernameFromSession = SessionUtils.getUsername(request);
-        UserManager userManager = ServletUtils.getUserManager(getServletContext());
+        Engine engine = ServletUtils.getEngine(getServletContext());
+        UserManager userManager = engine.getUserManager();
 
         if (usernameFromSession == null) {
             String usernameFromParameter = request.getParameter(USERNAME);
@@ -36,7 +38,7 @@ public class LoginServlet extends HttpServlet {
                         response.getOutputStream().print(errorMessage);
                     }
                     else {
-                        userManager.addUser(usernameFromParameter);
+                        engine.addUser(usernameFromParameter);
                         request.getSession(true).setAttribute(USERNAME, usernameFromParameter);
 
                         //redirect the request to the chat room - in order to actually change the URL

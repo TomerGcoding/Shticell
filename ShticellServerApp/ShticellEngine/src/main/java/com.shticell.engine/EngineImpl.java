@@ -1,15 +1,14 @@
 package com.shticell.engine;
 
-import com.shticell.engine.accessPermission.SheetUserAccessManager;
+import com.shticell.engine.users.UserManager;
+import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
+import com.shticell.engine.utils.*;
 import dto.RangeDTO;
 import dto.SheetDTO;
 import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.api.Sheet;
-import com.shticell.engine.utils.SheetFilterer;
-import com.shticell.engine.utils.SheetLoader;
-import com.shticell.engine.utils.SheetSorter;
-import com.shticell.engine.utils.VersionShower;
-import com.shticell.engine.accessPermission.UserAccessPermission;
+import com.shticell.engine.users.accessPermission.UserAccessPermission;
+import dto.SheetUsersAccessDTO;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.*;
@@ -18,10 +17,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.shticell.engine.accessPermission.AccessPermisionType.OWNER;
-import static com.shticell.engine.accessPermission.AccessPermissionStatus.APPROVED;
-import static com.shticell.engine.utils.DTOCreator.rangeToDTO;
-import static com.shticell.engine.utils.DTOCreator.sheetToDTO;
+import static com.shticell.engine.users.accessPermission.AccessPermisionType.NONE;
+import static com.shticell.engine.users.accessPermission.AccessPermisionType.OWNER;
+import static com.shticell.engine.users.accessPermission.AccessPermissionStatus.APPROVED;
+import static com.shticell.engine.utils.DTOCreator.*;
 
 public class EngineImpl implements Engine, Serializable {
     private Map<String, Sheet> sheets = new HashMap<>();
@@ -29,6 +28,7 @@ public class EngineImpl implements Engine, Serializable {
     private final Map<String, Map<Integer, SheetDTO>> avilableVersions = new HashMap<>();
     private Map <String, String> sheetNameToUser = new HashMap<>();
     private final Map<String, SheetUserAccessManager> sheetNameToSheetUserAccessManager = new HashMap<>();
+    private final UserManager userManager = new UserManager();
 
     @Override
     public SheetDTO loadSheetFile(String filePath, String userName) throws JAXBException {
@@ -43,14 +43,14 @@ public class EngineImpl implements Engine, Serializable {
         Map <Integer,SheetDTO> versions = new HashMap<>();
         versions.put(sheet.getVersion(),sheetToDTO(sheet));
         avilableVersions.put(sheet.getSheetName(), versions);
-        sheetNameToUser .put(sheet.getSheetName(),userName);
+        sheet.getSheetUserAccessManager().addUserAccessPermission(new UserAccessPermission(userName, OWNER, APPROVED));
         setSheetOwner(sheet, userName);
         return sheetToDTO(sheet);
     }
 
     private void setSheetOwner(Sheet sheet, String userName) {
         Object AccessPermission;
-        SheetUserAccessManager sheetUserAccessManager = new SheetUserAccessManager(sheet);
+        SheetUserAccessManager sheetUserAccessManager = new SheetUserAccessManager();
         sheetUserAccessManager.addUserAccessPermission(new UserAccessPermission(userName, OWNER, APPROVED));
         sheetNameToSheetUserAccessManager.put(sheet.getSheetName(), sheetUserAccessManager);
     }
@@ -149,27 +149,56 @@ public class EngineImpl implements Engine, Serializable {
     }
 
     @Override
-    public Map<String,List<SheetDTO>> getAllSheets(){
-        
+    public Map<String,List<SheetDTO>> getAllSheets(String userName){
+
         Map<String,List<SheetDTO>> allSheets = new HashMap<>();
 
         for (Map.Entry<String,Sheet> entry : sheets.entrySet()){
             String sheetName = entry.getKey();
-            String userName = sheetNameToUser.get(sheetName);
+            String owner = getSheetOwner(sheetName);
 
-            if (!allSheets.containsKey(userName)){
+            if (!allSheets.containsKey(owner)){
                 List<SheetDTO> sheetsForUser = new ArrayList<>();
                 sheetsForUser.add(sheetToDTO(entry.getValue()));
-                allSheets.put(userName, sheetsForUser);
+                allSheets.put(owner, sheetsForUser);
             }
             else {
-                List<SheetDTO> sheets = allSheets.get(userName);
+                List<SheetDTO> sheets = allSheets.get(owner);
                 sheets.add(sheetToDTO(entry.getValue()));
-                allSheets.put(userName,sheets);
+                allSheets.put(owner,sheets);
             }
         }
         return allSheets;
     }
 
+    private String getSheetOwner (String sheetName){
+        SheetUserAccessManager sheetUserAccessManager = sheets.get(sheetName).getSheetUserAccessManager();
+        for (Map.Entry<String, UserAccessPermission> entry : sheetUserAccessManager.getSheetUserAccessManager().entrySet()){
+            if (entry.getValue().getAccessPermisionType() == OWNER && entry.getValue().getAccessPermissionStatus() == APPROVED){
+                return entry.getKey();
+            }
+        }
+        throw new IllegalStateException("No owner was found for the sheet " + sheetName);
+    }
 
+    @Override
+    public SheetUsersAccessDTO getSheetUsersAccess(String sheetName) {
+        if (!sheetNameToSheetUserAccessManager.containsKey(sheetName)) {
+            throw new IllegalArgumentException("Sheet with the name " + sheetName + " does not exist.");
+        }
+        return sheetUsersAccessToDTO(sheets.get(sheetName).getSheetUserAccessManager());
+    }
+
+    @Override
+    public void addUser(String userName){
+        userManager.addUser(userName);
+        for (Sheet sheet : sheets.values()){
+            sheet.getSheetUserAccessManager().addUserAccessPermission(new UserAccessPermission(userName, NONE, APPROVED));
+        }
+    }
+
+    @Override
+    public UserManager getUserManager() {
+        return userManager;
+    }
 }

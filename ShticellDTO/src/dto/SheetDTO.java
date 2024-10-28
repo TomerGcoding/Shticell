@@ -12,6 +12,7 @@ public class SheetDTO implements Serializable {
     private int currVersion;
     private String sheetName;
     private SheetPropertiesDTO properties;
+    private SheetUsersAccessDTO sheetUsersAccess;
     private String uploadedBy;
 
     public SheetDTO() {
@@ -20,19 +21,21 @@ public class SheetDTO implements Serializable {
         this.currVersion = 0;
         this.sheetName = null;
         this.properties = null;
+        this.sheetUsersAccess = null;
     }
 
     public SheetDTO(Map<CoordinateDTO, CellDTO> activeCells,
                     Map <String, RangeDTO> activeRanges,
                     int currVersion,
                     String sheetName,
-                    SheetPropertiesDTO properties) {
+                    SheetPropertiesDTO properties,
+                    SheetUsersAccessDTO sheetUsersAccess) {
         this.activeCells = activeCells;
         this.activeRanges = activeRanges;
         this.currVersion = currVersion;
         this.sheetName = sheetName;
         this.properties = properties;
-
+        this.sheetUsersAccess = sheetUsersAccess;
     }
 
     public SheetPropertiesDTO getProperties() {
@@ -108,7 +111,7 @@ public class SheetDTO implements Serializable {
     }
 
     public void setUploadedBy(String userName) {
-        uploadedBy = userName;
+        this.uploadedBy = userName;
 
     }
 }

@@ -1,6 +1,6 @@
 package com.shticell.engine.sheet.impl;
 
-import com.shticell.engine.accessPermission.SheetUserAccessManager;
+import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
 import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.range.Range;
 import com.shticell.engine.range.RangeImpl;
@@ -29,7 +29,8 @@ public class SheetImpl implements Sheet, Serializable {
         this.activeRanges = new HashMap<>();
         this.sheetName = sheetName;
         this.properties = new SheetProperties(rows, columns, rowHeight, columnWidth);
-        currVersion = 0;
+        this.userAccessManager = new SheetUserAccessManager();
+        this.currVersion = 0;
     }
 
 
@@ -272,5 +273,8 @@ public class SheetImpl implements Sheet, Serializable {
         return values;
     }
 
-
+    @Override
+    public SheetUserAccessManager getSheetUserAccessManager() {
+        return userAccessManager;
+    }
 }

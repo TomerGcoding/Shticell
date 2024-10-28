@@ -6,6 +6,7 @@ import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.sheet.impl.SheetImpl;
 import com.shticell.engine.sheet.impl.SheetProperties;
+import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
 
 import java.util.List;
 import java.util.Map;
@@ -36,4 +37,6 @@ public interface Sheet {
     void removeRange(String name);
 
     List<String> getUniqeColumnValues(String columnId);
+
+    SheetUserAccessManager getSheetUserAccessManager();
 }
