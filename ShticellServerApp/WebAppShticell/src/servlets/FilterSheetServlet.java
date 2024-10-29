@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.SessionUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,7 +44,7 @@ public class FilterSheetServlet extends HttpServlet {
 
         Engine engine = getEngine(getServletContext());
         try {
-            SheetDTO sheetDTO = engine.filterSheet(sheetName, range, columns, values);
+            SheetDTO sheetDTO = engine.filterSheet(sheetName, range, columns, values, SessionUtils.getUsername(request));
             Type sheetType = new TypeToken<SheetDTO>() {
             }.getType();
             String jsonResponse = new Gson().toJson(sheetDTO, sheetType);

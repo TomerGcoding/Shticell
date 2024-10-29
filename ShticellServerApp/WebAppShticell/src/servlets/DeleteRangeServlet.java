@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.SessionUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class DeleteRangeServlet extends  HttpServlet {
         Engine engine = getEngine(getServletContext());
         try {
             synchronized (lock) {
-                engine.removeRange(sheetName, range);
+                engine.removeRange(sheetName, range, SessionUtils.getUsername(request));
             }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {

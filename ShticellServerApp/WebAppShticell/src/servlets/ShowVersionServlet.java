@@ -30,7 +30,7 @@ public class ShowVersionServlet extends HttpServlet {
            String sheetName = request.getParameter(SHEET_NAME);
            int version = Integer.parseInt(request.getParameter(VERSION));
            Engine engine = getEngine(getServletContext());
-           SheetDTO sheetDTO = engine.showChosenVersion(sheetName, version);
+           SheetDTO sheetDTO = engine.showChosenVersion(sheetName, version, SessionUtils.getUsername(request));
            Type sheetType = new TypeToken<SheetDTO>() {
            }.getType();
            String json = new Gson().toJson(sheetDTO, sheetType);

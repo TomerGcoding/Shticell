@@ -8,6 +8,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.SessionUtils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import static utils.ServletUtils.getEngine;
@@ -27,7 +29,7 @@ public class AddRangeServlet extends  HttpServlet {
          Engine engine = getEngine(getServletContext());
          try {
              synchronized (lock) {
-                 RangeDTO rangeDTO = engine.addRange(sheetName, newRange, rangeCells);
+                 RangeDTO rangeDTO = engine.addRange(sheetName, newRange, rangeCells, SessionUtils.getUsername(req));
                  String json = new Gson().toJson(rangeDTO, RangeDTO.class);
                  resp.setContentType("text/plain;charset=UTF-8");
                  PrintWriter out = resp.getWriter();

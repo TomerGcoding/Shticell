@@ -6,7 +6,9 @@ import com.shticell.engine.range.Range;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.sheet.impl.SheetImpl;
 import com.shticell.engine.sheet.impl.SheetProperties;
+import com.shticell.engine.users.accessPermission.AccessPermissionType;
 import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
+import dto.UserAccessDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -41,4 +43,14 @@ public interface Sheet {
     SheetUserAccessManager getSheetUserAccessManager();
 
     void setSheetOwner(String userName);
+
+    void checkUserAccess(String userName, AccessPermissionType requiredAccessPermission);
+
+    void requestAccessPermission(String userName, String requestedAccessPermission);
+
+    void approveAccessPermission(String userName, String requestedAccessPermission);
+
+    void rejectAccessPermission(String userName, String requestedAccessPermission);
+
+    List<UserAccessDTO> getAllAccessRequests(String ownerUserName);
 }

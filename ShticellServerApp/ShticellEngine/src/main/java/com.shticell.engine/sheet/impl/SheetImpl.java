@@ -1,5 +1,6 @@
 package com.shticell.engine.sheet.impl;
 
+import com.shticell.engine.users.accessPermission.AccessPermissionType;
 import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
 import com.shticell.engine.cell.api.EffectiveValue;
 import com.shticell.engine.range.Range;
@@ -10,6 +11,8 @@ import com.shticell.engine.cell.impl.CellImpl;
 import com.shticell.engine.sheet.coordinate.Coordinate;
 import com.shticell.engine.sheet.coordinate.CoordinateFactory;
 import com.shticell.engine.sheet.coordinate.CoordinateFormatter;
+import com.shticell.engine.users.accessPermission.UserAccessPermission;
+import dto.UserAccessDTO;
 
 import java.io.*;
 import java.util.*;
@@ -281,5 +284,54 @@ public class SheetImpl implements Sheet, Serializable {
     @Override
     public void setSheetOwner(String userName){
         userAccessManager.setOwner(userName);
+    }
+
+    //move method to userAccess!!!!!!!!!!!!!!! לעשות את זה
+    @Override
+    public void checkUserAccess(String userName, AccessPermissionType requiredAccessPermission) {
+        UserAccessPermission accessPermission = userAccessManager.getUserAccessPermission(userName);
+        switch (requiredAccessPermission) {
+            case OWNER:
+                if (accessPermission == null || accessPermission.getAccessPermissionType() != AccessPermissionType.OWNER) {
+                    throw new IllegalArgumentException("User does not have owner access permission.");
+                }
+                break;
+            case WRITER:
+                if (accessPermission == null || (accessPermission.getAccessPermissionType() != AccessPermissionType.WRITER && accessPermission.getAccessPermissionType() != AccessPermissionType.OWNER)) {
+                    throw new IllegalArgumentException("User does not have writer access permission.");
+                }
+                break;
+            case READER:
+                if (accessPermission == null || accessPermission.getAccessPermissionType() == AccessPermissionType.NONE) {
+                    throw new IllegalArgumentException("User does not have viewer access permission.");
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public void requestAccessPermission(String userName, String requestedAccessPermission) {
+        userAccessManager.requestAccessPermission(userName, requestedAccessPermission);
+    }
+
+    @Override
+    public void approveAccessPermission(String userName, String requestedAccessPermission) {
+        userAccessManager.approveAccessPermission(userName, requestedAccessPermission);
+    }
+
+    @Override
+    public void rejectAccessPermission(String userName, String requestedAccessPermission) {
+        userAccessManager.rejectAccessPermission(userName, requestedAccessPermission);
+    }
+
+    @Override
+    public List<UserAccessDTO> getAllAccessRequests(String ownerUserName) {
+        if (userAccessManager.isOwner(ownerUserName)) {
+            return userAccessManager.getAllAccessRequests(ownerUserName);
+        }
+        else {
+            throw new IllegalArgumentException("User does not have owner access permission.");
+        }
     }
 }
