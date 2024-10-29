@@ -53,6 +53,7 @@ public class ManagementRequests {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
+                    response.close();
                     Platform.runLater(() -> {
                         controller.showErrorAlert("Upload Error", "An error occurred while uploading the file: " + responseBody);
                         callback.onUploadFailed(responseBody);  // Notify failure

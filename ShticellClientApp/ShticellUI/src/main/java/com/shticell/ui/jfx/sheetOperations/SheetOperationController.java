@@ -70,7 +70,6 @@ public class SheetOperationController {
     private Button switchToManagementPageBtn;
 
     private MainController mainController;
-    private GridPane loginComponent;
     private UIModel uiModel;
     private GridPane sheetGridPane  = new GridPane();
     private SheetGridManager gridManager;
@@ -109,6 +108,7 @@ public class SheetOperationController {
                 }
             });
             versionSelectorComponentController.setSheetGridManager(gridManager);
+           // versionSelectorComponentController.setSheetName(sheet.getSheetName());
             changeStyleComboBox.getItems().addAll(1, 2, 3);
             changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
@@ -137,8 +137,8 @@ public class SheetOperationController {
             gridManager.createSheetGridPane(sheet);
             sheetTab.setContent(sheetGridPane);
             rangeController.addLoadedRange(sheet);
+            versionSelectorComponentController.setSheetName(sheet.getSheetName());
         }
-
 
         @FXML
         public void updateSelectedCellValue (ActionEvent event){
@@ -172,8 +172,9 @@ public class SheetOperationController {
             }
         }
 
-        public void setSheet (SheetDTO sheet){
+        public void updateSheet (SheetDTO sheet){
             this.sheet = sheet;
+            mainController.updateSheet(sheet);
         }
 
         private boolean isCellChanged (String cellId){

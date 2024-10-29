@@ -46,6 +46,7 @@ public class RangeRequests {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
+                    response.close();
                     Platform.runLater(() -> {
                         controller.showErrorAlert("Adding Range Error", "An error occurred while adding new range: " + responseBody);
                     });
@@ -53,6 +54,7 @@ public class RangeRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
                             System.out.println(responseBody);
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
