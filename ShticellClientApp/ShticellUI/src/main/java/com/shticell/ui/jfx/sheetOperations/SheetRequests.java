@@ -242,4 +242,51 @@ public class SheetRequests {
             }
         });
     }
+
+    protected void dynamicAnalysisRequest(String sheetName, String cellId, String maxValue, String minValue,String stepSize) {
+        String finalUrl = HttpUrl
+                .parse(BASE_URL+DYNAMIC_ANALYSIS)
+                .newBuilder()
+                .addQueryParameter("sheetName",sheetName)
+                .addQueryParameter("cellId", cellId)
+                .addQueryParameter("maxValue", maxValue)
+                .addQueryParameter("minValue", minValue)
+                .addQueryParameter("stepSize", stepSize)
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    controller.showErrorAlert("Analysis Error", "An error occurred while dynamic analysis: " + e.getMessage());
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() != 200) {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            response.close();
+                            controller.showErrorAlert("Analysis Error", "An error occurred while dynamic analysis: " + responseBody);
+                            ;
+                        } catch (Exception e) {
+                            controller.showErrorAlert("Analysis Error", "An error occurred while dynamic analysis: " + e.getMessage());;
+                        }
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        try {
+
+                        } catch (Exception e) {
+                            controller.showErrorAlert("Analysis Error", "An error occurred while dynamic analysis: " + e.getMessage());;
+                        }
+                    });
+                }
+            }
+        });
+    }
 }
