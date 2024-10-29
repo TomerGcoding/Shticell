@@ -60,6 +60,7 @@ public class SheetRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
                             System.out.println(responseBody);
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
@@ -103,6 +104,7 @@ public class SheetRequests {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
+                    response.close();
                     Platform.runLater(() -> {
                         controller.showErrorAlert("Upload Error", "An error occurred while uploading the file " + responseBody);
                     });
