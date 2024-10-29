@@ -184,6 +184,7 @@ public class SheetsManagementController {
     }
 
     public void addSheet(SheetDTO sheet) {
+        sheets.put(sheet.getSheetName(), sheet);
         sheet.setOwner();
         activeSheetsTable.getItems().add(sheet);
     }
@@ -204,5 +205,12 @@ public class SheetsManagementController {
                 addSheet(sheet);
             }
         }
+    }
+
+    public void updateSheet(SheetDTO sheet) {
+        if (!sheets.containsKey(sheet.getSheetName())){
+            showErrorAlert("Sheet not found", "Sheet not found in the list of active sheets");
+        }
+        sheets.put(sheet.getSheetName(), sheet);
     }
 }

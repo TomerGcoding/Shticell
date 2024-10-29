@@ -11,13 +11,15 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class VersionController {
 
-    private SheetOperationController mainController;
     private SheetGridManager sheetGridManager;
     @FXML
     private ComboBox<Integer> versionSelectorComboBox;
     private VersionRequests requests;
+    private String sheetName;
 
     @FXML
     private void initialize() {
@@ -34,8 +36,22 @@ public class VersionController {
         this.sheetGridManager = sheetGridManager;
     }
 
+    public void setSheetName (String sheetName) {
+        this.sheetName = sheetName;
+    }
+
+//    public void addVersion(int newVersionNumber) {
+//        versionSelectorComboBox.getItems().add(newVersionNumber);
+//    }
     public void addVersion(int newVersionNumber) {
-        versionSelectorComboBox.getItems().add(newVersionNumber);
+        List<Integer> versions = versionSelectorComboBox.getItems();
+        for (int i = 1; i <= newVersionNumber; i = i + 1)
+        {
+            if (!versions.contains(i))
+            {
+                versionSelectorComboBox.getItems().add(i);
+            }
+        }
     }
 
     public void clearAllVersions() {
@@ -44,7 +60,6 @@ public class VersionController {
 
     private void showSelectedVersion(Integer selectedVersion) {
         if (versionSelectorComboBox.getValue() != null) {
-            String sheetName = mainController.getSheet().getSheetName();
             requests.showVersion(sheetName, selectedVersion);
         }
     }
@@ -70,7 +85,4 @@ public class VersionController {
         alert.showAndWait();
     }
 
-    public void setMainController(SheetOperationController sheetOperationController) {
-        mainController = sheetOperationController;
-    }
 }

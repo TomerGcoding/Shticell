@@ -120,7 +120,7 @@ public class SheetRequests {
                                     .create();
 
                             SheetDTO sheet = gson.fromJson(responseBody, SheetDTO.class);
-                            controller.setSheet(sheet);
+                            controller.updateSheet(sheet);
                         }
                         catch (Exception e)
                         {
@@ -231,9 +231,8 @@ public class SheetRequests {
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
                                     .create();
                             SheetDTO updatedSheet = gson.fromJson(responseBody, SheetDTO.class);
-                            controller.setSheet(updatedSheet);
+                            controller.updateSheet(updatedSheet);
                             controller.showUpdatedSheet(cellId);
-
                         } catch (Exception e) {
                             controller.showErrorAlert("Update Error", "An error occurred while updating the cell: " + e.getMessage());
                         }

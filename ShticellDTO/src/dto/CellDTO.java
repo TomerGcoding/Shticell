@@ -13,7 +13,6 @@ CellDTO implements Serializable {
     private List<String> dependsOn;
     private List<String> influencingOn;
 
-
     public CellDTO() {
         this.ID = null;
         this.coordinate = null;
