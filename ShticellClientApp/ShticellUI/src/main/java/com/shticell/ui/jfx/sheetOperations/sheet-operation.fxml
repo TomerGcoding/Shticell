@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -63,6 +64,8 @@
       <HBox maxWidth="Infinity" spacing="10">
          <Button fx:id="sortSheetButton" text="Sort Sheet" HBox.hgrow="ALWAYS" />
          <Button fx:id="filterSheetButton" text="Filter Sheet" HBox.hgrow="ALWAYS" />
+         <Button fx:id="dynamicAnalysisButton" layoutX="101.0" layoutY="10.0" text="Dynamic Analysis" />
+         <Slider fx:id="dynamicAnalysisSlider" showTickLabels="true" visible="false" />
       </HBox>
    </bottom>
 </BorderPane>

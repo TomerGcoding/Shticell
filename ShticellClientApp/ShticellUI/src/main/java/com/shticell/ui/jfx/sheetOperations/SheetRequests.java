@@ -243,14 +243,14 @@ public class SheetRequests {
         });
     }
 
-    protected void dynamicAnalysisRequest(String sheetName, String cellId, String maxValue, String minValue,String stepSize) {
+    protected void dynamicAnalysisRequest(String sheetName, String cellId, String minValue, String maxValue,String stepSize) {
         String finalUrl = HttpUrl
                 .parse(BASE_URL+DYNAMIC_ANALYSIS)
                 .newBuilder()
                 .addQueryParameter("sheetName",sheetName)
                 .addQueryParameter("cellId", cellId)
-                .addQueryParameter("maxValue", maxValue)
                 .addQueryParameter("minValue", minValue)
+                .addQueryParameter("maxValue", maxValue)
                 .addQueryParameter("stepSize", stepSize)
                 .build()
                 .toString();
@@ -280,6 +280,7 @@ public class SheetRequests {
                 } else {
                     Platform.runLater(() -> {
                         try {
+
 
                         } catch (Exception e) {
                             controller.showErrorAlert("Analysis Error", "An error occurred while dynamic analysis: " + e.getMessage());;
