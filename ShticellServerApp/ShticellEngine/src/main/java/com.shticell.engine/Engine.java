@@ -37,4 +37,6 @@ public interface Engine {
     void addUser(String userName);
 
     UserManager getUserManager();
+
+    SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue);
 }

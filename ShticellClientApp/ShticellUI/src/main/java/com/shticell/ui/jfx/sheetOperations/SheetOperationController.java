@@ -77,6 +77,7 @@ public class SheetOperationController {
     private Map<String, SheetDTO> sheetNameTosheet = new HashMap<>();
     private SheetRequests requests = new SheetRequests();
     private boolean dynamicAnalysisMode = false;
+    private SheetDTO originalSheet;
 
 
     @FXML
@@ -470,6 +471,7 @@ public class SheetOperationController {
         Optional<Pair<Pair<String, String>, String>> result = dialog.showAndWait();
 
         result.ifPresent(pair -> {
+            originalSheet = sheet.copySheet();
             String min = pair.getKey().getKey();
             String max = pair.getKey().getValue();
             String stepSize = pair.getValue();
@@ -485,14 +487,10 @@ public class SheetOperationController {
         dynamicAnalysisSlider.setMax(Double.parseDouble(maxValue));
         dynamicAnalysisSlider.setMin(Double.parseDouble(minValue));
         dynamicAnalysisSlider.setMajorTickUnit(Double.parseDouble(stepSize));
-        dynamicAnalysisSlider.setMinorTickCount(Integer.parseInt(stepSize));
         dynamicAnalysisSlider.setBlockIncrement(Double.parseDouble(stepSize));
-        dynamicAnalysisSlider.valueProperty().addListener((obs, oldValue, newValue) -> {
-            requests.updateCellRequest(
-                    sheet.getSheetName(),
-                    cellId,
-                    Double.toString(newValue.doubleValue())
-            );
+        dynamicAnalysisSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if(dynamicAnalysisSlider.getValue()%dynamicAnalysisSlider.getMajorTickUnit()==0){
+                requests.dynamicAnalysisRequest(originalSheet.getSheetName(), cellId, Double.toString(newVal.doubleValue()));}
         });
     }
     private void enterDynamicAnalysisMode() {
@@ -504,6 +502,8 @@ public class SheetOperationController {
         dynamicAnalysisMode = false;
         dynamicAnalysisSlider.setVisible(false);
         dynamicAnalysisButton.setText("Dynamic Analysis");
+        setSheet(originalSheet);
+        showUpdatedSheet(currentCellLabel.getText());
         // Any other cleanup or reset logic
     }
 }

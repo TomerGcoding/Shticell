@@ -65,7 +65,7 @@
          <Button fx:id="sortSheetButton" text="Sort Sheet" HBox.hgrow="ALWAYS" />
          <Button fx:id="filterSheetButton" text="Filter Sheet" HBox.hgrow="ALWAYS" />
          <Button fx:id="dynamicAnalysisButton" layoutX="101.0" layoutY="10.0" text="Dynamic Analysis" />
-         <Slider fx:id="dynamicAnalysisSlider" showTickLabels="true" visible="false" />
+         <Slider fx:id="dynamicAnalysisSlider" blockIncrement="25.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" visible="false" />
       </HBox>
    </bottom>
 </BorderPane>

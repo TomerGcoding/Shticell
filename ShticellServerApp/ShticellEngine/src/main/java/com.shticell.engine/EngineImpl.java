@@ -197,4 +197,23 @@ public class EngineImpl implements Engine, Serializable {
     public UserManager getUserManager() {
         return userManager;
     }
+
+    @Override
+    public SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue){
+
+        if (!sheets.containsKey(sheetName)){
+            throw new IllegalStateException("No sheet with the name " + sheetName + " is currently loaded.");
+        }
+        try {
+            Sheet sheet = sheets.get(sheetName);
+            Sheet sheetCopy = sheet.copySheet();
+            sheetCopy = sheetCopy.setCell(cellId, cellValue);
+            SheetDTO newSheet = sheetToDTO(sheetCopy);
+            return newSheet;
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Cell "+ cellId + " can't be updated with the value " + cellValue + " because "
+                    + e.getMessage() + "\n" );
+        }
+    }
 }
