@@ -3,8 +3,8 @@ package com.shticell.ui.jfx.sheetsManagement;
 import com.shticell.ui.jfx.main.MainController;
 import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import dto.SheetDTO;
+import dto.UserAccessDTO;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -15,7 +15,6 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SheetsManagementController {
@@ -32,28 +31,27 @@ public class SheetsManagementController {
     @FXML
     private TableColumn<SheetDTO, String> sheetSizeColumn;
     @FXML
-    private TableColumn<SheetDTO, Void> actionColumn;  // New column for the "Open Sheet" button
-    @FXML
     private TableColumn<SheetDTO, String> accessPermissionColumn;
+    @FXML
+    private TableColumn<SheetDTO, Void> actionColumn;
+
+    @FXML
+    private TableView<UserAccessDTO> permissionsTable;
+    @FXML
+    private TableColumn<UserAccessDTO, String> userNameColumn;
+    @FXML
+    private TableColumn<UserAccessDTO, String> permissionColumn;
 
     @FXML
     private Button loadXMLFileButton;
-
     @FXML
     private Label permissionLabel;
-
-    @FXML
-    private Label permissionsGridPaneComponent;
-
     @FXML
     private ProgressBar progressBar;
-
     @FXML
     private Label progressLabel;
-
     @FXML
     private Label shticellLabel;
-
     @FXML
     private Label userNameLabel;
 
@@ -66,14 +64,15 @@ public class SheetsManagementController {
     @FXML
     private void initialize() {
         requests = new ManagementRequests(this);
+        initializeSheetsTable();
+        initializePermissionsTable();
+        setupRowSelectionListener();
     }
-
 
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
         this.userName = mainController.getUserName();
         userNameLabel.setText("Hello, " + userName + "!");
-        initializeSheetsTable(userName);
         requests.getActiveSheets();
     }
 
@@ -81,22 +80,36 @@ public class SheetsManagementController {
         this.sheetOperationController = sheetOperationController;
     }
 
-    private void initializeSheetsTable(String userName) {
-        // Setting up the TableView columns
+    private void initializeSheetsTable() {
+        // Setting up the TableView columns with PropertyValueFactory
         sheetNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSheetName()));
         uploadedByColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner()));
         sheetSizeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSize())));
-        accessPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getUserPermission(userName))));
-        // Set up the Access Permission column
-        accessPermissionColumn = new TableColumn<>("Access Permission");
-        accessPermissionColumn.setPrefWidth(150); // Adjust width as needed
+        accessPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserPermission(userName)));
 
+        // Setting up the "Actions" column with a button
         actionColumn.setCellFactory(createButtonCellFactory());
+    }
 
-        // Add all columns to the table (no need to add them again if already added)
-        if (!activeSheetsTable.getColumns().contains(sheetNameColumn)) {
-            activeSheetsTable.getColumns().addAll(sheetNameColumn, uploadedByColumn, sheetSizeColumn, accessPermissionColumn, actionColumn);
-        }
+    private void initializePermissionsTable() {
+        // Setting up the permissions TableView columns
+        userNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserName()));
+        permissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermission()));
+    }
+
+    private void setupRowSelectionListener() {
+        // Listening for selection changes in the sheets table
+        activeSheetsTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                updatePermissionsTable(newValue);
+            }
+        });
+    }
+
+    private void updatePermissionsTable(SheetDTO sheet) {
+        // Update the permissions table with the users and their access permissions
+        permissionsTable.getItems().clear();
+        permissionsTable.getItems().addAll(sheet.getSheetUsersAccess().getUsersAccess());
     }
 
     private Callback<TableColumn<SheetDTO, Void>, TableCell<SheetDTO, Void>> createButtonCellFactory() {
@@ -153,7 +166,6 @@ public class SheetsManagementController {
                 updateMessage("Loading sheet data...");
                 updateProgress(0.6, 1);
 
-                // Call the uploadFile method in requests and handle callbacks
                 requests.uploadFile(file, new ManagementRequests.UploadCallback() {
                     @Override
                     public void onUploadSuccess(SheetDTO sheet) {
@@ -162,9 +174,7 @@ public class SheetsManagementController {
                             progressBar.setManaged(false);
                             progressLabel.setVisible(false);
                             progressLabel.setManaged(false);
-
-                            // Add the sheet to the table
-                            addSheet(sheet);  // Replace with the actual user name if needed
+                            addSheet(sheet);
                         });
                     }
 
@@ -197,7 +207,6 @@ public class SheetsManagementController {
 
     public void addSheet(SheetDTO sheet) {
         sheets.put(sheet.getSheetName(), sheet);
-        sheet.setOwner();
         activeSheetsTable.getItems().add(sheet);
     }
 
@@ -209,27 +218,11 @@ public class SheetsManagementController {
         alert.showAndWait();
     }
 
-//    // Populate the TableView with sheets from the server
-//    public void populateSheetsTable(Map<String, List<SheetDTO>> sheets) {
-//        for (Map.Entry<String, List<SheetDTO>> entry : sheets.entrySet()) {
-//            String userName = entry.getKey();
-//            for (SheetDTO sheet : entry.getValue()) {
-//                addSheet(sheet);
-//            }
-//        }
-//    }
-    // Populate the TableView with sheets from the server
     public void populateSheetsTable(Map<String, SheetDTO> allSheets) {
-        for (Map.Entry<String, SheetDTO> entry : allSheets.entrySet()) {
-             SheetDTO sheet = entry.getValue();
-                addSheet(sheet);
-            }
-        }
+        allSheets.values().forEach(this::addSheet);
+    }
 
     public void updateSheet(SheetDTO sheet) {
-        if (!sheets.containsKey(sheet.getSheetName())){
-            showErrorAlert("Sheet not found", "Sheet not found in the list of active sheets");
-        }
         sheets.put(sheet.getSheetName(), sheet);
     }
 }

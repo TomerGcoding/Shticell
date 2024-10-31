@@ -24,6 +24,10 @@ public class SheetDTO implements Serializable {
         this.owner = null;
     }
 
+    public SheetUsersAccessDTO getSheetUsersAccess() {
+        return sheetUsersAccess;
+    }
+
     public SheetDTO(Map<CoordinateDTO, CellDTO> activeCells,
                     Map <String, RangeDTO> activeRanges,
                     int currVersion,
