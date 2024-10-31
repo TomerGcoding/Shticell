@@ -142,7 +142,7 @@ public class SheetDTO implements Serializable {
             e.printStackTrace();
             return null;
         }
-
+    }
 
     public String getUserPermission (String userName) {
         for (UserAccessDTO userAccess : sheetUsersAccess.getUsersAccess()) {

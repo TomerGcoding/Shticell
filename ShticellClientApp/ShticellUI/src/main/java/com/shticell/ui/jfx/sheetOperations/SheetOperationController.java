@@ -121,7 +121,7 @@ public class SheetOperationController {
             initializeDynamicAnalysisButton();
             createRangeController();
         } catch (Exception e) {
-            showErrorAlert("Initialization Error", "An error occurred while initializing the sheet operation controller: " + e.getMessage())
+            showErrorAlert("Initialization Error", "An error occurred while initializing the sheet operation controller: " + e.getMessage());
             e.printStackTrace();}
     }
         // Method to handle a sheet being loaded and displayed
@@ -161,7 +161,7 @@ public class SheetOperationController {
                 }
             }
         }
-    }
+
 
     protected void showUpdatedSheet(String cellId) {
         versionSelectorComponentController.addVersion(sheet.getCurrVersion());
