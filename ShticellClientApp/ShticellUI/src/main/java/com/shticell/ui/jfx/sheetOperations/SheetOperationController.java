@@ -135,7 +135,7 @@ public class SheetOperationController {
         uiModel.selectedCellVersionProperty().set(0);
         versionSelectorComponentController.clearAllVersions();
         versionSelectorComponentController.addVersion(sheet.getCurrVersion());
-        uiModel.isFileSelectedProperty().setValue(true);
+        uiModel.isDynamicAnalysisModeProperty().setValue(false);
         gridManager.createSheetGridPane(sheet);
         sheetTab.setContent(sheetGridPane);
         rangeController.addLoadedRange(sheet);
@@ -428,7 +428,14 @@ public class SheetOperationController {
     private void initializeDynamicAnalysisButton() {
         dynamicAnalysisButton.setOnAction(e -> {
             if (!dynamicAnalysisMode) {
-                showDynamicAnalysisDialog();
+                try {
+                    showDynamicAnalysisDialog();
+                }catch(NumberFormatException ex) {
+                    showErrorAlert("Can't start analysis","Illegal cell selection: cell original value must be number. ");
+                }
+                catch (IllegalArgumentException ex) {
+                    showErrorAlert("Can't start analysis","Illegal cell selection "+ ex.getMessage());
+                }
             } else {
                 exitDynamicAnalysisMode();
             }
@@ -436,6 +443,7 @@ public class SheetOperationController {
     }
 
     private void showDynamicAnalysisDialog() {
+        validateCellSelection(currentCellLabel.getText(),selectedCellOriginalValueTextField.getText());
         Dialog<Pair<Pair<String, String>, String>> dialog = new Dialog<>();
         dialog.setTitle("Dynamic Analysis");
         dialog.setHeaderText("Enter minimum value, maximum value and step size");
@@ -477,13 +485,42 @@ public class SheetOperationController {
             String stepSize = pair.getValue();
             String cellId = currentCellLabel.getText();
             String cellValue = selectedCellOriginalValueTextField.getText();
-            defineDynamicAnalysisSlider(cellId,cellValue,min,max,stepSize);
-            enterDynamicAnalysisMode();
+            try {
+                validateAnalysisParameters( min, max, stepSize);
+                defineDynamicAnalysisSlider(cellId, min, max, stepSize);
+                enterDynamicAnalysisMode();
+            } catch (NumberFormatException e){
+                showErrorAlert("Dynamic Analysis Error", "Please make sure to enter numbers for all parameters.");
+            } catch (IllegalArgumentException e) {
+                showErrorAlert("Dynamic Analysis Error", e.getMessage());
+            }
         });
     }
-    private void defineDynamicAnalysisSlider(String cellId, String cellValue, String minValue, String maxValue, String stepSize) {
+
+    private void validateAnalysisParameters(String min, String max, String stepSize) {
+
+        Double minValue = Double.parseDouble(min);
+        Double maxValue = Double.parseDouble(max);
+        Double stepSizeDouble = Double.parseDouble(stepSize);
+
+        if(stepSizeDouble< 0) {
+            throw new IllegalArgumentException("The step size must be a positive number");
+        }
+        if(minValue > maxValue) {
+            throw new IllegalArgumentException("The minimum value must be less than maximum value");
+        }
+    }
+    private void validateCellSelection(String cellId,String cellValue) {
+
+        if(cellId == null) {
+            throw new IllegalArgumentException("You must select a cell first");
+        }
+        Double.parseDouble(cellValue);
+    }
+
+    private void defineDynamicAnalysisSlider(String cellId, String minValue, String maxValue, String stepSize) {
         dynamicAnalysisSlider.setVisible(true);
-        dynamicAnalysisSlider.setValue(Double.parseDouble(cellValue));
+        dynamicAnalysisSlider.setValue(Double.parseDouble(minValue));
         dynamicAnalysisSlider.setMax(Double.parseDouble(maxValue));
         dynamicAnalysisSlider.setMin(Double.parseDouble(minValue));
         dynamicAnalysisSlider.setMajorTickUnit(Double.parseDouble(stepSize));
@@ -496,12 +533,14 @@ public class SheetOperationController {
     private void enterDynamicAnalysisMode() {
         dynamicAnalysisMode = true;
         dynamicAnalysisButton.setText("Stop Analysis");
+        uiModel.isDynamicAnalysisModeProperty().set(dynamicAnalysisMode);
     }
 
     private void exitDynamicAnalysisMode() {
         dynamicAnalysisMode = false;
         dynamicAnalysisSlider.setVisible(false);
         dynamicAnalysisButton.setText("Dynamic Analysis");
+        uiModel.isDynamicAnalysisModeProperty().set(dynamicAnalysisMode);
         setSheet(originalSheet);
         showUpdatedSheet(currentCellLabel.getText());
         // Any other cleanup or reset logic

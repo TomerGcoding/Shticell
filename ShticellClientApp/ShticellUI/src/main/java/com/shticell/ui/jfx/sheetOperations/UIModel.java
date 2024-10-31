@@ -16,7 +16,7 @@ public class UIModel {
 
     private final StringProperty fullPath;
     private final StringProperty name;
-    private final BooleanProperty isFileSelected;
+    private final BooleanProperty isDynamicAnalysisMode;
     private final BooleanProperty isLoading;
     private IntegerProperty selectedCellVersion;
     private Map<String,StringProperty> cellIdtoCellValue;
@@ -31,21 +31,21 @@ public class UIModel {
                    Button filterSheetButton) {
         this.fullPath = new SimpleStringProperty( );
         this.name = new SimpleStringProperty( );
-        this.isFileSelected = new SimpleBooleanProperty(false );
+        this.isDynamicAnalysisMode = new SimpleBooleanProperty(false );
         this.selectedCellId = new SimpleStringProperty( );
         this.selectedCellOriginalValue = new SimpleStringProperty( );
         this.selectedCellVersion = new SimpleIntegerProperty();
         this.isLoading = new SimpleBooleanProperty( false );
         sheetNameTab.textProperty().bind( this.name );
-        updateSelectedCellValueButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
-        versionSelectorComponent.disableProperty().bind( this.isFileSelected.not().or(this.isLoading));
+        updateSelectedCellValueButton.disableProperty().bind( this.isDynamicAnalysisMode);
+        versionSelectorComponent.disableProperty().bind( this.isDynamicAnalysisMode);
         selectedCellOriginalValueTextField.disableProperty().bind(this.isLoading);
-        sheetNameTab.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+        sheetNameTab.disableProperty().bind( this.isDynamicAnalysisMode);
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
-        sortSheetButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
-        filterSheetButton.disableProperty().bind( this.isFileSelected.not().or(this.isLoading) );
+        sortSheetButton.disableProperty().bind( this.isDynamicAnalysisMode);
+        filterSheetButton.disableProperty().bind( this.isDynamicAnalysisMode);
     }
 
     public void initializePropertiesForEachCell(GridPane sheetGridPane) {
@@ -84,8 +84,8 @@ public class UIModel {
     public StringProperty nameProperty( ) {
         return this.name;
     }
-    public BooleanProperty isFileSelectedProperty( ) {
-        return this.isFileSelected;
+    public BooleanProperty isDynamicAnalysisModeProperty( ) {
+        return this.isDynamicAnalysisMode;
     }
 
 }
