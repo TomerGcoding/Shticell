@@ -24,6 +24,10 @@ public class SheetDTO implements Serializable {
         this.owner = null;
     }
 
+    public SheetUsersAccessDTO getSheetUsersAccess() {
+        return sheetUsersAccess;
+    }
+
     public SheetDTO(Map<CoordinateDTO, CellDTO> activeCells,
                     Map <String, RangeDTO> activeRanges,
                     int currVersion,
@@ -104,6 +108,9 @@ public class SheetDTO implements Serializable {
     }
 
     public String getOwner() {
+        if (owner == null) {
+            owner = setOwner();
+        }
         return owner;
     }
 
@@ -119,6 +126,7 @@ public class SheetDTO implements Serializable {
         }
         throw new IllegalArgumentException("Owner not found in sheet users, problem found in SheetDTO setOwner");
     }
+
     public SheetDTO copySheet() {
         try {
             // Serialize the current object to a byte array
@@ -134,6 +142,16 @@ public class SheetDTO implements Serializable {
             e.printStackTrace();
             return null;
         }
+
+
+    public String getUserPermission (String userName) {
+        for (UserAccessDTO userAccess : sheetUsersAccess.getUsersAccess()) {
+            if (userAccess.getUserName().equals(userName)) {
+                return userAccess.getAccessPermission();
+            }
+        }
+        throw new IllegalArgumentException("User not found in sheet users, problem found in SheetDTO getUserPermission");
+
     }
 }
 

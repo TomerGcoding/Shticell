@@ -67,7 +67,6 @@ public class SheetOperationController {
 
 
     private MainController mainController;
-    private GridPane loginComponent;
     private UIModel uiModel;
     private GridPane sheetGridPane = new GridPane();
     private SheetGridManager gridManager;
@@ -109,6 +108,7 @@ public class SheetOperationController {
                 }
             });
             versionSelectorComponentController.setSheetGridManager(gridManager);
+           // versionSelectorComponentController.setSheetName(sheet.getSheetName());
             changeStyleComboBox.getItems().addAll(1, 2, 3);
             changeStyleComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
@@ -121,42 +121,44 @@ public class SheetOperationController {
             initializeDynamicAnalysisButton();
             createRangeController();
         } catch (Exception e) {
-            showErrorAlert("Initialization Error", "An error occurred while initializing the sheet operation controller: " + e.getMessage());
-            e.printStackTrace();
-        }
+            showErrorAlert("Initialization Error", "An error occurred while initializing the sheet operation controller: " + e.getMessage())
+            e.printStackTrace();}
     }
-
-    // Method to handle a sheet being loaded and displayed
-    public void loadSheet(SheetDTO sheet) {
-        this.sheet = sheet;
-        uiModel.nameProperty().setValue(sheet.getSheetName());
-        uiModel.selectedCellIdProperty().set(null);
-        uiModel.selectedCellOriginalValueProperty().set(null);
-        uiModel.selectedCellVersionProperty().set(0);
-        versionSelectorComponentController.clearAllVersions();
-        versionSelectorComponentController.addVersion(sheet.getCurrVersion());
-        uiModel.isDynamicAnalysisModeProperty().setValue(false);
-        gridManager.createSheetGridPane(sheet);
-        sheetTab.setContent(sheetGridPane);
-        rangeController.addLoadedRange(sheet);
-    }
-
-    @FXML
-    public void updateSelectedCellValue(ActionEvent event) {
-        if (selectedCell.get() == null) {
-            throw new IllegalStateException("Please select a cell to update.");
+        // Method to handle a sheet being loaded and displayed
+        public void loadSheet (SheetDTO sheet){
+            this.sheet = sheet;
+            uiModel.nameProperty().setValue(sheet.getSheetName());
+            uiModel.selectedCellIdProperty().set(null);
+            uiModel.selectedCellOriginalValueProperty().set(null);
+            uiModel.selectedCellVersionProperty().set(0);
+            versionSelectorComponentController.clearAllVersions();
+            versionSelectorComponentController.addVersion(sheet.getCurrVersion());
+            uiModel.isDynamicAnalysisModeProperty().setValue(false);
+            gridManager.createSheetGridPane(sheet);
+            sheetTab.setContent(sheetGridPane);
+            rangeController.addLoadedRange(sheet);
+            versionSelectorComponentController.setSheetName(sheet.getSheetName());
         }
-        if (isCellChanged(currentCellLabel.getText())) {
-            try {
-                String cellId = currentCellLabel.getText();
-                String cellValue = selectedCellOriginalValueTextField.getText();
-                requests.updateCellRequest(sheet.getSheetName(), cellId, cellValue);
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Failed to update Cell:");
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
+
+
+
+        @FXML
+        public void updateSelectedCellValue (ActionEvent event){
+            if (selectedCell.get() == null) {
+                throw new IllegalStateException("Please select a cell to update.");
+            }
+            if (isCellChanged(currentCellLabel.getText())) {
+                try {
+                    String cellId = currentCellLabel.getText();
+                    String cellValue = selectedCellOriginalValueTextField.getText();
+                    requests.updateCellRequest(sheet.getSheetName(), cellId, cellValue);
+                } catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText("Failed to update Cell:");
+                    alert.setContentText(e.getMessage());
+                    alert.showAndWait();
+                }
             }
         }
     }
@@ -173,9 +175,16 @@ public class SheetOperationController {
         }
     }
 
+
     public void setSheet(SheetDTO sheet) {
         this.sheet = sheet;
     }
+
+    public void updateSheet (SheetDTO sheet){
+            this.sheet = sheet;
+            mainController.updateSheet(sheet);
+        }
+
 
     private boolean isCellChanged(String cellId) {
         CellDTO cell = sheet.getCell(cellId);

@@ -45,6 +45,7 @@ public class VersionRequests {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
+                    response.close();
                     Platform.runLater(() -> {
                         controller.showErrorAlert("Filtering Error", "An error occurred while filtering the sheet " + responseBody);
                     });
@@ -52,6 +53,7 @@ public class VersionRequests {
                     Platform.runLater(() -> {
                         try {
                             String responseBody = response.body().string();
+                            response.close();
                             System.out.println(responseBody);
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())

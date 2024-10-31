@@ -1,12 +1,12 @@
 package com.shticell.ui.jfx.main;
 
+import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import com.shticell.ui.jfx.sheetsManagement.SheetsManagementController;
+import dto.SheetDTO;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.AnchorPane;
-import com.shticell.ui.jfx.sheetOperations.*;
 import javafx.scene.layout.BorderPane;
 
 import java.io.IOException;
@@ -18,24 +18,32 @@ public class MainController {
 
     @FXML
     private ScrollPane mainPanel;
-    private SheetOperationController sheetOperationController = null;
+    private SheetOperationController sheetOperationController;
     private BorderPane sheetOperationComponent;
-    private SheetsManagementController sheetsManagementController = null;
+    private SheetsManagementController sheetsManagementController;
     private BorderPane sheetsManagementComponent;
-
+    private String userName;
 
     @FXML
     public void initialize() {
-        try{
+//        try {
+//            loadSheetOperationPage();
+//            loadSheetsManagementPage();
+//        } catch (Exception e) {
+//            System.out.println("Error loading pages" + e.getMessage());
+//            e.printStackTrace();
+//        }
+    }
+
+    public void loadPages(String userName) {
+        this.userName = userName;
+        try {
             loadSheetOperationPage();
             loadSheetsManagementPage();
-
         } catch (Exception e) {
             System.out.println("Error loading pages" + e.getMessage());
             e.printStackTrace();
-        }
-
-    }
+        }}
 
     private void loadSheetsManagementPage() {
         URL loginPageUrl = getClass().getResource(SHEETS_MANAGEMENT_PAGE_FXML_RESOURCE_LOCATION);
@@ -64,6 +72,7 @@ public class MainController {
             e.printStackTrace();
         }
     }
+
     public void setMainPanelTo(Parent pane) {
         mainPanel.setContent(pane);
     }
@@ -71,6 +80,7 @@ public class MainController {
     public void switchToSheetOperation() {
         setMainPanelTo(sheetOperationComponent);
     }
+
     public void switchToSheetsManagement() {
         setMainPanelTo(sheetsManagementComponent);
     }
@@ -78,5 +88,16 @@ public class MainController {
     public SheetOperationController getSheetOperationController() {
         return sheetOperationController;
     }
-}
 
+    public void updateSheet(SheetDTO sheet) {
+        sheetsManagementController.updateSheet(sheet);
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+}

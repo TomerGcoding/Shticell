@@ -4,33 +4,46 @@ import java.io.Serializable;
 
 public class UserAccessPermission implements Serializable {
     private final String username;
-    private  AccessPermisionType accessPermisionType;
-    private  AccessPermissionStatus accessPermissionStatus;
+    private AccessPermissionType accessPermissionType;
+    private AccessPermissionType requestedType;
+    private  AccessPermissionStatus requestStatus;
 
-    public UserAccessPermission(String username, AccessPermisionType accessPermisionType, AccessPermissionStatus accessPermissionStatus) {
+    public UserAccessPermission(String username, AccessPermissionType accessPermissionType, AccessPermissionStatus accessPermissionStatus) {
         this.username = username;
-        this.accessPermisionType = accessPermisionType;
-        this.accessPermissionStatus = accessPermissionStatus;
+        this.accessPermissionType = accessPermissionType;
+        this.requestStatus = accessPermissionStatus;
+        this.requestedType = null;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public AccessPermisionType getAccessPermisionType() {
-        return accessPermisionType;
+    public AccessPermissionType getAccessPermissionType() {
+        return accessPermissionType;
     }
 
     public AccessPermissionStatus getAccessPermissionStatus() {
-        return accessPermissionStatus;
+        return requestStatus;
     }
 
-    public void setAccessPermissionType(AccessPermisionType accessPermisionType) {
-        this.accessPermisionType = accessPermisionType;
+    public void setAccessPermissionType(AccessPermissionType accessPermissionType) {
+        this.accessPermissionType = accessPermissionType;
     }
 
     public void setAccessPermissionStatus(AccessPermissionStatus accessPermissionStatus) {
-        this.accessPermissionStatus = accessPermissionStatus;
+        this.requestStatus = accessPermissionStatus;
     }
 
+    public AccessPermissionType getRequestedAccessPermissionType() {
+        return requestedType;
+    }
+
+    public void setRequestedAccessPermissionType(AccessPermissionType requestedType) {
+        this.requestedType = requestedType;
+    }
+
+    public AccessPermissionType getRequestedAccessPermission() {
+        return requestedType;
+    }
 }
