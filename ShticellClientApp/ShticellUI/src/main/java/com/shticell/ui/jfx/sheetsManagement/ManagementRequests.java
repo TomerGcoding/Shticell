@@ -113,18 +113,17 @@ public class ManagementRequests {
                 } else {
                     Platform.runLater(() -> {
                         try {
-                            System.out.println("get sheets response body (200ok) : " + responseBody);
-
-                            // Use Gson with the custom deserializer to parse the response
-                            Map<String, List<SheetDTO>> sheets = new GsonBuilder()
-                                    .registerTypeAdapter(new TypeToken<Map<String, List<SheetDTO>>>(){}.getType(), new MapOfSheetsDeserializer())
-                                    .create()
-                                    .fromJson(responseBody, new TypeToken<Map<String, List<SheetDTO>>>(){}.getType());
+                       //     System.out.println("get sheets response body (200ok) : " + responseBody);
+                            Gson gson = new GsonBuilder()
+                                    .registerTypeAdapter(new TypeToken<Map<String, SheetDTO>>() {}.getType(), new MapOfSheetsDeserializer())
+                                    .create();
+                            Map<String, SheetDTO> allSheets = gson.fromJson(responseBody, new TypeToken<Map<String, SheetDTO>>() {}.getType());
 
                             // Populate the table with the parsed sheets
-                            controller.populateSheetsTable(sheets);
+                            controller.populateSheetsTable(allSheets);
 
                         } catch (Exception e) {
+                            e.printStackTrace();
                             controller.showErrorAlert("Update Sheets", "An error occurred while trying to update available sheets " + e.getMessage());
                         }
                     });

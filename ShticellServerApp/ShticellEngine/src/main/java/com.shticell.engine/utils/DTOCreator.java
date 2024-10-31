@@ -106,7 +106,10 @@ public class DTOCreator implements Serializable {
     }
 
     public static UserAccessDTO userAccessToDTO (UserAccessPermission userAccess) {
-        return new UserAccessDTO(userAccess.getUsername(), userAccess.getAccessPermissionType().toString(), userAccess.getAccessPermissionStatus().toString());
+        if(userAccess.getRequestedAccessPermission() != null)
+            return new UserAccessDTO(userAccess.getUsername(), userAccess.getAccessPermissionType().toString(), userAccess.getAccessPermissionStatus().toString(), userAccess.getRequestedAccessPermission().toString());
+        else
+            return new UserAccessDTO(userAccess.getUsername(), userAccess.getAccessPermissionType().toString(), userAccess.getAccessPermissionStatus().toString(), null);
     }
 
     public static SheetUsersAccessDTO sheetUsersAccessToDTO (SheetUserAccessManager sheetUserAccessManager) {

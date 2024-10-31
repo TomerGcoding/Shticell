@@ -5,6 +5,7 @@ import com.shticell.ui.jfx.sheetOperations.SheetOperationController;
 import dto.SheetDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,6 +33,8 @@ public class SheetsManagementController {
     private TableColumn<SheetDTO, String> sheetSizeColumn;
     @FXML
     private TableColumn<SheetDTO, Void> actionColumn;  // New column for the "Open Sheet" button
+    @FXML
+    private TableColumn<SheetDTO, String> accessPermissionColumn;
 
     @FXML
     private Button loadXMLFileButton;
@@ -54,39 +57,48 @@ public class SheetsManagementController {
     @FXML
     private Label userNameLabel;
 
-    private SheetOperationController sheetOperationController;
     private MainController mainController;
+    private SheetOperationController sheetOperationController;
     private Map<String, SheetDTO> sheets = new HashMap<>();
     private ManagementRequests requests;
+    private String userName;
 
     @FXML
     private void initialize() {
         requests = new ManagementRequests(this);
-        initializeSheetsTable();
-        requests.getActiveSheets();
     }
+
 
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
+        this.userName = mainController.getUserName();
+        userNameLabel.setText("Hello, " + userName + "!");
+        initializeSheetsTable(userName);
+        requests.getActiveSheets();
     }
 
     public void setSheetOperationController(SheetOperationController sheetOperationController) {
         this.sheetOperationController = sheetOperationController;
     }
 
-    private void initializeSheetsTable() {
+    private void initializeSheetsTable(String userName) {
         // Setting up the TableView columns
-        sheetNameColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getSheetName()));
-        uploadedByColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getOwner()));
-        sheetSizeColumn.setCellValueFactory(cellData -> new SimpleObjectProperty<>(String.valueOf(cellData.getValue().getSize())));
+        sheetNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSheetName()));
+        uploadedByColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner()));
+        sheetSizeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSize())));
+        accessPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getUserPermission(userName))));
+        // Set up the Access Permission column
+        accessPermissionColumn = new TableColumn<>("Access Permission");
+        accessPermissionColumn.setPrefWidth(150); // Adjust width as needed
 
-        // Set up the "Open Sheet" button column
-        actionColumn = new TableColumn<>("Actions");
         actionColumn.setCellFactory(createButtonCellFactory());
-        activeSheetsTable.getColumns().add(actionColumn);
+
+        // Add all columns to the table (no need to add them again if already added)
+        if (!activeSheetsTable.getColumns().contains(sheetNameColumn)) {
+            activeSheetsTable.getColumns().addAll(sheetNameColumn, uploadedByColumn, sheetSizeColumn, accessPermissionColumn, actionColumn);
+        }
     }
 
-    // Create a cell factory that adds a button to each row
     private Callback<TableColumn<SheetDTO, Void>, TableCell<SheetDTO, Void>> createButtonCellFactory() {
         return param -> new TableCell<>() {
             private final Button openButton = new Button("Open Sheet");
@@ -197,15 +209,22 @@ public class SheetsManagementController {
         alert.showAndWait();
     }
 
+//    // Populate the TableView with sheets from the server
+//    public void populateSheetsTable(Map<String, List<SheetDTO>> sheets) {
+//        for (Map.Entry<String, List<SheetDTO>> entry : sheets.entrySet()) {
+//            String userName = entry.getKey();
+//            for (SheetDTO sheet : entry.getValue()) {
+//                addSheet(sheet);
+//            }
+//        }
+//    }
     // Populate the TableView with sheets from the server
-    public void populateSheetsTable(Map<String, List<SheetDTO>> sheets) {
-        for (Map.Entry<String, List<SheetDTO>> entry : sheets.entrySet()) {
-            String userName = entry.getKey();
-            for (SheetDTO sheet : entry.getValue()) {
+    public void populateSheetsTable(Map<String, SheetDTO> allSheets) {
+        for (Map.Entry<String, SheetDTO> entry : allSheets.entrySet()) {
+             SheetDTO sheet = entry.getValue();
                 addSheet(sheet);
             }
         }
-    }
 
     public void updateSheet(SheetDTO sheet) {
         if (!sheets.containsKey(sheet.getSheetName())){

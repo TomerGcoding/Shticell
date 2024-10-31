@@ -27,12 +27,11 @@ public class LoginController {
     @FXML
     public Label errorMessageLabel;
 
-    private MainController mainController;
-
     private Runnable loginListener;
 
     private final StringProperty errorMessageProperty = new SimpleStringProperty();
 
+    private String userName;
     @FXML
     public void initialize() {
         errorMessageLabel.textProperty().bind(errorMessageProperty);
@@ -41,12 +40,12 @@ public class LoginController {
     @FXML
     private void loginButtonClicked() {
         String userName = userNameTextField.getText();
+        setUserName(userName);
         if (userName.isEmpty()) {
             errorMessageProperty.set("User name is empty. You can't login with empty user name");
             return;
         }
 
-        //noinspection ConstantConditions
         String finalUrl = HttpUrl
                 .parse(BASE_URL + LOGIN_PAGE)
                 .newBuilder()
@@ -68,10 +67,12 @@ public class LoginController {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
+                    response.close();
                     Platform.runLater(() ->
                             errorMessageProperty.set("Something went wrong: " + responseBody)
                     );
                 } else {
+                    setUserName(userName);
                     Platform.runLater(() -> {
                       loginListener.run();
                     });
@@ -80,14 +81,18 @@ public class LoginController {
         });
     }
 
+    private void setUserName(String userName) {
+        this.userName = userName;  }
+
+    public String getUserName() {
+        return userName;
+    }
+
     @FXML
     private void userNameKeyTyped(KeyEvent event) {
         errorMessageProperty.set("");
     }
 
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
 
     public void setLoginListener(Runnable listener) {
         this.loginListener = listener;

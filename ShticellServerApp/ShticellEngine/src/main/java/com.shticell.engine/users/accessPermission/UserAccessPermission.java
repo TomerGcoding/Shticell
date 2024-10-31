@@ -43,4 +43,7 @@ public class UserAccessPermission implements Serializable {
         this.requestedType = requestedType;
     }
 
+    public AccessPermissionType getRequestedAccessPermission() {
+        return requestedType;
+    }
 }

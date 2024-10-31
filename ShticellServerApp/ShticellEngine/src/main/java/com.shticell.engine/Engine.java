@@ -31,7 +31,8 @@ public interface Engine {
 
     SheetDTO filterSheet(String sheetName, String rangeToFilter,String columnsToFilterBy,List<String> valuesToFilterBy, String userName);
 
-    Map<String,List<SheetDTO>>  getAllSheets(String userName);
+    Map <String, SheetDTO> getAllSheets(String userName);
+   // Map<String,List<SheetDTO>>  getAllSheets(String userName);
 
     SheetUsersAccessDTO getSheetUsersAccess(String sheetName);
     

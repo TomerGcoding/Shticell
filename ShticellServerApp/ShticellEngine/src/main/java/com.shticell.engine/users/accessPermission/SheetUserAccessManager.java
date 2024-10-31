@@ -92,7 +92,10 @@ public class SheetUserAccessManager implements Serializable {
         List<UserAccessDTO> userAccessDTOList = new ArrayList<>();
         for (UserAccessPermission userAccessPermission : userAccessPermissionMap.values()) {
             if (userAccessPermission.getRequestedAccessPermissionType() != null && userAccessPermission.getAccessPermissionStatus() == AccessPermissionStatus.PENDING) {
-                userAccessDTOList.add(new UserAccessDTO(userAccessPermission.getUsername(), userAccessPermission.getRequestedAccessPermissionType().toString(), userAccessPermission.getAccessPermissionStatus().toString()));
+                if (userAccessPermission.getRequestedAccessPermissionType() != null)
+                    userAccessDTOList.add(new UserAccessDTO(userAccessPermission.getUsername(), userAccessPermission.getRequestedAccessPermissionType().toString(), userAccessPermission.getAccessPermissionStatus().toString(), userAccessPermission.getRequestedAccessPermission().toString()));
+                else
+                    userAccessDTOList.add(new UserAccessDTO(userAccessPermission.getUsername(), userAccessPermission.getRequestedAccessPermissionType().toString(), userAccessPermission.getAccessPermissionStatus().toString(), null));
             }
         }
         return userAccessDTOList;
