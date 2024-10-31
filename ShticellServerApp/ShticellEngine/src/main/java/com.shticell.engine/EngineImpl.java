@@ -222,6 +222,24 @@ public class EngineImpl implements Engine, Serializable {
     }
 
     @Override
+    public SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue){
+
+        if (!sheets.containsKey(sheetName)){
+            throw new IllegalStateException("No sheet with the name " + sheetName + " is currently loaded.");
+        }
+        try {
+            Sheet sheet = sheets.get(sheetName);
+            Sheet sheetCopy = sheet.copySheet();
+            sheetCopy = sheetCopy.setCell(cellId, cellValue);
+            SheetDTO newSheet = sheetToDTO(sheetCopy);
+            return newSheet;
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException("Cell "+ cellId + " can't be updated with the value " + cellValue + " because "
+                    + e.getMessage() + "\n" );
+        }
+    }
+
     public void requestAccessPermission(String sheetName, String userName, String requestedAccessPermission) {
         if (!sheets.containsKey(sheetName)) {
             throw new IllegalArgumentException("Sheet with the name " + sheetName + " does not exist.");

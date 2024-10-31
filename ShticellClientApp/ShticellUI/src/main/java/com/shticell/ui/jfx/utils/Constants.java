@@ -18,4 +18,5 @@ public class Constants {
     public final static String DELETE_RANGE = "/deleteRange";
     public final static String SHOW_VERSION = "/showVersion";
     public final static String GET_ALL_SHEETS = "/getAllSheets";
+    public final static String DYNAMIC_ANALYSIS = "/dynamicAnalysis";
 }
