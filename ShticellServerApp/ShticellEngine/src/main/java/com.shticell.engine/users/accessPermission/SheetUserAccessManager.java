@@ -1,9 +1,11 @@
 package com.shticell.engine.users.accessPermission;
 
-import com.shticell.engine.sheet.api.Sheet;
+import dto.UserAccessDTO;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SheetUserAccessManager implements Serializable {
@@ -29,6 +31,73 @@ public class SheetUserAccessManager implements Serializable {
     }
 
     public void setOwner(String userName) {
-        addUserAccessPermission(new UserAccessPermission(userName, AccessPermisionType.OWNER, AccessPermissionStatus.APPROVED));
+        addUserAccessPermission(new UserAccessPermission(userName, AccessPermissionType.OWNER, AccessPermissionStatus.APPROVED));
+    }
+
+    public void requestAccessPermission(String userName, String requestedAccessPermission) {
+        UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
+        if (userAccessPermission == null) {
+            throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");
+        }
+        try {
+            userAccessPermission.setRequestedAccessPermissionType(AccessPermissionType.valueOf(requestedAccessPermission));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Invalid access permission type: " + requestedAccessPermission + "found in SheetAccessManager");
+        }
+    }
+
+    public void approveAccessPermission(String userName, String requestedAccessPermission) {
+        UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
+        if (userAccessPermission == null) {
+            throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");
+        }
+        if (userAccessPermission.getRequestedAccessPermissionType() == null) {
+            throw new IllegalArgumentException("User " + userName + " has not requested any access permission.");
+        }
+        if (userAccessPermission.getRequestedAccessPermissionType().equals(AccessPermissionType.valueOf(requestedAccessPermission))) {
+            userAccessPermission.setAccessPermissionType(AccessPermissionType.valueOf(requestedAccessPermission));
+            userAccessPermission.setAccessPermissionStatus(AccessPermissionStatus.APPROVED);
+            // if we want the request to be deleted we ned to put "null" in the request
+        } else {
+            throw new IllegalArgumentException("User " + userName + " has not requested access permission: " + requestedAccessPermission);
+        }
+    }
+
+    public void rejectAccessPermission(String userName, String requestedAccessPermission) {
+        UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
+        if (userAccessPermission == null) {
+            throw new IllegalArgumentException("User " + userName + " does not have any access to the sheet.");
+        }
+        if (userAccessPermission.getRequestedAccessPermissionType() == null) {
+            throw new IllegalArgumentException("User " + userName + " has not requested any access permission.");
+        }
+        if (userAccessPermission.getRequestedAccessPermissionType().equals(AccessPermissionType.valueOf(requestedAccessPermission))) {
+            userAccessPermission.setAccessPermissionType(AccessPermissionType.valueOf(requestedAccessPermission));
+            userAccessPermission.setAccessPermissionStatus(AccessPermissionStatus.REJECTED);
+        } else {
+            throw new IllegalArgumentException("User " + userName + " has not requested access permission: " + requestedAccessPermission);
+        }
+    }
+
+    public boolean isOwner(String ownerUserName) {
+        UserAccessPermission userAccessPermission = userAccessPermissionMap.get(ownerUserName);
+        if (userAccessPermission == null) {
+            return false;
+        }
+        return userAccessPermission.getAccessPermissionType().equals(AccessPermissionType.OWNER);
+    }
+    //המבוק
+    public List<UserAccessDTO> getAllAccessRequests(String ownerUserName) {
+        List<UserAccessDTO> userAccessDTOList = new ArrayList<>();
+        for (UserAccessPermission userAccessPermission : userAccessPermissionMap.values()) {
+            if (userAccessPermission.getRequestedAccessPermissionType() != null && userAccessPermission.getAccessPermissionStatus() == AccessPermissionStatus.PENDING) {
+                if (userAccessPermission.getRequestedAccessPermissionType() != null)
+                    userAccessDTOList.add(new UserAccessDTO(userAccessPermission.getUsername(), userAccessPermission.getRequestedAccessPermissionType().toString(), userAccessPermission.getAccessPermissionStatus().toString(), userAccessPermission.getRequestedAccessPermission().toString()));
+                else
+                    userAccessDTOList.add(new UserAccessDTO(userAccessPermission.getUsername(), userAccessPermission.getRequestedAccessPermissionType().toString(), userAccessPermission.getAccessPermissionStatus().toString(), null));
+            }
+        }
+        return userAccessDTOList;
     }
 }

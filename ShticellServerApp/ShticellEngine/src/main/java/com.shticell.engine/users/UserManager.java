@@ -34,6 +34,7 @@ public class UserManager {
         return usersSet.contains(username);
     }
 
+
 //    public AccessPermission getPermissionForUser (String userName, String sheetName){
 //        if (usersSet.contains(userName)){
 //            return userNameToUser.get(userName).getSheetPermission(sheetName);

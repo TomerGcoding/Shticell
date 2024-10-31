@@ -2,7 +2,7 @@ package com.shticell.engine.users.accessPermission;
 
 import java.io.Serializable;
 
-public enum AccessPermisionType implements Serializable {
+public enum AccessPermissionType implements Serializable {
     NONE {
         @Override
         public String toString() {

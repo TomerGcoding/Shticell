@@ -63,8 +63,16 @@
                                 <PropertyValueFactory property="sheetSize" />
                             </cellValueFactory>
                         </TableColumn>
+                        <!-- New Access Permission Column -->
+                        <TableColumn fx:id="accessPermissionColumn" text="Access Permission" prefWidth="150.0">
+                            <cellValueFactory>
+                                <PropertyValueFactory property="accessPermission" />
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="actionColumn" text="Actions" prefWidth="100.0" />
                     </columns>
                 </TableView>
+
 
                 <!-- Table for Permissions -->
                 <Label fx:id="permissionLabel" text="Permissions" style="-fx-font-size: 16px; -fx-font-weight: bold;" />

@@ -9,6 +9,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.SessionUtils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
@@ -34,8 +36,8 @@ public class UpdateCellServlet extends HttpServlet {
         try {
             System.out.println("trying to update cell in server");
             synchronized (lock) {
-                engine.setCell(sheetName, cellId, cellValue);}
-            SheetDTO sheetDTO = engine.showSheet(sheetName);
+                engine.setCell(sheetName, cellId, cellValue, SessionUtils.getUsername(request));}
+            SheetDTO sheetDTO = engine.showSheet(sheetName, SessionUtils.getUsername(request));
             Type sheetType = new TypeToken<SheetDTO>() {}.getType();
             String json = new Gson().toJson(sheetDTO, sheetType);
             PrintWriter out = response.getWriter();

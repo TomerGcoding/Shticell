@@ -1,18 +1,18 @@
 package dto.json;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import dto.SheetDTO;
 import dto.json.SheetDTODeserializer;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MapOfSheetsDeserializer implements JsonDeserializer<Map<String, List<SheetDTO>>> {
+public class MapOfSheetsDeserializer implements JsonDeserializer<Map<String, SheetDTO>> {
 
     @Override
-    public Map<String, List<SheetDTO>> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        Map<String, List<SheetDTO>> result = new HashMap<>();
+    public Map<String, SheetDTO> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        Map<String, SheetDTO> result = new HashMap<>();
 
         JsonObject jsonObject = json.getAsJsonObject();
         Gson gson = new GsonBuilder()
@@ -21,12 +21,12 @@ public class MapOfSheetsDeserializer implements JsonDeserializer<Map<String, Lis
 
         // Iterate over each entry in the JSON object
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-            String userName = entry.getKey();
-            JsonArray sheetArray = entry.getValue().getAsJsonArray();
+            String key = entry.getKey();
+            JsonElement value = entry.getValue();
 
-            // Deserialize the list of SheetDTOs
-            List<SheetDTO> sheetList = gson.fromJson(sheetArray, new TypeToken<List<SheetDTO>>(){}.getType());
-            result.put(userName, sheetList);
+            // Deserialize each SheetDTO
+            SheetDTO sheetDTO = gson.fromJson(value, SheetDTO.class);
+            result.put(key, sheetDTO);
         }
 
         return result;
