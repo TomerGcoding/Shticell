@@ -42,7 +42,7 @@ public interface Engine {
 
     void requestAccessPermission(String sheetName, String userName, String requestedAccessPermission);
 
-    void approveAccessPermission(String sheetName, String userName, String requestedAccessPermission);
+    void approveAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission);
 
     void rejectAccessPermission(String sheetName, String userName, String requestedAccessPermission);
 

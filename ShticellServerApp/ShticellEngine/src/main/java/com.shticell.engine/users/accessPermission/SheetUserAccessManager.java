@@ -40,14 +40,20 @@ public class SheetUserAccessManager implements Serializable {
             throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");
         }
         try {
-            userAccessPermission.setRequestedAccessPermissionType(AccessPermissionType.valueOf(requestedAccessPermission));
+            userAccessPermission.setRequestedAccessPermissionType(
+                    AccessPermissionType.valueOf(requestedAccessPermission.toUpperCase())
+            );
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalArgumentException("Invalid access permission type: " + requestedAccessPermission + "found in SheetAccessManager");
         }
     }
 
-    public void approveAccessPermission(String userName, String requestedAccessPermission) {
+    public void approveAccessPermission(String owner, String userName, String requestedAccessPermission) {
+        AccessPermissionType ownerAccessPermission = userAccessPermissionMap.get(owner).getAccessPermissionType();
+        if (ownerAccessPermission != AccessPermissionType.OWNER) {
+            throw new IllegalArgumentException("User " + owner + " is not the owner of the sheet.");
+        }
         UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
         if (userAccessPermission == null) {
             throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");

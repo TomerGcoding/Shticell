@@ -41,6 +41,7 @@ public class UserAccessPermission implements Serializable {
 
     public void setRequestedAccessPermissionType(AccessPermissionType requestedType) {
         this.requestedType = requestedType;
+        this.requestStatus = AccessPermissionStatus.PENDING;
     }
 
     public AccessPermissionType getRequestedAccessPermission() {
