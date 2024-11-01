@@ -10,6 +10,7 @@ import com.shticell.ui.jfx.range.RangeController;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -18,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
@@ -519,6 +521,7 @@ public class SheetOperationController {
             throw new IllegalArgumentException("The minimum value must be less than maximum value");
         }
     }
+
     private void validateCellSelection(String cellId,String cellValue) {
 
         if(cellId == null) {
@@ -527,18 +530,22 @@ public class SheetOperationController {
         Double.parseDouble(cellValue);
     }
 
-    private void defineDynamicAnalysisSlider(String cellId, String minValue, String maxValue, String stepSize) {
+    private void defineDynamicAnalysisSlider(String cellId,String minValue, String maxValue, String stepSize) {
         dynamicAnalysisSlider.setVisible(true);
         dynamicAnalysisSlider.setValue(Double.parseDouble(minValue));
         dynamicAnalysisSlider.setMax(Double.parseDouble(maxValue));
         dynamicAnalysisSlider.setMin(Double.parseDouble(minValue));
         dynamicAnalysisSlider.setMajorTickUnit(Double.parseDouble(stepSize));
         dynamicAnalysisSlider.setBlockIncrement(Double.parseDouble(stepSize));
-        dynamicAnalysisSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
+        dynamicAnalysisSlider.setOnMouseReleased(e->{
             if(dynamicAnalysisSlider.getValue()%dynamicAnalysisSlider.getMajorTickUnit()==0){
-                requests.dynamicAnalysisRequest(originalSheet.getSheetName(), cellId, Double.toString(newVal.doubleValue()));}
+                requests.dynamicAnalysisRequest(originalSheet.getSheetName(),
+                        cellId,
+                        Double.toString(dynamicAnalysisSlider.getValue()));
+            }
         });
     }
+
     private void enterDynamicAnalysisMode() {
         dynamicAnalysisMode = true;
         dynamicAnalysisButton.setText("Stop Analysis");
