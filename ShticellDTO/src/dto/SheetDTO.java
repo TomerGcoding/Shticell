@@ -1,7 +1,7 @@
 package dto;
 
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -127,12 +127,32 @@ public class SheetDTO implements Serializable {
         throw new IllegalArgumentException("Owner not found in sheet users, problem found in SheetDTO setOwner");
     }
 
+    public SheetDTO copySheet() {
+        try {
+            // Serialize the current object to a byte array
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(this);
+            oos.close();
+
+            // Deserialize the byte array to create a deep copy
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+            return (SheetDTO) ois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public String getUserPermission (String userName) {
         for (UserAccessDTO userAccess : sheetUsersAccess.getUsersAccess()) {
             if (userAccess.getUserName().equals(userName)) {
                 return userAccess.getAccessPermission();
             }
         }
+
         return "None";
+
     }
 }
+

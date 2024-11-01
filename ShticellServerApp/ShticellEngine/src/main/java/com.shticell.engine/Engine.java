@@ -40,6 +40,8 @@ public interface Engine {
 
     UserManager getUserManager();
 
+    SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue);
+
     void requestAccessPermission(String sheetName, String userName, String requestedAccessPermission);
 
     void approveAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission);
@@ -47,4 +49,5 @@ public interface Engine {
     void rejectAccessPermission(String sheetName, String userName, String requestedAccessPermission);
 
     List<UserAccessDTO> getAllAccessRequests(String sheetName, String ownerUserName);
+
 }

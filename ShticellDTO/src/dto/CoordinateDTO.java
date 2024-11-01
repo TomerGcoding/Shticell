@@ -1,6 +1,8 @@
 package dto;
 
-public class CoordinateDTO {
+import java.io.Serializable;
+
+public class CoordinateDTO implements Serializable {
     private int row;
     private int column;
 
