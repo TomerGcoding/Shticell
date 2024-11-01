@@ -58,4 +58,7 @@ public class HttpClientUtil {
     }
 
 
+    public static OkHttpClient getClient() {
+        return HTTP_CLIENT;
+    }
 }

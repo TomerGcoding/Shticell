@@ -38,4 +38,12 @@ public class UserAccessDTO implements Serializable {
     public String getRequestedAccessPermission() {
         return requestedAccessPermission;
     }
+
+    public void setAccessPermission(String requestedAccessPermission) {
+        this.accessPermission = requestedAccessPermission;
+    }
+
+    public void setAccessPermissionStatus(String approved) {
+        this.accessPermissionStatus = approved;
+    }
 }

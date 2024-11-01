@@ -150,7 +150,8 @@ public class SheetDTO implements Serializable {
                 return userAccess.getAccessPermission();
             }
         }
-        throw new IllegalArgumentException("User not found in sheet users, problem found in SheetDTO getUserPermission");
+
+        return "None";
 
     }
 }

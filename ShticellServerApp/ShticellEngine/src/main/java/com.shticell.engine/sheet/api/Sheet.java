@@ -48,7 +48,7 @@ public interface Sheet {
 
     void requestAccessPermission(String userName, String requestedAccessPermission);
 
-    void approveAccessPermission(String userName, String requestedAccessPermission);
+    void approveAccessPermission(String owner, String userName, String requestedAccessPermission);
 
     void rejectAccessPermission(String userName, String requestedAccessPermission);
 

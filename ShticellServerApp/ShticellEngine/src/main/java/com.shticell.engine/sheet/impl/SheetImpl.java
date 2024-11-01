@@ -316,8 +316,8 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public void approveAccessPermission(String userName, String requestedAccessPermission) {
-        userAccessManager.approveAccessPermission(userName, requestedAccessPermission);
+    public void approveAccessPermission(String owner, String userName, String requestedAccessPermission) {
+        userAccessManager.approveAccessPermission(owner, userName, requestedAccessPermission);
     }
 
     @Override

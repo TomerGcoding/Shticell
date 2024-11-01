@@ -80,6 +80,87 @@ public class ManagementRequests {
         }, body);
     }
 
+    public void approveAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission) {
+        String finalUrl = HttpUrl
+                .parse(BASE_URL + APPROVE_ACCESS_PERMISSION)
+                .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
+                .addQueryParameter("username", userName)
+                .addQueryParameter("accessPermission", requestedAccessPermission)
+                .addQueryParameter("owner", owner)
+                .toString();
+
+        // async
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    controller.showErrorAlert("Approve access fail", "An error occurred while trying approve access request " + e.getMessage());
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+
+                if (response.code() != 200) {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            response.close();
+                            controller.showErrorAlert("Approve access fail", "error occurred while trying approve access request: " + responseBody);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            controller.showErrorAlert("Approve access fail", "error occurred while trying approve access request: " + e.getMessage());
+                        }});
+
+                }
+            }
+        });
+    }
+
+    public void requestAccessPermission(String sheetName, String requestedPermission) {
+        String finalUrl = HttpUrl
+                .parse(BASE_URL + REQUEST_ACCESS_PERMISSION)
+                .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
+                .addQueryParameter("requestedPermission", requestedPermission)
+                .toString();
+
+        // async
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    controller.showErrorAlert("Request access fail", "An error occurred while trying to request access permission " + e.getMessage());
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+
+                if (response.code() != 200) {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            response.close();
+                            controller.showErrorAlert("Request access fail", "error occurred while trying to request access permission: " + responseBody);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            controller.showErrorAlert("Request access fail", "error occurred while trying to request access permission: " + e.getMessage());
+                        }});
+
+                }
+            }
+        });
+        
+    }
+
+    public void rejectAccessPermission(String sheetName, String userName, String requestedAccessPermission) {
+    }
+
+
     public interface UploadCallback {
         void onUploadSuccess(SheetDTO sheet);
         void onUploadFailed(String errorMessage);
@@ -121,6 +202,7 @@ public class ManagementRequests {
 
                             // Populate the table with the parsed sheets
                             controller.populateSheetsTable(allSheets);
+                       //     controller.refreshSheetsTable();
 
                         } catch (Exception e) {
                             e.printStackTrace();

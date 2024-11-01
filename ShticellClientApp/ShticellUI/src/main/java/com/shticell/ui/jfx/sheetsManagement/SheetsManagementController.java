@@ -6,22 +6,27 @@ import dto.SheetDTO;
 import dto.UserAccessDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.FileChooser;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
-
-import java.io.File;
+import javafx.concurrent.Task;
+import javafx.stage.FileChooser;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
+import java.util.Timer;
+import java.util.function.Consumer;
+
+import static com.shticell.ui.jfx.utils.Constants.REFRESH_RATE;
 
 public class SheetsManagementController {
 
     @FXML
     private Label activeSheetLabel;
-
     @FXML
     private TableView<SheetDTO> activeSheetsTable;
     @FXML
@@ -33,17 +38,19 @@ public class SheetsManagementController {
     @FXML
     private TableColumn<SheetDTO, String> accessPermissionColumn;
     @FXML
-    private TableColumn<SheetDTO, Void> actionColumn;
-
+    private TableColumn<SheetDTO, Void> sheetsActionColumn;
     @FXML
     private TableView<UserAccessDTO> permissionsTable;
     @FXML
     private TableColumn<UserAccessDTO, String> userNameColumn;
     @FXML
     private TableColumn<UserAccessDTO, String> permissionColumn;
-
     @FXML
-    private Button loadXMLFileButton;
+    private TableColumn<UserAccessDTO, String> permmisionActionColumn;
+    @FXML
+    private ComboBox<String> permissionComboBox;
+    @FXML
+    private Button requestPermissionButton;
     @FXML
     private Label permissionLabel;
     @FXML
@@ -64,16 +71,17 @@ public class SheetsManagementController {
     @FXML
     private void initialize() {
         requests = new ManagementRequests(this);
-        initializeSheetsTable();
-        initializePermissionsTable();
-        setupRowSelectionListener();
     }
 
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
         this.userName = mainController.getUserName();
+        initializeSheetsTable();
+        initializePermissionsTable();
+        setupRowSelectionListener();
         userNameLabel.setText("Hello, " + userName + "!");
         requests.getActiveSheets();
+        startSheetsRefresher();
     }
 
     public void setSheetOperationController(SheetOperationController sheetOperationController) {
@@ -81,20 +89,19 @@ public class SheetsManagementController {
     }
 
     private void initializeSheetsTable() {
-        // Setting up the TableView columns with PropertyValueFactory
+        // Setting up the TableView columns
         sheetNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSheetName()));
         uploadedByColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner()));
         sheetSizeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSize())));
         accessPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserPermission(userName)));
-
-        // Setting up the "Actions" column with a button
-        actionColumn.setCellFactory(createButtonCellFactory());
+        sheetsActionColumn.setCellFactory(createButtonCellFactory());
     }
 
     private void initializePermissionsTable() {
         // Setting up the permissions TableView columns
         userNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserName()));
         permissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermission()));
+        permmisionActionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermissionStatus()));
     }
 
     private void setupRowSelectionListener() {
@@ -137,6 +144,56 @@ public class SheetsManagementController {
             }
         };
     }
+
+    @FXML
+    private void handleRequestPermission(ActionEvent event) {
+        String requestedPermission = permissionComboBox.getValue();
+        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
+        if (selectedSheet != null && requestedPermission != null) {
+            requests.requestAccessPermission(selectedSheet.getSheetName(), requestedPermission);
+        }
+    }
+
+    private void handleApproveRequest(UserAccessDTO userAccess) {
+        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
+        if (selectedSheet != null) {
+            // Call the engine method to approve the access
+            requests.approveAccessPermission(this.userName, selectedSheet.getSheetName(), userAccess.getUserName(), userAccess.getRequestedAccessPermission());
+
+            // Update the user access permission and status
+            userAccess.setAccessPermission(userAccess.getRequestedAccessPermission());
+            userAccess.setAccessPermissionStatus("Approved");
+            refreshPermissionsTable();
+        }
+    }
+
+    private void handleRejectRequest(UserAccessDTO userAccess) {
+        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
+        if (selectedSheet != null) {
+            // Call the engine method to reject the access
+            requests.rejectAccessPermission(selectedSheet.getSheetName(), userAccess.getUserName(), userAccess.getRequestedAccessPermission());
+
+            // Update the user access status
+            userAccess.setAccessPermissionStatus("Rejected");
+            refreshPermissionsTable();
+        }
+    }
+
+    // Method to refresh the permissions table
+    private void refreshPermissionsTable() {
+        permissionsTable.refresh(); // Refresh the table to reflect updated data
+    }
+
+//    private void refreshSheetsTable(){
+//        activeSheetsTable.refresh();
+//    }
+
+
+    private boolean isOwner() {
+        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
+        return selectedSheet != null && selectedSheet.getOwner().equals(userName);
+    }
+
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
@@ -206,8 +263,13 @@ public class SheetsManagementController {
     }
 
     public void addSheet(SheetDTO sheet) {
-        sheets.put(sheet.getSheetName(), sheet);
-        activeSheetsTable.getItems().add(sheet);
+        if (sheets.containsKey(sheet.getSheetName())) {
+            sheets.put(sheet.getSheetName(), sheet);
+        } else {
+            sheets.put(sheet.getSheetName(), sheet);
+            activeSheetsTable.getItems().add(sheet);
+        }
+
     }
 
     public void showErrorAlert(String title, String message) {
@@ -218,11 +280,44 @@ public class SheetsManagementController {
         alert.showAndWait();
     }
 
-    public void populateSheetsTable(Map<String, SheetDTO> allSheets) {
-        allSheets.values().forEach(this::addSheet);
-    }
 
     public void updateSheet(SheetDTO sheet) {
         sheets.put(sheet.getSheetName(), sheet);
+        populateSheetsTable(sheets);
+    }
+
+public void startSheetsRefresher() {
+    Consumer<Map<String, SheetDTO>> updateSheetsConsumer = this::populateSheetsTable;
+    SheetsRefresher sheetsRefresher = new SheetsRefresher(this, updateSheetsConsumer);
+    Timer timer = new Timer(true); // Use a daemon timer
+    timer.scheduleAtFixedRate(sheetsRefresher, REFRESH_RATE, REFRESH_RATE);
+}
+
+
+    public void populateSheetsTable(Map<String, SheetDTO> updatedSheets) {
+        System.out.println("this thread is: " + Thread.currentThread().getName());
+        System.out.println("User " + userName + " got these sheets to update the table: " + updatedSheets);
+
+        // Clear the current items
+        activeSheetsTable.getItems().clear();
+        sheets.clear();
+
+        // Check if the map has data
+        if (updatedSheets.isEmpty()) {
+            System.out.println("No sheets found to add to the table.");
+            return;
+        }
+
+        System.out.println("Cleared the sheet table");
+        updatedSheets.values().forEach(sheet -> {
+            sheets.put(sheet.getSheetName(), sheet);
+            activeSheetsTable.getItems().add(sheet);
+            System.out.println("Added sheet to table: " + sheet.getSheetName());
+        });
+
+        // Refresh the table to ensure it reflects the latest data
+        activeSheetsTable.refresh();
+        System.out.println("Refreshed the sheet table");
+
     }
 }
