@@ -50,11 +50,11 @@
                 <Label fx:id="activeSheetLabel" text="Active Sheets" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
                 <TableView fx:id="activeSheetsTable" VBox.vgrow="ALWAYS" prefHeight="300.0" prefWidth="800.0">
                     <columns>
-                        <TableColumn fx:id="sheetNameColumn" text="Sheet Name" prefWidth="250.0" />
+                        <TableColumn fx:id="sheetNameColumn" text="Sheet Name" prefWidth="200.0" />
                         <TableColumn fx:id="uploadedByColumn" text="Uploaded By" prefWidth="200.0" />
-                        <TableColumn fx:id="sheetSizeColumn" text="Sheet Size" prefWidth="150.0" />
-                        <TableColumn fx:id="accessPermissionColumn" text="Access Permission" prefWidth="150.0" />
-                        <TableColumn fx:id="actionColumn" text="Actions" prefWidth="100.0" />
+                        <TableColumn fx:id="sheetSizeColumn" text="Sheet Size" prefWidth="120.0" />
+                        <TableColumn fx:id="accessPermissionColumn" text="Access Permission" prefWidth="120.0" />
+                        <TableColumn fx:id="sheetsActionColumn" text="Actions" prefWidth="100.0" />
                     </columns>
                 </TableView>
 
@@ -64,7 +64,7 @@
                     <columns>
                         <TableColumn fx:id="userNameColumn" text="User Name" prefWidth="300.0" />
                         <TableColumn fx:id="permissionColumn" text="Permission" prefWidth="300.0" />
-                        <!--<TableColumn fx:id="actionColumn" text="Action" prefWidth="200.0" />-->
+                        <TableColumn fx:id="permmisionActionColumn" text="Action" prefWidth="200.0" />
                     </columns>
                 </TableView>
 

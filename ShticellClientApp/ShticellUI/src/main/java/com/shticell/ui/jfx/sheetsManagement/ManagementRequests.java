@@ -119,8 +119,6 @@ public class ManagementRequests {
         });
     }
 
-
-
     public void requestAccessPermission(String sheetName, String requestedPermission) {
         String finalUrl = HttpUrl
                 .parse(BASE_URL + REQUEST_ACCESS_PERMISSION)
@@ -204,6 +202,7 @@ public class ManagementRequests {
 
                             // Populate the table with the parsed sheets
                             controller.populateSheetsTable(allSheets);
+                       //     controller.refreshSheetsTable();
 
                         } catch (Exception e) {
                             e.printStackTrace();
