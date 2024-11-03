@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UIModel {
@@ -22,11 +23,12 @@ public class UIModel {
     private Map<String,StringProperty> cellIdtoCellValue;
     private StringProperty selectedCellId;
     private StringProperty selectedCellOriginalValue;
+    private StringProperty selectedCellLastUserUpdating;
 
     public UIModel(Tab sheetNameTab,
                    Button updateSelectedCellValueButton, GridPane sheetGridPane,
                    Label currentCellLabel, TextField selectedCellOriginalValueTextField,
-                   Label lastVersionUpdateLabel, AnchorPane versionSelectorComponent,
+                   Label lastVersionUpdateLabel,Label cellUpdatedByLabel, AnchorPane versionSelectorComponent,
                    Button sortSheetButton,
                    Button filterSheetButton) {
         this.fullPath = new SimpleStringProperty( );
@@ -35,6 +37,7 @@ public class UIModel {
         this.selectedCellId = new SimpleStringProperty( );
         this.selectedCellOriginalValue = new SimpleStringProperty( );
         this.selectedCellVersion = new SimpleIntegerProperty();
+        this.selectedCellLastUserUpdating = new SimpleStringProperty();
         this.isLoading = new SimpleBooleanProperty( false );
         sheetNameTab.textProperty().bind( this.name );
         updateSelectedCellValueButton.disableProperty().bind( this.isDynamicAnalysisMode);
@@ -44,6 +47,7 @@ public class UIModel {
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());
+        cellUpdatedByLabel.textProperty().bind(this.selectedCellLastUserUpdating);
         sortSheetButton.disableProperty().bind( this.isDynamicAnalysisMode);
         filterSheetButton.disableProperty().bind( this.isDynamicAnalysisMode);
     }
@@ -84,8 +88,10 @@ public class UIModel {
     public StringProperty nameProperty( ) {
         return this.name;
     }
+
     public BooleanProperty isDynamicAnalysisModeProperty( ) {
         return this.isDynamicAnalysisMode;
     }
 
+    public StringProperty selectedCellLastUserUpdatingProperty() {return this.selectedCellLastUserUpdating;}
 }

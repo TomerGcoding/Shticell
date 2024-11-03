@@ -51,7 +51,7 @@ public class RangeImpl implements Range, Serializable {
                 Cell cell = sheet.getCell(coordinate);
 
                 if (cell == null) {
-                    cell = new CellImpl(row, col, "", sheet.getVersion(), sheet);
+                    cell = new CellImpl(row, col, "", sheet.getVersion(), sheet,"");
                     sheet.addCell(coordinate, cell);
                 }
 

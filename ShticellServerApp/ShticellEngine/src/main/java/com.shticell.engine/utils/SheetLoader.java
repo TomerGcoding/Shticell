@@ -28,14 +28,14 @@ public class SheetLoader implements Serializable {
 
     private Sheet sheet;
     private final Map<Integer, SheetDTO> versions = new HashMap<>();
-    public void loadSheetFile(String filePath) throws JAXBException {
+    public void loadSheetFile(String filePath,String userName) throws JAXBException {
         validateFilePath(filePath);
 
         File file = new File(filePath);
         validateFileExistence(file);
 
         STLSheet stlSheet = unmarshalSheet(file);
-        convertStlSheetToOurSheet(stlSheet);
+        convertStlSheetToOurSheet(stlSheet,userName);
     }
 
     private void validateFilePath(String filePath) throws JAXBException {
@@ -60,7 +60,7 @@ public class SheetLoader implements Serializable {
         }
     }
 
-    private void convertStlSheetToOurSheet(STLSheet stlSheet) {
+    private void convertStlSheetToOurSheet(STLSheet stlSheet,String userName) {
         String sheetName = stlSheet.getName();
         int columns = stlSheet.getSTLLayout().getColumns();
         int rows = stlSheet.getSTLLayout().getRows();
@@ -72,7 +72,7 @@ public class SheetLoader implements Serializable {
         sheet = new SheetImpl(sheetName, rows, columns, rowHeight, columnWidth);
 
         populateSheetWithRanges(stlSheet,rows,columns);
-        populateSheetWithCells(stlSheet, rows, columns);
+        populateSheetWithCells(stlSheet, rows, columns,userName);
     }
 
     private void validateSheetDimensions(int rows, int columns) {
@@ -98,7 +98,7 @@ public class SheetLoader implements Serializable {
         }
     }
 
-    private void populateSheetWithCells(STLSheet stlSheet, int rows, int columns) {
+    private void populateSheetWithCells(STLSheet stlSheet, int rows, int columns,String userName) {
         if ((stlSheet.getSTLCells()!=null)) {
             for (STLCell cell : stlSheet.getSTLCells().getSTLCell()) {
                 int row = cell.getRow() - 1;
@@ -107,7 +107,7 @@ public class SheetLoader implements Serializable {
                 validateCellCoordinates(row, column, rows, columns);
 
                 String value = cell.getSTLOriginalValue();
-                this.sheet = sheet.setCell(row, column, value);
+                this.sheet = sheet.setCell(row, column, value,userName);
             }
             sheet.incrementVersion();
         }

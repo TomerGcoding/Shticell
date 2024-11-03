@@ -20,4 +20,7 @@ public interface Cell  {
     void removeFromInfluenceOn(Cell originCell);
     void deleteMeFromInfluenceList();
     int getColumn();
+    void setUserNameToUpdate(String userNameToUpdate);
+
+    String getUserNameToUpdate();
 }

@@ -32,9 +32,10 @@ public class CellImpl implements Cell, Serializable {
     private int version;
     private final List<Cell> dependsOn;
     private final List<Cell> influencingOn;
+    private String userNameToUpdate;
 
 
-    public CellImpl(int row, int column, String originalValue, int version, Sheet sheet) {
+    public CellImpl(int row, int column, String originalValue, int version, Sheet sheet, String userNameToUpdate) {
         this.sheet = sheet;
         this.coordinate = CoordinateFactory.createCoordinate(row, column);
         this.ID = CoordinateFormatter.indexToCellId(row, column);
@@ -43,6 +44,7 @@ public class CellImpl implements Cell, Serializable {
         this.dependsOn = new ArrayList<>();
         this.influencingOn = new ArrayList<>();
         this.effectiveValue = new EffectiveValueImpl(CellType.UNKNOWN, "");
+        this.userNameToUpdate = userNameToUpdate;
     }
 
     @Override
@@ -210,6 +212,16 @@ public class CellImpl implements Cell, Serializable {
     @Override
     public int getColumn() {
         return coordinate.getColumn();
+    }
+
+    @Override
+    public void setUserNameToUpdate(String userNameToUpdate) {
+        this.userNameToUpdate = userNameToUpdate;
+    }
+
+    @Override
+    public String getUserNameToUpdate() {
+        return this.userNameToUpdate;
     }
 }
 

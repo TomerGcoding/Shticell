@@ -12,6 +12,7 @@ CellDTO implements Serializable {
     private int version;
     private List<String> dependsOn;
     private List<String> influencingOn;
+    private String userNameToUpdate;
 
     public CellDTO() {
         this.ID = null;
@@ -29,7 +30,8 @@ CellDTO implements Serializable {
                    EffectiveValueDTO effectiveValue,
                    int version,
                    List<String> dependsOn,
-                   List<String> influencingOn) {
+                   List<String> influencingOn,
+                   String userNameToUpdate) {
         this.ID = cellId;
         this.coordinate = coordinate;
         this.originalValue = originalValue;
@@ -37,6 +39,7 @@ CellDTO implements Serializable {
         this.version = version;
         this.dependsOn = dependsOn;
         this.influencingOn = influencingOn;
+        this.userNameToUpdate=userNameToUpdate;
     }
 
     public String getId () { return ID; }
@@ -69,4 +72,7 @@ CellDTO implements Serializable {
         return influencingOn;
     }
 
+    public String getUserNameToUpdate() {
+        return userNameToUpdate;
+    }
 }

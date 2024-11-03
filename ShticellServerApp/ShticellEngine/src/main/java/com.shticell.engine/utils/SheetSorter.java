@@ -13,11 +13,13 @@ public class SheetSorter {
     private Sheet sheet;
     private final List<List<Cell>> rangeToSort;
     private final List<Integer> columnsToSortBy;
+    private final String userName;
 
-    public SheetSorter(Sheet sheet, String rangeToSort, String columnsToSortBy) {
+    public SheetSorter(Sheet sheet, String rangeToSort, String columnsToSortBy, String userName) {
         this.sheet = sheet.copySheet();
         this.rangeToSort = getRangeToSort(rangeToSort);
         this.columnsToSortBy = parseColumnsToSortBy(columnsToSortBy);
+        this.userName = userName;
     }
 
     private List<Integer> parseColumnsToSortBy(String columnsToSortBy) {
@@ -37,7 +39,7 @@ public class SheetSorter {
             int[] indexes = CoordinateFormatter.cellIdToIndex(rangeCellId);
             Cell cell = sheet.getCell(rangeCellId);
             if (cell == null) {
-                cell = new CellImpl(indexes[0], indexes[1], "", sheet.getVersion(), sheet);
+                cell = new CellImpl(indexes[0], indexes[1], "", sheet.getVersion(), sheet,userName);
             }
             if(!rowIndexToRowCellsInRange.containsKey(indexes[0])) {
                 rowIndexToRowCellsInRange.put(indexes[0], new ArrayList<>());
@@ -120,7 +122,7 @@ public class SheetSorter {
                 Cell sortedCell = sortedRow.get(j);
 
                 //if(originalCell.getDependsOn().isEmpty()&&sortedCell.getDependsOn().isEmpty()) {
-                    this.sheet = sheet.setCell(originalCell.getId(), sortedCell.getEffectiveValue().getValue().toString());
+                    this.sheet = sheet.setCell(originalCell.getId(), sortedCell.getEffectiveValue().getValue().toString(), userName);
               //  }
             }
         }
@@ -132,7 +134,7 @@ public class SheetSorter {
         return row.stream()
                 .filter(cell -> cell.getCoordinate().getColumn() == column)
                 .findFirst()
-                .orElse(new CellImpl(row.get(0).getCoordinate().getRow(), column, "", sheet.getVersion(), sheet));
+                .orElse(new CellImpl(row.get(0).getCoordinate().getRow(), column, "", sheet.getVersion(), sheet,userName));
     }
 
 

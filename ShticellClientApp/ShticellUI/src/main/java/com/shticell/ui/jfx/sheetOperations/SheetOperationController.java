@@ -66,6 +66,10 @@ public class SheetOperationController {
     private Button dynamicAnalysisButton;
     @FXML
     private Slider dynamicAnalysisSlider;
+    @FXML
+    private Label cellUpdatedByLabel;
+    @FXML
+    private Button updateToLatestVersionButton;
 
 
     private MainController mainController;
@@ -95,6 +99,7 @@ public class SheetOperationController {
                     currentCellLabel,
                     selectedCellOriginalValueTextField,
                     currentCellVersionLabel,
+                    cellUpdatedByLabel,
                     versionSelectorComponent,
                     sortSheetButton,
                     filterSheetButton
@@ -175,6 +180,7 @@ public class SheetOperationController {
         uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
         uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
         uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
+        uiModel.selectedCellLastUserUpdatingProperty().set(updatedCell.getUserNameToUpdate());
 
         for (String influencedCellId : updatedCell.getInfluencingOn()) {
             uiModel.cellIdProperty(influencedCellId).setValue(sheet.getCell(influencedCellId).getEffectiveValue().toString());
@@ -411,6 +417,7 @@ public class SheetOperationController {
             CellDTO cell = sheet.getCell(cellRow, cellCol);
             uiModel.selectedCellOriginalValueProperty().set(cell == null ? "" : cell.getOriginalValue());
             uiModel.selectedCellVersionProperty().set(cell == null ? 0 : cell.getVersion());
+            uiModel.selectedCellLastUserUpdatingProperty().set(cell == null ? "" : cell.getUserNameToUpdate());
             uiModel.selectedCellIdProperty().set(cellID);
             gridManager.highlightDependenciesAndInfluences(cell);
             AnimationManager.animateCellSelection(label);
