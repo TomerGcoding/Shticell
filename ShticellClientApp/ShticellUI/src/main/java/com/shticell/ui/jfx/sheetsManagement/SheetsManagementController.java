@@ -241,9 +241,6 @@ public class SheetsManagementController {
         if (currentlySelectedSheet != null) {
             System.out.println("handle approve request in management controller");
             requests.approveAccessPermission(currentlySelectedSheet.getSheetName(), userAccess);
-//            userAccess.setAccessPermission(userAccess.getRequestedAccessPermission());
-//            userAccess.setAccessPermissionStatus("Approved");
-//            refreshPermissionsTable();
         }
     }
 
@@ -259,11 +256,6 @@ public class SheetsManagementController {
 
     private void refreshPermissionsTable() {
         permissionsTable.refresh(); // Refresh the table to reflect updated data
-    }
-
-    private boolean isOwner() {
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        return selectedSheet != null && selectedSheet.getOwner().equals(userName);
     }
 
     @FXML

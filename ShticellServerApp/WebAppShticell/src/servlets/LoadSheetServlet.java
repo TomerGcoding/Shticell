@@ -22,6 +22,7 @@ import static utils.ServletUtils.getEngine;
 @WebServlet(name = "SheetLoadServlet", urlPatterns = {"/loadSheet"})
 @MultipartConfig
 public class LoadSheetServlet extends HttpServlet {
+    private static final Object lock = new Object();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -37,18 +38,20 @@ public class LoadSheetServlet extends HttpServlet {
 
         Engine engine = getEngine(getServletContext());
         try {
-            // Load the sheet and send response as JSON
-            SheetDTO sheetDTO = engine.loadSheetFile(xmlFile.getAbsolutePath(), SessionUtils.getUsername(request));
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");  // Set encoding
-            PrintWriter out = response.getWriter();
-            Type sheetType = new TypeToken<SheetDTO>() {}.getType();
-            String json = new Gson().toJson(sheetDTO, sheetType);
-           // String json  = new Gson().toJson(sheetDTO);
-            System.out.println(json);
-            out.write(json);
-            out.flush();
-            out.close();
+           synchronized (lock) {
+               SheetDTO sheetDTO = engine.loadSheetFile(xmlFile.getAbsolutePath(), SessionUtils.getUsername(request));
+               response.setContentType("application/json");
+               response.setCharacterEncoding("UTF-8");  // Set encoding
+               PrintWriter out = response.getWriter();
+               Type sheetType = new TypeToken<SheetDTO>() {
+               }.getType();
+               String json = new Gson().toJson(sheetDTO, sheetType);
+               // String json  = new Gson().toJson(sheetDTO);
+               System.out.println(json);
+               out.write(json);
+               out.flush();
+               out.close();
+           }
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -57,7 +60,6 @@ public class LoadSheetServlet extends HttpServlet {
             out.flush();
             out.close();
         } finally {
-            // Clean up: Delete the temporary file if needed
             if (xmlFile != null && xmlFile.exists()) {
                 xmlFile.delete();
             }
@@ -69,12 +71,10 @@ public class LoadSheetServlet extends HttpServlet {
         Collection<Part> parts = request.getParts();
         for (Part part : parts) {
             if (part.getName().equals("XMLFile")) {
-                // Create a temporary file for this upload
                 Path tempFile = Files.createTempFile("uploaded-", ".xml");
                 File xmlFile = tempFile.toFile();
 
                 try (InputStream fileContent = part.getInputStream()) {
-                    // Copy the uploaded file content to the temporary file
                     Files.copy(fileContent, tempFile, StandardCopyOption.REPLACE_EXISTING);
                 }
 
