@@ -205,6 +205,7 @@ public class SheetsManagementController {
             private final Button openButton = new Button("Open Sheet");
 
             {
+                // Set up the button action
                 openButton.setOnAction(event -> {
                     SheetDTO sheet = getTableView().getItems().get(getIndex());
                     if (sheet != null) {
@@ -212,15 +213,41 @@ public class SheetsManagementController {
                         sheetOperationController.show();
                     }
                 });
+
+                // Apply hover effect for the button when permission is "None"
+                openButton.setOnMouseEntered(event -> {
+                    if (openButton.isDisabled()) {
+                        openButton.setStyle("-fx-background-color: lightgrey; -fx-cursor: not-allowed;");
+                    }
+                });
+
+                openButton.setOnMouseExited(event -> {
+                    if (openButton.isDisabled()) {
+                        openButton.setStyle(""); // Reset style when the mouse exits
+                    }
+                });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(openButton);
+                    SheetDTO sheet = getTableView().getItems().get(getIndex());
+                    if (sheet != null) {
+                        // Check the access permission
+                        String accessPermission = sheet.getUserPermission(userName);
+                        if ("None".equalsIgnoreCase(accessPermission)) {
+                            openButton.setDisable(true); // Disable the button
+                            openButton.setStyle("-fx-background-color: lightgrey; -fx-cursor: not-allowed;"); // Add hover effect
+                        } else {
+                            openButton.setDisable(false); // Enable the button
+                            openButton.setStyle(""); // Reset style
+                        }
+                        setGraphic(openButton);
+                    }
                 }
             }
         };
