@@ -39,6 +39,9 @@ public class SheetUserAccessManager implements Serializable {
         if (userAccessPermission == null) {
             throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");
         }
+        if (userAccessPermission.getAccessPermissionType() == AccessPermissionType.OWNER) {
+            throw new IllegalArgumentException("User " + userName + " Cannot change access permission of sheet's owner.");
+        }
         try {
             userAccessPermission.setRequestedAccessPermissionType(
                     AccessPermissionType.valueOf(requestedAccessPermission.toUpperCase())
@@ -52,7 +55,7 @@ public class SheetUserAccessManager implements Serializable {
     public void approveAccessPermission(String owner, String userName, String requestedAccessPermission) {
         AccessPermissionType ownerAccessPermission = userAccessPermissionMap.get(owner).getAccessPermissionType();
         if (ownerAccessPermission != AccessPermissionType.OWNER) {
-            throw new IllegalArgumentException("User " + owner + " is not the owner of the sheet.");
+            throw new IllegalArgumentException("User " + owner + " is not the owner of the sheet. He can't approve access permission.");
         }
         UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
         if (userAccessPermission == null) {
@@ -61,25 +64,27 @@ public class SheetUserAccessManager implements Serializable {
         if (userAccessPermission.getRequestedAccessPermissionType() == null) {
             throw new IllegalArgumentException("User " + userName + " has not requested any access permission.");
         }
-        if (userAccessPermission.getRequestedAccessPermissionType().equals(AccessPermissionType.valueOf(requestedAccessPermission))) {
-            userAccessPermission.setAccessPermissionType(AccessPermissionType.valueOf(requestedAccessPermission));
+        if (requestedAccessPermission.equalsIgnoreCase(userAccessPermission.getRequestedAccessPermissionType().toString())) {
+            userAccessPermission.setAccessPermissionType(userAccessPermission.getRequestedAccessPermissionType());
             userAccessPermission.setAccessPermissionStatus(AccessPermissionStatus.APPROVED);
-            // if we want the request to be deleted we ned to put "null" in the request
         } else {
             throw new IllegalArgumentException("User " + userName + " has not requested access permission: " + requestedAccessPermission);
         }
     }
 
-    public void rejectAccessPermission(String userName, String requestedAccessPermission) {
+    public void rejectAccessPermission(String owner, String userName, String requestedAccessPermission) {
+        AccessPermissionType ownerAccessPermission = userAccessPermissionMap.get(owner).getAccessPermissionType();
+        if (ownerAccessPermission != AccessPermissionType.OWNER) {
+            throw new IllegalArgumentException("User " + owner + " is not the owner of the sheet. He can't approve access permission.");
+        }
         UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
         if (userAccessPermission == null) {
-            throw new IllegalArgumentException("User " + userName + " does not have any access to the sheet.");
+            throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");
         }
         if (userAccessPermission.getRequestedAccessPermissionType() == null) {
             throw new IllegalArgumentException("User " + userName + " has not requested any access permission.");
         }
-        if (userAccessPermission.getRequestedAccessPermissionType().equals(AccessPermissionType.valueOf(requestedAccessPermission))) {
-            userAccessPermission.setAccessPermissionType(AccessPermissionType.valueOf(requestedAccessPermission));
+        if (requestedAccessPermission.equalsIgnoreCase(userAccessPermission.getRequestedAccessPermissionType().toString())) {
             userAccessPermission.setAccessPermissionStatus(AccessPermissionStatus.REJECTED);
         } else {
             throw new IllegalArgumentException("User " + userName + " has not requested access permission: " + requestedAccessPermission);
@@ -93,7 +98,7 @@ public class SheetUserAccessManager implements Serializable {
         }
         return userAccessPermission.getAccessPermissionType().equals(AccessPermissionType.OWNER);
     }
-    //המבוק
+
     public List<UserAccessDTO> getAllAccessRequests(String ownerUserName) {
         List<UserAccessDTO> userAccessDTOList = new ArrayList<>();
         for (UserAccessPermission userAccessPermission : userAccessPermissionMap.values()) {

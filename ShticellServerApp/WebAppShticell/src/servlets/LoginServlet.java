@@ -36,8 +36,7 @@ public class LoginServlet extends HttpServlet {
 
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                         response.getOutputStream().print(errorMessage);
-                    }
-                    else {
+                    } else {
                         engine.addUser(usernameFromParameter);
                         request.getSession(true).setAttribute(USERNAME, usernameFromParameter);
 
@@ -53,5 +52,4 @@ public class LoginServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }
-
 }

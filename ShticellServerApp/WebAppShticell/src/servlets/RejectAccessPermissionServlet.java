@@ -1,6 +1,5 @@
 package servlets;
 
-import com.google.gson.Gson;
 import com.shticell.engine.Engine;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -13,8 +12,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import static utils.ServletUtils.getEngine;
 
-@WebServlet (name = "ApproveAccessPermissionServlet", urlPatterns = "/approveAccessPermission")
-public class ApproveAccessPermissionServlet extends HttpServlet {
+@WebServlet (name = "RejectAccessPermissionServlet", urlPatterns = "/rejectAccessPermission")
+public class RejectAccessPermissionServlet extends HttpServlet {
     private final static String SHEET_NAME = "sheetName";
     private final static String USERNAME = "username";
     private final static String ACCESS_PERMISSION = "accessPermission";
@@ -28,17 +27,18 @@ public class ApproveAccessPermissionServlet extends HttpServlet {
         Engine engine = getEngine(getServletContext());
         try {
             synchronized (lock) {
-                String userName = SessionUtils.getUsername(request);
-                engine.approveAccessPermission(userName, sheetName, username, accessPermission);}
-
-            response.setStatus(HttpServletResponse.SC_OK);
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                PrintWriter out = response.getWriter();
-                out.write("Failed approve access " + e.getMessage());
-                out.flush();
-                out.close();
+                String owner = SessionUtils.getUsername(request);
+                engine.rejectAccessPermission(owner, sheetName, username, accessPermission);
+                response.setStatus(HttpServletResponse.SC_OK);
             }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            PrintWriter out = response.getWriter();
+            out.write("Failed reject access " + e.getMessage());
+            out.flush();
+            out.close();
+        }
     }
 
 }
+

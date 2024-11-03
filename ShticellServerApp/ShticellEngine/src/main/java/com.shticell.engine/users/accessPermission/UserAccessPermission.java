@@ -11,7 +11,7 @@ public class UserAccessPermission implements Serializable {
     public UserAccessPermission(String username, AccessPermissionType accessPermissionType, AccessPermissionStatus accessPermissionStatus) {
         this.username = username;
         this.accessPermissionType = accessPermissionType;
-        this.requestStatus = accessPermissionStatus;
+        this.requestStatus = null;
         this.requestedType = null;
     }
 
