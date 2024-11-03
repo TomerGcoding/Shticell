@@ -44,6 +44,7 @@
                   <Button fx:id="updateSelectedCellValueButton" disable="true" onAction="#updateSelectedCellValue" text="Update Value" HBox.hgrow="ALWAYS" />
                   <Label text="Last version update:" HBox.hgrow="ALWAYS" />
                   <Label fx:id="currentCellVersionLabel" HBox.hgrow="ALWAYS" />
+                  <fx:include fx:id="versionSelectorComponent" source="../version/version.fxml" HBox.hgrow="ALWAYS" />
                   <Label text="Updated By:" />
                   <Label fx:id="cellUpdatedByLabel" />
                </children>
