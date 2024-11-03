@@ -184,7 +184,6 @@ public class ManagementRequests {
                         try {
                             String responseBody = response.body().string();
                             response.close();
-                            controller.showErrorAlert("Reject access fail", "error occurred while trying reject access request: " + responseBody);
                         }catch (Exception e){
                             e.printStackTrace();
                             controller.showErrorAlert("Reject access fail", "error occurred while trying reject access request: " + e.getMessage());

@@ -156,30 +156,6 @@ public class EngineImpl implements Engine, Serializable {
 
     }
 
-//    @Override
-//    public Map<String,List<SheetDTO>> getAllSheets(String userName){
-//
-//        Map<String,List<SheetDTO>> allSheets = new HashMap<>();
-//
-//        for (Map.Entry<String,Sheet> entry : sheets.entrySet()){
-//            String sheetName = entry.getKey();
-//            String owner = getSheetOwner(sheetName);
-//
-//            if (!allSheets.containsKey(owner)){
-//                List<SheetDTO> sheetsForUser = new ArrayList<>();
-//                sheetsForUser.add(sheetToDTO(entry.getValue()));
-//                allSheets.put(owner, sheetsForUser);
-//            }
-//            else {
-//                List<SheetDTO> sheets = allSheets.get(owner);
-//                sheets.add(sheetToDTO(entry.getValue()));
-//                allSheets.put(owner,sheets);
-//            }
-//        }
-//        return allSheets;
-//    }
-
-
     @Override
     public Map<String, SheetDTO> getAllSheets(String userName) {
         Map<String, SheetDTO> allSheets = new HashMap<>();

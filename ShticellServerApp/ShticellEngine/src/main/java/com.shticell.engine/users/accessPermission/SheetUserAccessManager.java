@@ -39,6 +39,9 @@ public class SheetUserAccessManager implements Serializable {
         if (userAccessPermission == null) {
             throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");
         }
+        if (userAccessPermission.getAccessPermissionType() == AccessPermissionType.OWNER) {
+            throw new IllegalArgumentException("User " + userName + " Cannot change access permission of sheet's owner.");
+        }
         try {
             userAccessPermission.setRequestedAccessPermissionType(
                     AccessPermissionType.valueOf(requestedAccessPermission.toUpperCase())

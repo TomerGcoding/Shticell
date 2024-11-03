@@ -183,7 +183,6 @@ public class SheetsManagementController {
 
 
     private void setupRowSelectionListener() {
-        // Listen for selection changes in the sheets table
         activeSheetsTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 currentlySelectedSheet = newValue; // Update the currently selected sheet
