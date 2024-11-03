@@ -20,6 +20,7 @@ public class Constants {
     public final static String GET_ALL_SHEETS = "/getAllSheets";
     public final static String REQUEST_ACCESS_PERMISSION = "/requestAccessPermission";
     public final static String APPROVE_ACCESS_PERMISSION = "/approveAccessPermission";
+    public final static String REJECT_ACCESS_PERMISSION = "/rejectAccessPermission";
     public final static String DYNAMIC_ANALYSIS = "/dynamicAnalysis";
 
 }

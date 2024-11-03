@@ -1,6 +1,7 @@
 package com.shticell.engine;
 
 import com.shticell.engine.users.UserManager;
+import com.shticell.engine.users.accessPermission.AccessPermissionStatus;
 import com.shticell.engine.users.accessPermission.AccessPermissionType;
 import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
 import com.shticell.engine.utils.*;
@@ -155,35 +156,14 @@ public class EngineImpl implements Engine, Serializable {
 
     }
 
-//    @Override
-//    public Map<String,List<SheetDTO>> getAllSheets(String userName){
-//
-//        Map<String,List<SheetDTO>> allSheets = new HashMap<>();
-//
-//        for (Map.Entry<String,Sheet> entry : sheets.entrySet()){
-//            String sheetName = entry.getKey();
-//            String owner = getSheetOwner(sheetName);
-//
-//            if (!allSheets.containsKey(owner)){
-//                List<SheetDTO> sheetsForUser = new ArrayList<>();
-//                sheetsForUser.add(sheetToDTO(entry.getValue()));
-//                allSheets.put(owner, sheetsForUser);
-//            }
-//            else {
-//                List<SheetDTO> sheets = allSheets.get(owner);
-//                sheets.add(sheetToDTO(entry.getValue()));
-//                allSheets.put(owner,sheets);
-//            }
-//        }
-//        return allSheets;
-//    }
-
-
     @Override
     public Map<String, SheetDTO> getAllSheets(String userName) {
         Map<String, SheetDTO> allSheets = new HashMap<>();
         for (Map.Entry<String, Sheet> entry : sheets.entrySet()){
             Sheet sheet = entry.getValue();
+            if (!sheet.getSheetUserAccessManager().getSheetUserAccessManager().containsKey(userName)){
+                sheet.getSheetUserAccessManager().addUserAccessPermission(new UserAccessPermission(userName, AccessPermissionType.NONE, AccessPermissionStatus.APPROVED));
+            }
             SheetDTO sheetDTO = sheetToDTO(sheet);
             allSheets.put(sheet.getSheetName(), sheetDTO);
             }
@@ -256,11 +236,11 @@ public class EngineImpl implements Engine, Serializable {
     }
 
     @Override
-    public void rejectAccessPermission(String sheetName, String userName, String requestedAccessPermission) {
+    public void rejectAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission) {
         if (!sheets.containsKey(sheetName)) {
             throw new IllegalArgumentException("Sheet with the name " + sheetName + " does not exist.");
         }
-        sheets.get(sheetName).rejectAccessPermission(userName, requestedAccessPermission);
+        sheets.get(sheetName).rejectAccessPermission(owner, userName, requestedAccessPermission);
 
     }
 

@@ -68,6 +68,7 @@ public class MainController {
             sheetOperationComponent = fxmlLoader.load();
             sheetOperationController = fxmlLoader.getController();
             sheetOperationController.setMainController(this);
+            sheetOperationController.setUserName(userName);
         } catch (IOException e) {
             e.printStackTrace();
         }

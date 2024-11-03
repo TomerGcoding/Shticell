@@ -29,6 +29,7 @@ public class RequestAccessPermissionServlet extends HttpServlet {
         try {
             synchronized (lock) {
                 engine.requestAccessPermission(sheetName, SessionUtils.getUsername(request), requestedPermission);
+                System.out.println("Request access permission for " + SessionUtils.getUsername(request) + " to " + sheetName + " with permission " + requestedPermission);
             }
             response.setStatus(HttpServletResponse.SC_OK);
         } catch (Exception e) {

@@ -6,6 +6,9 @@ import dto.SheetDTO;
 import dto.UserAccessDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -13,10 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.concurrent.Task;
 import javafx.stage.FileChooser;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 import java.io.File;
 import java.util.Timer;
 import java.util.function.Consumer;
@@ -44,9 +45,13 @@ public class SheetsManagementController {
     @FXML
     private TableColumn<UserAccessDTO, String> userNameColumn;
     @FXML
-    private TableColumn<UserAccessDTO, String> permissionColumn;
+    private TableColumn<UserAccessDTO, String> currentPermissionColumn;
     @FXML
-    private TableColumn<UserAccessDTO, String> permmisionActionColumn;
+    private TableColumn<UserAccessDTO, String> requestedPermissionColumn;
+    @FXML
+    private TableColumn<UserAccessDTO, String> permissionStatusColumn;
+    @FXML
+    private TableColumn<UserAccessDTO, String> permmissionActionColumn;
     @FXML
     private ComboBox<String> permissionComboBox;
     @FXML
@@ -67,6 +72,9 @@ public class SheetsManagementController {
     private Map<String, SheetDTO> sheets = new HashMap<>();
     private ManagementRequests requests;
     private String userName;
+    private SheetDTO currentlySelectedSheet;
+    private ObservableList<UserAccessDTO> userAccessList;
+
 
     @FXML
     private void initialize() {
@@ -98,32 +106,106 @@ public class SheetsManagementController {
     }
 
     private void initializePermissionsTable() {
-        // Setting up the permissions TableView columns
-        userNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserName()));
-        permissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermission()));
-        permmisionActionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermissionStatus()));
-    }
+        userAccessList = FXCollections.observableArrayList();
 
-    private void setupRowSelectionListener() {
-        // Listening for selection changes in the sheets table
-        activeSheetsTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                updatePermissionsTable(newValue);
+        SortedList<UserAccessDTO> sortedList = new SortedList<>(userAccessList);
+        sortedList.setComparator(Comparator.comparing(UserAccessDTO::getUserName));
+
+        permissionsTable.setItems(sortedList);
+
+        userNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserName()));
+        currentPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermission()));
+        requestedPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRequestedAccessPermission()));
+        permissionStatusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermissionStatus()));
+
+        permmissionActionColumn.setCellFactory(param -> new TableCell<>() {
+            private final Button approveButton = new Button("Approve");
+            private final Button rejectButton = new Button("Reject");
+            private final HBox actionButtons = new HBox(approveButton, rejectButton);
+
+            {
+                actionButtons.setSpacing(5);
+
+                approveButton.setOnAction(event -> {
+                    UserAccessDTO userAccess = getTableView().getItems().get(getIndex());
+                    if (userAccess != null) {
+                        handleApproveRequest(userAccess);
+                    }
+                });
+
+                rejectButton.setOnAction(event -> {
+                    UserAccessDTO userAccess = getTableView().getItems().get(getIndex());
+                    if (userAccess != null) {
+                        handleRejectRequest(userAccess);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                // Check if the current item is non-empty and the user has writer permissions
+                if (empty || getIndex() >= getTableView().getItems().size()) {
+                    setGraphic(null);
+                } else {
+                    UserAccessDTO userAccess = getTableView().getItems().get(getIndex());
+                    if (hasOwnerPermission() && permissionRequested(userAccess)) {
+                        System.out.println("suppose to see the buttons");
+                        setGraphic(actionButtons); // Show the buttons only if the user is the owner
+                    } else {
+                        setGraphic(null);
+                    }
+                }
             }
         });
     }
 
-    private void updatePermissionsTable(SheetDTO sheet) {
-        // Update the permissions table with the users and their access permissions
-        permissionsTable.getItems().clear();
-        permissionsTable.getItems().addAll(sheet.getSheetUsersAccess().getUsersAccess());
+    private boolean permissionRequested(UserAccessDTO accessPermission) {
+        if (accessPermission == null) {
+            return false;
+        }
+        String status = accessPermission.getAccessPermissionStatus();
+        String requestedPermission = accessPermission.getRequestedAccessPermission();
+        if (status != null && requestedPermission != null) {
+            System.out.println("status is not null in permissionRequested");
+            return status.equalsIgnoreCase("Pending");
+        }
+        return false;
     }
+
+    private boolean hasOwnerPermission() {
+        if (currentlySelectedSheet == null) {
+            return false;
+        }
+        return currentlySelectedSheet.getOwner().equals(userName);
+    }
+
+
+    private void setupRowSelectionListener() {
+        activeSheetsTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                currentlySelectedSheet = newValue; // Update the currently selected sheet
+                updatePermissionsTable(newValue);  // Update the permissions table with the new sheet's data
+            }
+        });
+    }
+
+
+    private void updatePermissionsTable(SheetDTO sheet) {
+        if (sheet != null) {
+            userAccessList.clear();
+            userAccessList.addAll(sheet.getSheetUsersAccess().getUsersAccess());
+        }
+    }
+
 
     private Callback<TableColumn<SheetDTO, Void>, TableCell<SheetDTO, Void>> createButtonCellFactory() {
         return param -> new TableCell<>() {
             private final Button openButton = new Button("Open Sheet");
 
             {
+                // Set up the button action
                 openButton.setOnAction(event -> {
                     SheetDTO sheet = getTableView().getItems().get(getIndex());
                     if (sheet != null) {
@@ -131,15 +213,41 @@ public class SheetsManagementController {
                         sheetOperationController.show();
                     }
                 });
+
+                // Apply hover effect for the button when permission is "None"
+                openButton.setOnMouseEntered(event -> {
+                    if (openButton.isDisabled()) {
+                        openButton.setStyle("-fx-background-color: lightgrey; -fx-cursor: not-allowed;");
+                    }
+                });
+
+                openButton.setOnMouseExited(event -> {
+                    if (openButton.isDisabled()) {
+                        openButton.setStyle(""); // Reset style when the mouse exits
+                    }
+                });
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(openButton);
+                    SheetDTO sheet = getTableView().getItems().get(getIndex());
+                    if (sheet != null) {
+                        // Check the access permission
+                        String accessPermission = sheet.getUserPermission(userName);
+                        if ("None".equalsIgnoreCase(accessPermission)) {
+                            openButton.setDisable(true); // Disable the button
+                            openButton.setStyle("-fx-background-color: lightgrey; -fx-cursor: not-allowed;"); // Add hover effect
+                        } else {
+                            openButton.setDisable(false); // Enable the button
+                            openButton.setStyle(""); // Reset style
+                        }
+                        setGraphic(openButton);
+                    }
                 }
             }
         };
@@ -148,30 +256,24 @@ public class SheetsManagementController {
     @FXML
     private void handleRequestPermission(ActionEvent event) {
         String requestedPermission = permissionComboBox.getValue();
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        if (selectedSheet != null && requestedPermission != null) {
-            requests.requestAccessPermission(selectedSheet.getSheetName(), requestedPermission);
+        if (currentlySelectedSheet != null && requestedPermission != null) {
+            requests.requestAccessPermission(currentlySelectedSheet.getSheetName(), requestedPermission);
+        } else {
+            showErrorAlert("No Sheet Selected", "Please select a sheet from the table to request permission.");
         }
     }
 
-    private void handleApproveRequest(UserAccessDTO userAccess) {
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        if (selectedSheet != null) {
-            // Call the engine method to approve the access
-            requests.approveAccessPermission(this.userName, selectedSheet.getSheetName(), userAccess.getUserName(), userAccess.getRequestedAccessPermission());
 
-            // Update the user access permission and status
-            userAccess.setAccessPermission(userAccess.getRequestedAccessPermission());
-            userAccess.setAccessPermissionStatus("Approved");
-            refreshPermissionsTable();
+    private void handleApproveRequest(UserAccessDTO userAccess) {
+        if (currentlySelectedSheet != null) {
+            System.out.println("handle approve request in management controller");
+            requests.approveAccessPermission(currentlySelectedSheet.getSheetName(), userAccess);
         }
     }
 
     private void handleRejectRequest(UserAccessDTO userAccess) {
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        if (selectedSheet != null) {
-            // Call the engine method to reject the access
-            requests.rejectAccessPermission(selectedSheet.getSheetName(), userAccess.getUserName(), userAccess.getRequestedAccessPermission());
+        if (currentlySelectedSheet != null) {
+            requests.rejectAccessPermission(currentlySelectedSheet.getSheetName(), userAccess);
 
             // Update the user access status
             userAccess.setAccessPermissionStatus("Rejected");
@@ -179,21 +281,9 @@ public class SheetsManagementController {
         }
     }
 
-    // Method to refresh the permissions table
     private void refreshPermissionsTable() {
         permissionsTable.refresh(); // Refresh the table to reflect updated data
     }
-
-//    private void refreshSheetsTable(){
-//        activeSheetsTable.refresh();
-//    }
-
-
-    private boolean isOwner() {
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        return selectedSheet != null && selectedSheet.getOwner().equals(userName);
-    }
-
 
     @FXML
     public void loadXMLFile(ActionEvent event) {
@@ -280,44 +370,39 @@ public class SheetsManagementController {
         alert.showAndWait();
     }
 
-
     public void updateSheet(SheetDTO sheet) {
         sheets.put(sheet.getSheetName(), sheet);
         populateSheetsTable(sheets);
     }
 
-public void startSheetsRefresher() {
+    public void startSheetsRefresher() {
     Consumer<Map<String, SheetDTO>> updateSheetsConsumer = this::populateSheetsTable;
     SheetsRefresher sheetsRefresher = new SheetsRefresher(this, updateSheetsConsumer);
     Timer timer = new Timer(true); // Use a daemon timer
     timer.scheduleAtFixedRate(sheetsRefresher, REFRESH_RATE, REFRESH_RATE);
 }
 
-
     public void populateSheetsTable(Map<String, SheetDTO> updatedSheets) {
-        System.out.println("this thread is: " + Thread.currentThread().getName());
-        System.out.println("User " + userName + " got these sheets to update the table: " + updatedSheets);
-
-        // Clear the current items
+        String selectedSheetName = currentlySelectedSheet != null ? currentlySelectedSheet.getSheetName() : null;
         activeSheetsTable.getItems().clear();
         sheets.clear();
 
         // Check if the map has data
         if (updatedSheets.isEmpty()) {
-            System.out.println("No sheets found to add to the table.");
             return;
         }
 
-        System.out.println("Cleared the sheet table");
         updatedSheets.values().forEach(sheet -> {
             sheets.put(sheet.getSheetName(), sheet);
             activeSheetsTable.getItems().add(sheet);
-            System.out.println("Added sheet to table: " + sheet.getSheetName());
         });
 
-        // Refresh the table to ensure it reflects the latest data
         activeSheetsTable.refresh();
-        System.out.println("Refreshed the sheet table");
+        if (selectedSheetName != null) {
+           currentlySelectedSheet = updatedSheets.get(selectedSheetName);
+        }
+        updatePermissionsTable(currentlySelectedSheet);
+        refreshPermissionsTable();
 
     }
 }

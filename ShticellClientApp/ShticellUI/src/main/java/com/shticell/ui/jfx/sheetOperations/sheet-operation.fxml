@@ -32,9 +32,7 @@
                   <Button fx:id="switchToManagementPageBtn" mnemonicParsing="false" onAction="#switchToManagementPage" text="Back To Menu " />
                   <ComboBox fx:id="changeStyleComboBox" promptText="Shticell Styles" HBox.hgrow="ALWAYS" />
                   <CheckBox fx:id="animationsCheckbox" alignment="CENTER" text="Activate animations" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" text="Hello, User!" HBox.hgrow="ALWAYS" />
-                  <fx:include fx:id="versionSelectorComponent" source="../version/version.fxml" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="updateToLatestVersionButton" mnemonicParsing="false" text="Update To latest version" />
+                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" text="Hello, User!" style="-fx-alignment: CENTER_RIGHT;" maxWidth="200.0" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="5.0">

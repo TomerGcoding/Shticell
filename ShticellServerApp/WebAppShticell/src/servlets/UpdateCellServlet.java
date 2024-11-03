@@ -36,7 +36,8 @@ public class UpdateCellServlet extends HttpServlet {
         try {
             System.out.println("trying to update cell in server");
             synchronized (lock) {
-                engine.setCell(sheetName, cellId, cellValue, SessionUtils.getUsername(request));}
+                engine.setCell(sheetName, cellId, cellValue, SessionUtils.getUsername(request));
+            }
             SheetDTO sheetDTO = engine.showSheet(sheetName, SessionUtils.getUsername(request));
             Type sheetType = new TypeToken<SheetDTO>() {}.getType();
             String json = new Gson().toJson(sheetDTO, sheetType);

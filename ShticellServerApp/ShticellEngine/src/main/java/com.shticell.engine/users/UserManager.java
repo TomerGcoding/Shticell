@@ -14,12 +14,10 @@ public class UserManager {
     public UserManager() {
         System.out.println("UserManager constructor called");
         usersSet = new HashSet<>();
-     //   userNameToUser = new HashMap<>();
     }
 
     public synchronized void addUser(String username) {
         usersSet.add(username);
-      //  userNameToUser.put(username, new User(username));
     }
 
     public synchronized void removeUser(String username) {

@@ -322,8 +322,8 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public void rejectAccessPermission(String userName, String requestedAccessPermission) {
-        userAccessManager.rejectAccessPermission(userName, requestedAccessPermission);
+    public void rejectAccessPermission(String owner, String userName, String requestedAccessPermission) {
+        userAccessManager.rejectAccessPermission(owner, userName, requestedAccessPermission);
     }
 
     @Override

@@ -27,5 +27,8 @@ public enum AccessPermissionType implements Serializable {
             return "Owner";
         }
     };
-
+@Override
+    public String toString() {
+        return "";
+    }
 }

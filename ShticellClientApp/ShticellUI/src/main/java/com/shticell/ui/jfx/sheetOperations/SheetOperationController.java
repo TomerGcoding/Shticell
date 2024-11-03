@@ -131,6 +131,10 @@ public class SheetOperationController {
             showErrorAlert("Initialization Error", "An error occurred while initializing the sheet operation controller: " + e.getMessage());
             e.printStackTrace();}
     }
+
+    public void setUserName (String userName) {
+        userNameLabel.setText("Hello, " + userName + "!");
+    }
         // Method to handle a sheet being loaded and displayed
         public void loadSheet (SheetDTO sheet){
             this.sheet = sheet;
