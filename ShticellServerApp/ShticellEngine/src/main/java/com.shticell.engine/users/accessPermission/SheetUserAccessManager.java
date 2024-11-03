@@ -52,7 +52,7 @@ public class SheetUserAccessManager implements Serializable {
     public void approveAccessPermission(String owner, String userName, String requestedAccessPermission) {
         AccessPermissionType ownerAccessPermission = userAccessPermissionMap.get(owner).getAccessPermissionType();
         if (ownerAccessPermission != AccessPermissionType.OWNER) {
-            throw new IllegalArgumentException("User " + owner + " is not the owner of the sheet.");
+            throw new IllegalArgumentException("User " + owner + " is not the owner of the sheet. He can't approve access permission.");
         }
         UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
         if (userAccessPermission == null) {
@@ -69,10 +69,14 @@ public class SheetUserAccessManager implements Serializable {
         }
     }
 
-    public void rejectAccessPermission(String userName, String requestedAccessPermission) {
+    public void rejectAccessPermission(String owner, String userName, String requestedAccessPermission) {
+        AccessPermissionType ownerAccessPermission = userAccessPermissionMap.get(owner).getAccessPermissionType();
+        if (ownerAccessPermission != AccessPermissionType.OWNER) {
+            throw new IllegalArgumentException("User " + owner + " is not the owner of the sheet. He can't approve access permission.");
+        }
         UserAccessPermission userAccessPermission = userAccessPermissionMap.get(userName);
         if (userAccessPermission == null) {
-            throw new IllegalArgumentException("User " + userName + " does not have any access to the sheet.");
+            throw new IllegalArgumentException("User " + userName + " does not have access to the sheet.");
         }
         if (userAccessPermission.getRequestedAccessPermissionType() == null) {
             throw new IllegalArgumentException("User " + userName + " has not requested any access permission.");

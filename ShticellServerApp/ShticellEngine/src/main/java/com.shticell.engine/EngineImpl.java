@@ -260,11 +260,11 @@ public class EngineImpl implements Engine, Serializable {
     }
 
     @Override
-    public void rejectAccessPermission(String sheetName, String userName, String requestedAccessPermission) {
+    public void rejectAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission) {
         if (!sheets.containsKey(sheetName)) {
             throw new IllegalArgumentException("Sheet with the name " + sheetName + " does not exist.");
         }
-        sheets.get(sheetName).rejectAccessPermission(userName, requestedAccessPermission);
+        sheets.get(sheetName).rejectAccessPermission(owner, userName, requestedAccessPermission);
 
     }
 

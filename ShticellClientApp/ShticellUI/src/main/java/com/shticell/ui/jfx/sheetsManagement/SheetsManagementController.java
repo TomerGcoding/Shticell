@@ -239,10 +239,9 @@ public class SheetsManagementController {
 
 
     private void handleApproveRequest(UserAccessDTO userAccess) {
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
         if (currentlySelectedSheet != null) {
             System.out.println("handle approve request in management controller");
-            requests.approveAccessPermission(selectedSheet.getSheetName(), userAccess);
+            requests.approveAccessPermission(currentlySelectedSheet.getSheetName(), userAccess);
 //            userAccess.setAccessPermission(userAccess.getRequestedAccessPermission());
 //            userAccess.setAccessPermissionStatus("Approved");
 //            refreshPermissionsTable();
@@ -250,9 +249,8 @@ public class SheetsManagementController {
     }
 
     private void handleRejectRequest(UserAccessDTO userAccess) {
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        if (selectedSheet != null) {
-            requests.rejectAccessPermission(selectedSheet.getSheetName(), userAccess.getUserName(), userAccess.getRequestedAccessPermission());
+        if (currentlySelectedSheet != null) {
+            requests.rejectAccessPermission(currentlySelectedSheet.getSheetName(), userAccess);
 
             // Update the user access status
             userAccess.setAccessPermissionStatus("Rejected");

@@ -46,7 +46,7 @@ public interface Engine {
 
     void approveAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission);
 
-    void rejectAccessPermission(String sheetName, String userName, String requestedAccessPermission);
+    void rejectAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission);
 
     List<UserAccessDTO> getAllAccessRequests(String sheetName, String ownerUserName);
 

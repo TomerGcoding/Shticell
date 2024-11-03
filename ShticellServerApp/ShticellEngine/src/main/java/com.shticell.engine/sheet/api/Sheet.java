@@ -50,7 +50,7 @@ public interface Sheet {
 
     void approveAccessPermission(String owner, String userName, String requestedAccessPermission);
 
-    void rejectAccessPermission(String userName, String requestedAccessPermission);
+    void rejectAccessPermission(String owner, String userName, String requestedAccessPermission);
 
     List<UserAccessDTO> getAllAccessRequests(String ownerUserName);
 }
