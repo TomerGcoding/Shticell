@@ -59,12 +59,14 @@
                 </TableView>
 
                 <!-- Permissions Section -->
-                <Label fx:id="permissionLabel" text="Permissions" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                <Label fx:id="permissionLabel" text="Access Permissions" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
                 <TableView fx:id="permissionsTable" VBox.vgrow="ALWAYS" prefHeight="300.0" prefWidth="800.0">
                     <columns>
-                        <TableColumn fx:id="userNameColumn" text="User Name" prefWidth="300.0" />
-                        <TableColumn fx:id="permissionColumn" text="Permission" prefWidth="300.0" />
-                        <TableColumn fx:id="permmisionActionColumn" text="Action" prefWidth="200.0" />
+                        <TableColumn fx:id="userNameColumn" text="User Name" prefWidth="150.0" />
+                        <TableColumn fx:id="currentPermissionColumn" text="Permission" prefWidth="150.0" />
+                        <TableColumn fx:id="requestedPermissionColumn" text="Requested Permission" prefWidth="150.0" />
+                        <TableColumn fx:id="permissionStatusColumn" text="Permission Status" prefWidth="150.0" />
+                        <TableColumn fx:id="permmissionActionColumn" text="Action" prefWidth="200.0" />
                     </columns>
                 </TableView>
 

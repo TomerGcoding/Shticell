@@ -1,6 +1,7 @@
 package com.shticell.engine;
 
 import com.shticell.engine.users.UserManager;
+import com.shticell.engine.users.accessPermission.AccessPermissionStatus;
 import com.shticell.engine.users.accessPermission.AccessPermissionType;
 import com.shticell.engine.users.accessPermission.SheetUserAccessManager;
 import com.shticell.engine.utils.*;
@@ -184,6 +185,9 @@ public class EngineImpl implements Engine, Serializable {
         Map<String, SheetDTO> allSheets = new HashMap<>();
         for (Map.Entry<String, Sheet> entry : sheets.entrySet()){
             Sheet sheet = entry.getValue();
+            if (!sheet.getSheetUserAccessManager().getSheetUserAccessManager().containsKey(userName)){
+                sheet.getSheetUserAccessManager().addUserAccessPermission(new UserAccessPermission(userName, AccessPermissionType.NONE, AccessPermissionStatus.APPROVED));
+            }
             SheetDTO sheetDTO = sheetToDTO(sheet);
             allSheets.put(sheet.getSheetName(), sheetDTO);
             }
