@@ -28,7 +28,8 @@ public class ApproveAccessPermissionServlet extends HttpServlet {
         Engine engine = getEngine(getServletContext());
         try {
             synchronized (lock) {
-                engine.approveAccessPermission(SessionUtils.getUsername(request), sheetName, username, accessPermission);}
+                String userName = SessionUtils.getUsername(request);
+                engine.approveAccessPermission(userName, sheetName, username, accessPermission);}
 
             response.setStatus(HttpServletResponse.SC_OK);
             } catch (Exception e) {

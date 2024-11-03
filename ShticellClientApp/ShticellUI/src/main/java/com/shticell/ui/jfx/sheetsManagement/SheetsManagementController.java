@@ -6,6 +6,9 @@ import dto.SheetDTO;
 import dto.UserAccessDTO;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -13,10 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import javafx.concurrent.Task;
 import javafx.stage.FileChooser;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 import java.io.File;
 import java.util.Timer;
 import java.util.function.Consumer;
@@ -71,7 +72,8 @@ public class SheetsManagementController {
     private Map<String, SheetDTO> sheets = new HashMap<>();
     private ManagementRequests requests;
     private String userName;
-    private SheetDTO currentlySelectedSheet; // Add this variable to track the selected sheet
+    private SheetDTO currentlySelectedSheet;
+    private ObservableList<UserAccessDTO> userAccessList;
 
 
     @FXML
@@ -104,20 +106,25 @@ public class SheetsManagementController {
     }
 
     private void initializePermissionsTable() {
-        // Set up the columns with the data from UserAccessDTO
+        userAccessList = FXCollections.observableArrayList();
+
+        SortedList<UserAccessDTO> sortedList = new SortedList<>(userAccessList);
+        sortedList.setComparator(Comparator.comparing(UserAccessDTO::getUserName));
+
+        permissionsTable.setItems(sortedList);
+
         userNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserName()));
-        currentPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty((cellData.getValue().getAccessPermission())));
+        currentPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermission()));
         requestedPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRequestedAccessPermission()));
         permissionStatusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermissionStatus()));
 
-        // Set up the action column with Approve and Reject buttons
         permmissionActionColumn.setCellFactory(param -> new TableCell<>() {
             private final Button approveButton = new Button("Approve");
             private final Button rejectButton = new Button("Reject");
             private final HBox actionButtons = new HBox(approveButton, rejectButton);
 
             {
-                actionButtons.setSpacing(5); // Space between the buttons
+                actionButtons.setSpacing(5);
 
                 approveButton.setOnAction(event -> {
                     UserAccessDTO userAccess = getTableView().getItems().get(getIndex());
@@ -126,7 +133,6 @@ public class SheetsManagementController {
                     }
                 });
 
-                // Handle the Reject button action
                 rejectButton.setOnAction(event -> {
                     UserAccessDTO userAccess = getTableView().getItems().get(getIndex());
                     if (userAccess != null) {
@@ -139,26 +145,42 @@ public class SheetsManagementController {
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
 
-                // Only show buttons for non-empty items and when the user has writer permissions
-                if (empty || getTableView().getItems().get(getIndex()) == null || !hasWriterPermission()) {
+                // Check if the current item is non-empty and the user has writer permissions
+                if (empty || getIndex() >= getTableView().getItems().size()) {
                     setGraphic(null);
                 } else {
-                    setGraphic(actionButtons);
+                    UserAccessDTO userAccess = getTableView().getItems().get(getIndex());
+                    if (hasOwnerPermission() && permissionRequested(userAccess)) {
+                        System.out.println("suppose to see the buttons");
+                        setGraphic(actionButtons); // Show the buttons only if the user is the owner
+                    } else {
+                        setGraphic(null);
+                    }
                 }
             }
         });
     }
 
-    // Helper method to check if the user has writer permission
-    private boolean hasWriterPermission() {
-        SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        if (selectedSheet == null)
-           return false;
-        else
-            return selectedSheet.getOwner().equals(userName);
-//            String userPermission = selectedSheet.getUserPermission(userName);
-//            return "writer".equalsIgnoreCase(userPermission);
+    private boolean permissionRequested(UserAccessDTO accessPermission) {
+        if (accessPermission == null) {
+            return false;
         }
+        String status = accessPermission.getAccessPermissionStatus();
+        String requestedPermission = accessPermission.getRequestedAccessPermission();
+        if (status != null && requestedPermission != null) {
+            System.out.println("status is not null in permissionRequested");
+            return status.equalsIgnoreCase("Pending");
+        }
+        return false;
+    }
+
+    private boolean hasOwnerPermission() {
+        if (currentlySelectedSheet == null) {
+            return false;
+        }
+        return currentlySelectedSheet.getOwner().equals(userName);
+    }
+
 
     private void setupRowSelectionListener() {
         // Listen for selection changes in the sheets table
@@ -172,11 +194,12 @@ public class SheetsManagementController {
 
 
     private void updatePermissionsTable(SheetDTO sheet) {
-        if(sheet != null) {
-            permissionsTable.getItems().clear();
-            permissionsTable.getItems().addAll(sheet.getSheetUsersAccess().getUsersAccess());
+        if (sheet != null) {
+            userAccessList.clear();
+            userAccessList.addAll(sheet.getSheetUsersAccess().getUsersAccess());
         }
     }
+
 
     private Callback<TableColumn<SheetDTO, Void>, TableCell<SheetDTO, Void>> createButtonCellFactory() {
         return param -> new TableCell<>() {
@@ -217,20 +240,18 @@ public class SheetsManagementController {
 
     private void handleApproveRequest(UserAccessDTO userAccess) {
         SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
-        if (selectedSheet != null) {
-            requests.approveAccessPermission(this.userName, selectedSheet.getSheetName(), userAccess.getUserName(), userAccess.getRequestedAccessPermission());
-
-            // Update the user access permission and status
-            userAccess.setAccessPermission(userAccess.getRequestedAccessPermission());
-            userAccess.setAccessPermissionStatus("Approved");
-            refreshPermissionsTable();
+        if (currentlySelectedSheet != null) {
+            System.out.println("handle approve request in management controller");
+            requests.approveAccessPermission(selectedSheet.getSheetName(), userAccess);
+//            userAccess.setAccessPermission(userAccess.getRequestedAccessPermission());
+//            userAccess.setAccessPermissionStatus("Approved");
+//            refreshPermissionsTable();
         }
     }
 
     private void handleRejectRequest(UserAccessDTO userAccess) {
         SheetDTO selectedSheet = activeSheetsTable.getSelectionModel().getSelectedItem();
         if (selectedSheet != null) {
-            // Call the engine method to reject the access
             requests.rejectAccessPermission(selectedSheet.getSheetName(), userAccess.getUserName(), userAccess.getRequestedAccessPermission());
 
             // Update the user access status

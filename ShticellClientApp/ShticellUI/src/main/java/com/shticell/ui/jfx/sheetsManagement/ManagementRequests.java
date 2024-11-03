@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import com.shticell.ui.jfx.sheetsManagement.SheetsManagementController;
 import com.shticell.ui.jfx.utils.http.HttpClientUtil;
 import dto.SheetDTO;
+import dto.UserAccessDTO;
 import dto.json.MapOfSheetsDeserializer;
 import dto.json.SheetDTODeserializer;
 import javafx.application.Platform;
@@ -80,14 +81,13 @@ public class ManagementRequests {
         }, body);
     }
 
-    public void approveAccessPermission(String owner, String sheetName, String userName, String requestedAccessPermission) {
+    public void approveAccessPermission(String sheetName, UserAccessDTO accessPermission) {
         String finalUrl = HttpUrl
                 .parse(BASE_URL + APPROVE_ACCESS_PERMISSION)
                 .newBuilder()
                 .addQueryParameter("sheetName", sheetName)
-                .addQueryParameter("username", userName)
-                .addQueryParameter("accessPermission", requestedAccessPermission)
-                .addQueryParameter("owner", owner)
+                .addQueryParameter("username", accessPermission.getUserName())
+                .addQueryParameter("accessPermission", accessPermission.getRequestedAccessPermission())
                 .toString();
 
         // async
