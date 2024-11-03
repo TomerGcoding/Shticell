@@ -40,7 +40,7 @@ public interface Engine {
 
     UserManager getUserManager();
 
-    SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue);
+    SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue,String userName);
 
     void requestAccessPermission(String sheetName, String userName, String requestedAccessPermission);
 

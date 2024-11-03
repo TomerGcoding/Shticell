@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.SessionUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,7 +35,7 @@ public class DynamicAnalysisServlet extends HttpServlet {
 
         try {
             System.out.println("trying to dynamically set cell in server");
-            SheetDTO sheetDTO = engine.setCellForDynamicAnalysis(sheetName, cellId, cellValue);
+            SheetDTO sheetDTO = engine.setCellForDynamicAnalysis(sheetName, cellId, cellValue, SessionUtils.getUsername(request));
             Type sheetType = new TypeToken<SheetDTO>() {}.getType();
             String json = new Gson().toJson(sheetDTO, sheetType);
             PrintWriter out = response.getWriter();

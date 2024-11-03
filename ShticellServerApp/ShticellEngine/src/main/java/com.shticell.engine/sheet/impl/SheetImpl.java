@@ -75,20 +75,20 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public Sheet setCell(int row, int column, String value) {
+    public Sheet setCell(int row, int column, String value,String userNameToUpdate) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
         if (!properties.isCoordinateLegal(coordinate)) {
             throw new IllegalArgumentException("Invalid coordinate");
         }
-        SheetImpl newSheet = updateCellValueAndCalculate(row, column, value);
+        SheetImpl newSheet = updateCellValueAndCalculate(row, column, value,userNameToUpdate);
         newSheet.updateRangesLists(CoordinateFormatter.indexToCellId(row, column),value);
         return newSheet;
     }
 
     @Override
-    public Sheet setCell(String cellId, String value) {
+    public Sheet setCell(String cellId, String value,String userNameToUpdate) {
         int[] idx = CoordinateFormatter.cellIdToIndex(cellId);
-        SheetImpl newSheet = updateCellValueAndCalculate(idx[0], idx[1], value);
+        SheetImpl newSheet = updateCellValueAndCalculate(idx[0], idx[1], value,userNameToUpdate);
         newSheet.updateRangesLists(cellId, value);
         return newSheet;
     }
@@ -118,7 +118,7 @@ public class SheetImpl implements Sheet, Serializable {
     }
 
     @Override
-    public SheetImpl updateCellValueAndCalculate(int row, int column, String value) {
+    public SheetImpl updateCellValueAndCalculate(int row, int column, String value,String userNameToUpdate) {
         Cell originCell = getCell(row, column);
 
         if (originCell != null) {
@@ -130,7 +130,7 @@ public class SheetImpl implements Sheet, Serializable {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
 
         SheetImpl newSheetVersion = copySheet();
-        Cell newCell = new CellImpl(row, column, value, newSheetVersion.getVersion() + 1, newSheetVersion);
+        Cell newCell = new CellImpl(row, column, value, newSheetVersion.getVersion() + 1, newSheetVersion,userNameToUpdate);
         newCell.calculateEffectiveValue();
         newSheetVersion.activeCells.put(coordinate, newCell);
 
@@ -142,7 +142,8 @@ public class SheetImpl implements Sheet, Serializable {
         cellsThatHaveChanged.add(newCell);
         //System.out.println("");
         int newVersion = newSheetVersion.increaseVersion();
-        cellsThatHaveChanged.forEach(cell -> cell.setVersion(newVersion));
+        cellsThatHaveChanged.forEach(cell -> {cell.setVersion(newVersion);
+        cell.setUserNameToUpdate(userNameToUpdate);});
         return newSheetVersion;
     }
 

@@ -17,15 +17,15 @@ public interface Sheet {
     int getVersion();
     Cell getCell(int row, int column);
     Cell getCell(String cellId);
-    Sheet setCell(int row, int column, String value);
-    Sheet setCell(String id, String value);
+    Sheet setCell(int row, int column, String value, String userName);
+    Sheet setCell(String id, String value, String userName);
     String getSheetName();
     Map<Coordinate, Cell> getCells();
     SheetProperties getProperties();
     Coordinate getCoordinateFromCellId(String cellId);
     Cell getCell(Coordinate coordinate);
     void incrementVersion();
-    Sheet updateCellValueAndCalculate(int row, int column, String value);
+    Sheet updateCellValueAndCalculate(int row, int column, String value,String userName);
     int increaseVersion();
     SheetImpl copySheet();
     Range addRange(String name, String cellsRange);

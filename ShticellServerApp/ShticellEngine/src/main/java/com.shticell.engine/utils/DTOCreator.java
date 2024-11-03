@@ -60,7 +60,8 @@ public class DTOCreator implements Serializable {
                 effectiveValueToDTO(cell.getEffectiveValue()),
                 cell.getVersion(),
                 dependsOn,
-                influencingOn);
+                influencingOn,
+        cell.getUserNameToUpdate());
     }
 
     public static SheetDTO sheetToDTO(Sheet sheet) {

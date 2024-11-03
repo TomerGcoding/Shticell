@@ -13,11 +13,13 @@ public class SheetFilterer {
     private Sheet sheet;
     private final List<List<Cell>> rangeToFilter;
     private final int columnToFilterBy;
+    private final String userName;
 
-    public SheetFilterer(Sheet sheet, String rangeToFilter, String columnToFilterBy) {
+    public SheetFilterer(Sheet sheet, String rangeToFilter, String columnToFilterBy,String userName) {
         this.sheet = sheet.copySheet();
         this.rangeToFilter = getRangeToFilter(rangeToFilter);
         this.columnToFilterBy = CoordinateFormatter.getColumnIndex(columnToFilterBy.trim().toUpperCase());
+        this.userName = userName;
     }
 
     private List<List<Cell>> getRangeToFilter(String rangeToFilter) {
@@ -36,7 +38,7 @@ public class SheetFilterer {
                 String cellId = CoordinateFormatter.indexToCellId(row, col);
                 Cell cell = sheet.getCell(cellId);
                 if (cell == null) {
-                    cell = new CellImpl(row, col, "", sheet.getVersion(), sheet);
+                    cell = new CellImpl(row, col, "", sheet.getVersion(), sheet,userName);
                 }
                 rowCells.add(cell);
             }
@@ -70,7 +72,7 @@ public class SheetFilterer {
                 }
 
 
-                sheet = sheet.setCell(CoordinateFormatter.indexToCellId(startRow + i, cell.getCoordinate().getColumn()), newValue);
+                sheet = sheet.setCell(CoordinateFormatter.indexToCellId(startRow + i, cell.getCoordinate().getColumn()), newValue,userName);
             }
         }
 
@@ -81,7 +83,7 @@ public class SheetFilterer {
         return row.stream()
                 .filter(cell -> cell.getCoordinate().getColumn() == column)
                 .findFirst()
-                .orElse(new CellImpl(row.get(0).getCoordinate().getRow(), column, "", sheet.getVersion(), sheet));
+                .orElse(new CellImpl(row.get(0).getCoordinate().getRow(), column, "", sheet.getVersion(), sheet,userName));
     }
 
     private boolean cellMatchesFilter(Cell cell, List<String> filterValue) {

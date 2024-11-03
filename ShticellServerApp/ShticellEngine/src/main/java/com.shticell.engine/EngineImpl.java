@@ -33,7 +33,7 @@ public class EngineImpl implements Engine, Serializable {
 
     @Override
     public SheetDTO loadSheetFile(String filePath, String userName) throws JAXBException {
-        sheetLoader.loadSheetFile(filePath);
+        sheetLoader.loadSheetFile(filePath, userName);
         Sheet sheet = sheetLoader.getSheet();
         setSheetOwner(sheet, userName);
         synchronized (this) {
@@ -75,7 +75,7 @@ public class EngineImpl implements Engine, Serializable {
         try {
                 Sheet sheet = sheets.get(sheetName);
                 sheet.checkUserAccess(userName, AccessPermissionType.WRITER);
-                Sheet newSheet = sheet.setCell(cellId, cellValue);
+                Sheet newSheet = sheet.setCell(cellId, cellValue,userName);
                 if (newSheet != sheet){
                     sheets.put(sheetName,newSheet);
                     newSheet.incrementVersion();}
@@ -139,7 +139,7 @@ public class EngineImpl implements Engine, Serializable {
         }
         Sheet sheet = sheets.get(sheetName);
         sheet.checkUserAccess(userName, AccessPermissionType.READER);
-        SheetSorter sorter = new SheetSorter(sheet,rangeToSort,columnsToSortBy);
+        SheetSorter sorter = new SheetSorter(sheet,rangeToSort,columnsToSortBy,userName);
         return sorter.sort();
     }
 
@@ -150,7 +150,7 @@ public class EngineImpl implements Engine, Serializable {
         }
         Sheet sheet = sheets.get(sheetName);
         sheet.checkUserAccess(userName, AccessPermissionType.READER);
-        SheetFilterer filterer = new SheetFilterer(sheet,rangeToFilter,columnsToFilterBy);
+        SheetFilterer filterer = new SheetFilterer(sheet,rangeToFilter,columnsToFilterBy,userName);
         return filterer.filter(valuesToFilterBy);
 
     }
@@ -222,7 +222,7 @@ public class EngineImpl implements Engine, Serializable {
     }
 
     @Override
-    public SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue){
+    public SheetDTO setCellForDynamicAnalysis(String sheetName, String cellId, String cellValue,String userName){
 
         if (!sheets.containsKey(sheetName)){
             throw new IllegalStateException("No sheet with the name " + sheetName + " is currently loaded.");
@@ -230,7 +230,7 @@ public class EngineImpl implements Engine, Serializable {
         try {
             Sheet sheet = sheets.get(sheetName);
             Sheet sheetCopy = sheet.copySheet();
-            sheetCopy = sheetCopy.setCell(cellId, cellValue);
+            sheetCopy = sheetCopy.setCell(cellId, cellValue,userName);
             SheetDTO newSheet = sheetToDTO(sheetCopy);
             return newSheet;
         }
