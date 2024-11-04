@@ -50,4 +50,5 @@ public interface Engine {
 
     List<UserAccessDTO> getAllAccessRequests(String sheetName, String ownerUserName);
 
+    SheetDTO getSheetLatestVersion(String username, String sheetName);
 }
