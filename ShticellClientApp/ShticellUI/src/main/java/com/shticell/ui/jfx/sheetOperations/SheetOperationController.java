@@ -1,5 +1,6 @@
 package com.shticell.ui.jfx.sheetOperations;
 
+import com.shticell.ui.jfx.sheetsManagement.SheetsRefresher;
 import dto.CellDTO;
 import dto.CoordinateDTO;
 import dto.SheetDTO;
@@ -27,6 +28,9 @@ import javafx.util.Pair;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.function.Consumer;
+
+import static com.shticell.ui.jfx.utils.Constants.REFRESH_RATE;
 
 public class SheetOperationController {
 
@@ -69,7 +73,7 @@ public class SheetOperationController {
     @FXML
     private Label cellUpdatedByLabel;
     @FXML
-    private Button updateToLatestVersionButton;
+    private Button showLatestVersionButton;
 
 
     private MainController mainController;
@@ -102,7 +106,8 @@ public class SheetOperationController {
                     cellUpdatedByLabel,
                     versionSelectorComponent,
                     sortSheetButton,
-                    filterSheetButton
+                    filterSheetButton,
+                    showLatestVersionButton
             );
             gridManager = new SheetGridManager(sheetGridPane, uiModel, this);
             selectedCell = new SimpleObjectProperty<>();
@@ -126,6 +131,7 @@ public class SheetOperationController {
             initializeSortSheetButton();
             initializeFilterSheetButton();
             initializeDynamicAnalysisButton();
+            initializeShowLatestVersionButton();
             createRangeController();
         } catch (Exception e) {
             showErrorAlert("Initialization Error", "An error occurred while initializing the sheet operation controller: " + e.getMessage());
@@ -155,6 +161,10 @@ public class SheetOperationController {
 
         @FXML
         public void updateSelectedCellValue (ActionEvent event){
+            if (uiModel.isThereNewVersionProperty().get()){
+                showErrorAlert("Update Error", "Please update to the sheet latest version.");
+                return;
+            }
             if (selectedCell.get() == null) {
                 throw new IllegalStateException("Please select a cell to update.");
             }
@@ -173,7 +183,6 @@ public class SheetOperationController {
             }
         }
 
-
     protected void showUpdatedSheet(String cellId) {
         versionSelectorComponentController.addVersion(sheet.getCurrVersion());
         CellDTO updatedCell = sheet.getCell(cellId);
@@ -185,8 +194,8 @@ public class SheetOperationController {
         for (String influencedCellId : updatedCell.getInfluencingOn()) {
             uiModel.cellIdProperty(influencedCellId).setValue(sheet.getCell(influencedCellId).getEffectiveValue().toString());
         }
+//        loadSheet(sheet);
     }
-
 
     public void setSheet(SheetDTO sheet) {
         this.sheet = sheet;
@@ -571,5 +580,29 @@ public class SheetOperationController {
         setSheet(originalSheet);
         showUpdatedSheet(currentCellLabel.getText());
         // Any other cleanup or reset logic
+    }
+
+    private void initializeShowLatestVersionButton() {
+        showLatestVersionButton.setOnAction(e -> {
+            try {
+                requests.getSheetLatestVersionRequest(sheet.getSheetName());
+            } catch (Exception ex) {
+                showErrorAlert("Show Latest Version Error", "An error occurred while showing the latest version: " + ex.getMessage());
+            }
+        });
+    }
+
+    public void newVersionAvailable() {
+        uiModel.isThereNewVersionProperty().set(true);
+    }
+
+    public void startUpdatesRefresher() {
+        UpdatesRefresher updatesRefresher = new UpdatesRefresher(this);
+        Timer timer = new Timer(true); // Use a daemon timer
+        timer.scheduleAtFixedRate(updatesRefresher, REFRESH_RATE, REFRESH_RATE);
+    }
+
+    public void noNewVersion() {
+        uiModel.isThereNewVersionProperty().set(false);
     }
 }

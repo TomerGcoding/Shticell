@@ -252,4 +252,14 @@ public class EngineImpl implements Engine, Serializable {
         return sheets.get(sheetName).getAllAccessRequests(ownerUserName);
     }
 
+    @Override
+    public SheetDTO getSheetLatestVersion(String username, String sheetName) {
+        if (!sheets.containsKey(sheetName)) {
+            throw new IllegalArgumentException("Sheet with the name " + sheetName + " does not exist.");
+        }
+        Sheet sheet = sheets.get(sheetName);
+//        sheet.checkUserAccess(username, AccessPermissionType.READER);
+        return sheetToDTO(sheet);
+    }
+
 }

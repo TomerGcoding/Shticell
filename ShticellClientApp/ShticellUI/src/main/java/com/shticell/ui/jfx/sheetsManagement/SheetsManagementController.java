@@ -68,6 +68,9 @@ public class SheetsManagementController {
     private Label userNameLabel;
 
     private MainController mainController;
+
+
+
     private SheetOperationController sheetOperationController;
     private Map<String, SheetDTO> sheets = new HashMap<>();
     private ManagementRequests requests;
@@ -211,6 +214,7 @@ public class SheetsManagementController {
                     if (sheet != null) {
                         sheetOperationController.loadSheet(sheet);
                         sheetOperationController.show();
+                        sheetOperationController.startUpdatesRefresher();
                     }
                 });
 

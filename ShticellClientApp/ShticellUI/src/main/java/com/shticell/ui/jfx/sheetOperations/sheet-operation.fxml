@@ -32,7 +32,7 @@
                   <Button fx:id="switchToManagementPageBtn" mnemonicParsing="false" onAction="#switchToManagementPage" text="Back To Menu " />
                   <ComboBox fx:id="changeStyleComboBox" promptText="Shticell Styles" HBox.hgrow="ALWAYS" />
                   <CheckBox fx:id="animationsCheckbox" alignment="CENTER" text="Activate animations" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" text="Hello, User!" style="-fx-alignment: CENTER_RIGHT;" maxWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" maxWidth="200.0" style="-fx-alignment: CENTER_RIGHT;" text="Hello, User!" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="5.0">
@@ -44,7 +44,6 @@
                   <Button fx:id="updateSelectedCellValueButton" disable="true" onAction="#updateSelectedCellValue" text="Update Value" HBox.hgrow="ALWAYS" />
                   <Label text="Last version update:" HBox.hgrow="ALWAYS" />
                   <Label fx:id="currentCellVersionLabel" HBox.hgrow="ALWAYS" />
-                  <fx:include fx:id="versionSelectorComponent" source="../version/version.fxml" HBox.hgrow="ALWAYS" />
                   <Label text="Updated By:" />
                   <Label fx:id="cellUpdatedByLabel" />
                </children>
@@ -68,6 +67,8 @@
          <Button fx:id="filterSheetButton" text="Filter Sheet" HBox.hgrow="ALWAYS" />
          <Button fx:id="dynamicAnalysisButton" layoutX="101.0" layoutY="10.0" text="Dynamic Analysis" />
          <Slider fx:id="dynamicAnalysisSlider" blockIncrement="25.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" visible="false" />
+         <Button fx:id="showLatestVersionButton" mnemonicParsing="false" text="Show Latest Version" />
+         <fx:include fx:id="versionSelectorComponent" source="../version/version.fxml" HBox.hgrow="ALWAYS" />
       </HBox>
    </bottom>
 </BorderPane>

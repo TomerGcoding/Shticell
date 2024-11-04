@@ -19,6 +19,7 @@ public class UIModel {
     private final StringProperty name;
     private final BooleanProperty isDynamicAnalysisMode;
     private final BooleanProperty isLoading;
+    private final BooleanProperty isThereNewVersion;
     private IntegerProperty selectedCellVersion;
     private Map<String,StringProperty> cellIdtoCellValue;
     private StringProperty selectedCellId;
@@ -30,7 +31,7 @@ public class UIModel {
                    Label currentCellLabel, TextField selectedCellOriginalValueTextField,
                    Label lastVersionUpdateLabel,Label cellUpdatedByLabel, AnchorPane versionSelectorComponent,
                    Button sortSheetButton,
-                   Button filterSheetButton) {
+                   Button filterSheetButton,Button showLatestVersionButton) {
         this.fullPath = new SimpleStringProperty( );
         this.name = new SimpleStringProperty( );
         this.isDynamicAnalysisMode = new SimpleBooleanProperty(false );
@@ -39,6 +40,7 @@ public class UIModel {
         this.selectedCellVersion = new SimpleIntegerProperty();
         this.selectedCellLastUserUpdating = new SimpleStringProperty();
         this.isLoading = new SimpleBooleanProperty( false );
+        this.isThereNewVersion = new SimpleBooleanProperty( false );
         sheetNameTab.textProperty().bind( this.name );
         updateSelectedCellValueButton.disableProperty().bind( this.isDynamicAnalysisMode);
         versionSelectorComponent.disableProperty().bind( this.isDynamicAnalysisMode);
@@ -50,6 +52,8 @@ public class UIModel {
         cellUpdatedByLabel.textProperty().bind(this.selectedCellLastUserUpdating);
         sortSheetButton.disableProperty().bind( this.isDynamicAnalysisMode);
         filterSheetButton.disableProperty().bind( this.isDynamicAnalysisMode);
+        showLatestVersionButton.disableProperty().bind( this.isDynamicAnalysisMode);
+        showLatestVersionButton.visibleProperty().bind( this.isThereNewVersion);
     }
 
     public void initializePropertiesForEachCell(GridPane sheetGridPane) {
@@ -94,4 +98,8 @@ public class UIModel {
     }
 
     public StringProperty selectedCellLastUserUpdatingProperty() {return this.selectedCellLastUserUpdating;}
+
+    public BooleanProperty isThereNewVersionProperty() {
+        return this.isThereNewVersion;
+    }
 }

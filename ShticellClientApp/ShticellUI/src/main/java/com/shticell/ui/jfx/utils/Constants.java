@@ -22,5 +22,5 @@ public class Constants {
     public final static String APPROVE_ACCESS_PERMISSION = "/approveAccessPermission";
     public final static String REJECT_ACCESS_PERMISSION = "/rejectAccessPermission";
     public final static String DYNAMIC_ANALYSIS = "/dynamicAnalysis";
-
+    public static final String GET_LATEST_VERSION = "/getLatestVersion";
 }

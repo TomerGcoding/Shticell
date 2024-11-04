@@ -296,4 +296,52 @@ public class SheetRequests {
             }
         });
     }
+
+    protected void getSheetLatestVersionRequest(String sheetName) {
+        String finalUrl = HttpUrl
+                .parse(BASE_URL + GET_LATEST_VERSION)
+                .newBuilder()
+                .addQueryParameter("sheetName", sheetName)
+                .build()
+                .toString();
+
+        HttpClientUtil.runAsync(finalUrl, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Platform.runLater(() -> {
+                    controller.showErrorAlert("Version Error", "An error occurred while getting the latest version: " + e.getMessage());
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if (response.code() != 200) {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            response.close();
+                            controller.showErrorAlert("Version Error", "An error occurred while getting the latest version: " + responseBody);
+                        } catch (Exception e) {
+                            controller.showErrorAlert("Version Error", "An error occurred while getting the latest version: " + e.getMessage());
+                        }
+                    });
+                } else {
+                    Platform.runLater(() -> {
+                        try {
+                            String responseBody = response.body().string();
+                            response.close();
+                            Gson gson = new GsonBuilder()
+                                    .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
+                                    .create();
+                            SheetDTO latestVersion = gson.fromJson(responseBody, SheetDTO.class);
+                            controller.loadSheet(latestVersion);
+                        } catch (Exception e) {
+                            controller.showErrorAlert("Version Error", "An error occurred while getting the latest version: " + e.getMessage());
+                        }
+                    });
+                }
+            }
+        });
+    }
 }
