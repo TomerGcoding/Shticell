@@ -29,7 +29,7 @@
                 <HBox alignment="CENTER_LEFT" prefWidth="800.0" spacing="10.0">
                     <children>
                         <Button fx:id="loadXMLFileButton" minWidth="100.0" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" />
-                        <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" maxWidth="639.0" prefHeight="15.0" prefWidth="639.0" style="-fx-alignment: CENTER_RIGHT;" text="Hello, User!" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" maxWidth="200.0" style="-fx-alignment: CENTER_RIGHT; -fx-text-fill: #4a90e2; -fx-font-weight: bold; -fx-font-size: 13;" text="Hello, User!" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
             </children>
@@ -43,11 +43,11 @@
                 <Label fx:id="activeSheetLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Active Sheets" />
                 <TableView fx:id="activeSheetsTable" prefHeight="300.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="sheetNameColumn" prefWidth="200.0" text="Sheet Name" />
-                        <TableColumn fx:id="uploadedByColumn" prefWidth="200.0" text="Uploaded By" />
-                        <TableColumn fx:id="sheetSizeColumn" prefWidth="120.0" text="Sheet Size" />
-                        <TableColumn fx:id="accessPermissionColumn" prefWidth="120.0" text="Access Permission" />
-                        <TableColumn fx:id="sheetsActionColumn" prefWidth="100.0" text="Actions" />
+                        <TableColumn fx:id="sheetNameColumn" text="Sheet Name" prefWidth="150.0" />
+                        <TableColumn fx:id="uploadedByColumn" text="Uploaded By" prefWidth="150.0" />
+                        <TableColumn fx:id="sheetSizeColumn" text="Sheet Size" prefWidth="150.0" />
+                        <TableColumn fx:id="accessPermissionColumn" text="Access Permission" prefWidth="150.0" />
+                        <TableColumn fx:id="sheetsActionColumn" text="Actions" prefWidth="150.0" />
                     </columns>
                 </TableView>
 
@@ -55,11 +55,11 @@
                 <Label fx:id="permissionLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Access Permissions" />
                 <TableView fx:id="permissionsTable" prefHeight="300.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="userNameColumn" prefWidth="150.0" text="User Name" />
-                        <TableColumn fx:id="currentPermissionColumn" prefWidth="150.0" text="Permission" />
-                        <TableColumn fx:id="requestedPermissionColumn" prefWidth="150.0" text="Requested Permission" />
-                        <TableColumn fx:id="permissionStatusColumn" prefWidth="150.0" text="Permission Status" />
-                        <TableColumn fx:id="permmissionActionColumn" prefWidth="200.0" text="Action" />
+                        <TableColumn fx:id="userNameColumn" text="User Name" prefWidth="150.0" />
+                        <TableColumn fx:id="currentPermissionColumn" text="Permission" prefWidth="150.0" />
+                        <TableColumn fx:id="requestedPermissionColumn" text="Requested Permission" prefWidth="150.0" />
+                        <TableColumn fx:id="permissionStatusColumn" text="Permission Status" prefWidth="150.0" />
+                        <TableColumn fx:id="permissionActionColumn" text="Action" prefWidth="200.0" />
                     </columns>
                 </TableView>
 

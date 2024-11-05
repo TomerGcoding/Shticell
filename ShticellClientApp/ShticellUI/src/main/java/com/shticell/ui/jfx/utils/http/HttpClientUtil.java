@@ -18,9 +18,6 @@ public class HttpClientUtil {
     public HttpClientUtil(){
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);
     }
-    public static void setCookieManagerLoggingFacility(Consumer<String> logConsumer) {
-        simpleCookieManager.setLogData(logConsumer);
-    }
 
     public static void removeCookiesOf(String domain) {
         simpleCookieManager.removeCookiesOf(domain);

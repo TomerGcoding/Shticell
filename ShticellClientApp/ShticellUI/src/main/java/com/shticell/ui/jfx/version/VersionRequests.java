@@ -31,7 +31,6 @@ public class VersionRequests {
                 .build()
                 .toString();
 
-        //async
         HttpClientUtil.runAsync(finalUrl, new Callback() {
 
             @Override

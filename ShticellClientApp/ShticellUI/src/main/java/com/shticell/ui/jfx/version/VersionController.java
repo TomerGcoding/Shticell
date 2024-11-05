@@ -41,9 +41,6 @@ public class VersionController {
         this.sheetName = sheetName;
     }
 
-//    public void addVersion(int newVersionNumber) {
-//        versionSelectorComboBox.getItems().add(newVersionNumber);
-//    }
     public void addVersion(int newVersionNumber) {
         List<Integer> versions = versionSelectorComboBox.getItems();
         for (int i = 1; i <= newVersionNumber; i = i + 1)
