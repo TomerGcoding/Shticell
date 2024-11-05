@@ -17,6 +17,7 @@ import static com.shticell.ui.jfx.utils.Constants.*;
 public class RangeRequests {
 
     private final RangeController controller;
+
     public RangeRequests(RangeController controller) {
         this.controller = controller;
     }
@@ -32,7 +33,6 @@ public class RangeRequests {
                 .toString();
 
 
-        //async
         HttpClientUtil.runAsync(finalUrl, new Callback() {
 
             @Override
@@ -55,7 +55,6 @@ public class RangeRequests {
                         try {
                             String responseBody = response.body().string();
                             response.close();
-                            System.out.println(responseBody);
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
                                     .create();
@@ -81,7 +80,6 @@ public class RangeRequests {
                 .build()
                 .toString();
 
-        //async
         HttpClientUtil.runAsync(finalUrl, new Callback() {
 
             @Override
@@ -95,6 +93,7 @@ public class RangeRequests {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 if (response.code() != 200) {
                     String responseBody = response.body().string();
+                    response.close();
                     Platform.runLater(() -> {
                         controller.showErrorAlert("Deleting Range Error", "An error occurred while deleting range: " + responseBody);
                     });

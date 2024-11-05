@@ -24,7 +24,6 @@ public class SheetRequests {
     }
 
     protected void filterSheetRequest(String sheetName, String range, String columns, List<String> selectedValues) {
-        System.out.println("in filterSheetRequest, columns: " + columns);
         String finalUrl = HttpUrl
                 .parse(BASE_URL + FILTER_SHEET)
                 .newBuilder()
@@ -61,7 +60,6 @@ public class SheetRequests {
                         try {
                             String responseBody = response.body().string();
                             response.close();
-                            System.out.println(responseBody);
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
                                     .create();
@@ -113,9 +111,6 @@ public class SheetRequests {
                         try {
                             String responseBody = response.body().string();
                             response.close();
-
-                            // Print the response - for DEBUG
-                            System.out.println(responseBody);
 
                             Gson gson = new GsonBuilder()
                                     .registerTypeAdapter(SheetDTO.class, new SheetDTODeserializer())
@@ -243,7 +238,6 @@ public class SheetRequests {
             }
         });
     }
-
 
     protected void dynamicAnalysisRequest(String sheetName, String cellId, String cellValue) {
         String finalUrl = HttpUrl

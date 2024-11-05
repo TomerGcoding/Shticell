@@ -46,7 +46,6 @@ public class LoadSheetServlet extends HttpServlet {
                Type sheetType = new TypeToken<SheetDTO>() {
                }.getType();
                String json = new Gson().toJson(sheetDTO, sheetType);
-               // String json  = new Gson().toJson(sheetDTO);
                System.out.println(json);
                out.write(json);
                out.flush();
