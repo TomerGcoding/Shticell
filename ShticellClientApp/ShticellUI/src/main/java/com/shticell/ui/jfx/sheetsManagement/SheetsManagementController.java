@@ -17,6 +17,7 @@ import javafx.util.Callback;
 import javafx.concurrent.Task;
 import javafx.stage.FileChooser;
 
+import java.io.IOException;
 import java.util.*;
 import java.io.File;
 import java.util.Timer;
@@ -58,10 +59,6 @@ public class SheetsManagementController {
     private Button requestPermissionButton;
     @FXML
     private Label permissionLabel;
-    @FXML
-    private ProgressBar progressBar;
-    @FXML
-    private Label progressLabel;
     @FXML
     private Label shticellLabel;
     @FXML
@@ -297,63 +294,31 @@ public class SheetsManagementController {
         File file = fileChooser.showOpenDialog(null);
 
         if (file != null) {
-            progressBar.setVisible(true);
-            progressBar.setManaged(true);
-            progressLabel.setVisible(true);
-            progressLabel.setManaged(true);
-
-            uploadFile(file);
+            try {
+                uploadFile(file);
+            } catch (IOException e) {
+                showErrorAlert("Upload Error", "An error occurred while uploading the file.");
+            }
         }
     }
 
-    private void uploadFile(File file) {
-        Task<Void> loadTask = new Task<>() {
+    private void uploadFile(File file) throws IOException {
+
+        requests.uploadFile(file, new ManagementRequests.UploadCallback() {
             @Override
-            protected Void call() throws Exception {
-                updateMessage("Fetching file...");
-                updateProgress(0.2, 1);
-                Thread.sleep(1000);
-
-                updateMessage("Loading sheet data...");
-                updateProgress(0.6, 1);
-
-                requests.uploadFile(file, new ManagementRequests.UploadCallback() {
-                    @Override
-                    public void onUploadSuccess(SheetDTO sheet) {
-                        Platform.runLater(() -> {
-                            progressBar.setVisible(false);
-                            progressBar.setManaged(false);
-                            progressLabel.setVisible(false);
-                            progressLabel.setManaged(false);
-                            addSheet(sheet);
-                        });
-                    }
-
-                    @Override
-                    public void onUploadFailed(String errorMessage) {
-                        Platform.runLater(() -> {
-                            progressBar.setVisible(false);
-                            progressBar.setManaged(false);
-                            progressLabel.setVisible(false);
-                            progressLabel.setManaged(false);
-                            showErrorAlert("Upload Error", errorMessage);
-                        });
-                    }
+            public void onUploadSuccess(SheetDTO sheet) {
+                Platform.runLater(() -> {
+                    addSheet(sheet);
                 });
-
-                Thread.sleep(1000);
-                updateMessage("File upload successful!");
-                updateProgress(1, 1);
-                return null;
             }
-        };
 
-        progressBar.progressProperty().bind(loadTask.progressProperty());
-        progressLabel.textProperty().bind(loadTask.messageProperty());
-
-        Thread loadThread = new Thread(loadTask);
-        loadThread.setDaemon(true);
-        loadThread.start();
+            @Override
+            public void onUploadFailed(String errorMessage) {
+                Platform.runLater(() -> {
+                    showErrorAlert("Upload Error", errorMessage);
+                });
+            }
+        });
     }
 
     public void addSheet(SheetDTO sheet) {

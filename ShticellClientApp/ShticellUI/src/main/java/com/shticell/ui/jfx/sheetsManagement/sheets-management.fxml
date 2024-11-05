@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.collections.FXCollections?>
-<?import javafx.scene.control.ComboBox?>
-<?import java.lang.String?>
 <BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@css.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.sheetsManagement.SheetsManagementController">
     <top>
         <VBox prefHeight="82.0" prefWidth="800.0" BorderPane.alignment="CENTER">
@@ -29,14 +26,10 @@
                         </Label>
                     </children>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="10.0" prefWidth="800.0">
+                <HBox alignment="CENTER_LEFT" prefWidth="800.0" spacing="10.0">
                     <children>
                         <Button fx:id="loadXMLFileButton" minWidth="100.0" mnemonicParsing="false" onAction="#loadXMLFile" prefHeight="25.0" prefWidth="127.0" text="Load XML File" />
-                        <StackPane HBox.hgrow="ALWAYS">
-                            <ProgressBar fx:id="progressBar" managed="false" prefWidth="400.0" progress="0.0" visible="false" />
-                            <Label fx:id="progressLabel" managed="false" text="" textFill="black" visible="false" />
-                        </StackPane>
-                        <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" text="Hello, User!" style="-fx-alignment: CENTER_RIGHT;" maxWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" maxWidth="639.0" prefHeight="15.0" prefWidth="639.0" style="-fx-alignment: CENTER_RIGHT;" text="Hello, User!" HBox.hgrow="ALWAYS" />
                     </children>
                 </HBox>
             </children>
@@ -47,26 +40,26 @@
         <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="800.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
                 <!-- Active Sheets Table -->
-                <Label fx:id="activeSheetLabel" text="Active Sheets" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                <TableView fx:id="activeSheetsTable" VBox.vgrow="ALWAYS" prefHeight="300.0" prefWidth="800.0">
+                <Label fx:id="activeSheetLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Active Sheets" />
+                <TableView fx:id="activeSheetsTable" prefHeight="300.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="sheetNameColumn" text="Sheet Name" prefWidth="200.0" />
-                        <TableColumn fx:id="uploadedByColumn" text="Uploaded By" prefWidth="200.0" />
-                        <TableColumn fx:id="sheetSizeColumn" text="Sheet Size" prefWidth="120.0" />
-                        <TableColumn fx:id="accessPermissionColumn" text="Access Permission" prefWidth="120.0" />
-                        <TableColumn fx:id="sheetsActionColumn" text="Actions" prefWidth="100.0" />
+                        <TableColumn fx:id="sheetNameColumn" prefWidth="200.0" text="Sheet Name" />
+                        <TableColumn fx:id="uploadedByColumn" prefWidth="200.0" text="Uploaded By" />
+                        <TableColumn fx:id="sheetSizeColumn" prefWidth="120.0" text="Sheet Size" />
+                        <TableColumn fx:id="accessPermissionColumn" prefWidth="120.0" text="Access Permission" />
+                        <TableColumn fx:id="sheetsActionColumn" prefWidth="100.0" text="Actions" />
                     </columns>
                 </TableView>
 
                 <!-- Permissions Section -->
-                <Label fx:id="permissionLabel" text="Access Permissions" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                <TableView fx:id="permissionsTable" VBox.vgrow="ALWAYS" prefHeight="300.0" prefWidth="800.0">
+                <Label fx:id="permissionLabel" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Access Permissions" />
+                <TableView fx:id="permissionsTable" prefHeight="300.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="userNameColumn" text="User Name" prefWidth="150.0" />
-                        <TableColumn fx:id="currentPermissionColumn" text="Permission" prefWidth="150.0" />
-                        <TableColumn fx:id="requestedPermissionColumn" text="Requested Permission" prefWidth="150.0" />
-                        <TableColumn fx:id="permissionStatusColumn" text="Permission Status" prefWidth="150.0" />
-                        <TableColumn fx:id="permmissionActionColumn" text="Action" prefWidth="200.0" />
+                        <TableColumn fx:id="userNameColumn" prefWidth="150.0" text="User Name" />
+                        <TableColumn fx:id="currentPermissionColumn" prefWidth="150.0" text="Permission" />
+                        <TableColumn fx:id="requestedPermissionColumn" prefWidth="150.0" text="Requested Permission" />
+                        <TableColumn fx:id="permissionStatusColumn" prefWidth="150.0" text="Permission Status" />
+                        <TableColumn fx:id="permmissionActionColumn" prefWidth="200.0" text="Action" />
                     </columns>
                 </TableView>
 
@@ -80,10 +73,9 @@
                             </FXCollections>
                         </items>
                     </ComboBox>
-                    <Button fx:id="requestPermissionButton" text="Request Permission" onAction="#handleRequestPermission" />
+                    <Button fx:id="requestPermissionButton" onAction="#handleRequestPermission" text="Request Permission" />
                 </HBox>
             </children>
         </VBox>
     </center>
 </BorderPane>
-
