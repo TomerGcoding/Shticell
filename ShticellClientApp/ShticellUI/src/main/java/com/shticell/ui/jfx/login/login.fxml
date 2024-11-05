@@ -10,14 +10,14 @@
 
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="289.0" prefWidth="369.0" spacing="20.0" stylesheets="@login.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.login.LoginController">
    <children>
-      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="193.0" text="Log In to Shticell" textAlignment="CENTER">
+      <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="27.0" prefWidth="300.0" text="Log In to Shticell" textAlignment="CENTER">
          <font>
             <Font name="System Bold Italic" size="36.0" />
          </font>
       </Label>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
          <children>
-            <Label contentDisplay="CENTER" prefHeight="18.0" prefWidth="76.0" text="User Name:" HBox.hgrow="ALWAYS">
+            <Label contentDisplay="CENTER" prefHeight="18.0" prefWidth="120.0" text="User Name:" HBox.hgrow="ALWAYS">
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>

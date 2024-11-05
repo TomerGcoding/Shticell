@@ -14,7 +14,6 @@ public class SheetDTODeserializer implements JsonDeserializer<SheetDTO> {
     public SheetDTO deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
 
-        // Deserialize activeCells with custom logic
         Map<CoordinateDTO, CellDTO> activeCells = new HashMap<>();
         JsonObject activeCellsJson = jsonObject.getAsJsonObject("activeCells");
         for (Map.Entry<String, JsonElement> entry : activeCellsJson.entrySet()) {
@@ -24,20 +23,16 @@ public class SheetDTODeserializer implements JsonDeserializer<SheetDTO> {
             activeCells.put(coordinate, cellDTO);
         }
 
-        // Deserialize other fields
         Map<String, RangeDTO> activeRanges = context.deserialize(jsonObject.get("activeRanges"), new TypeToken<Map<String, RangeDTO>>() {}.getType());
         int currVersion = jsonObject.get("currVersion").getAsInt();
         String sheetName = jsonObject.get("sheetName").getAsString();
         SheetPropertiesDTO properties = context.deserialize(jsonObject.get("properties"), SheetPropertiesDTO.class);
 
-        // Deserialize the new field, SheetUsersAccessDTO
         SheetUsersAccessDTO sheetUsersAccess = context.deserialize(jsonObject.get("sheetUsersAccess"), SheetUsersAccessDTO.class);
 
-        // Return new SheetDTO with the new field included
         return new SheetDTO(activeCells, activeRanges, currVersion, sheetName, properties, sheetUsersAccess);
     }
 
-    // Helper method to parse a coordinate from the key (e.g., "6,4")
     private CoordinateDTO parseCoordinate(String key) {
         String[] parts = key.split(",");
         int row = Integer.parseInt(parts[0]);

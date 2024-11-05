@@ -39,8 +39,6 @@ public class LoginServlet extends HttpServlet {
                     } else {
                         engine.addUser(usernameFromParameter);
                         request.getSession(true).setAttribute(USERNAME, usernameFromParameter);
-
-                        //redirect the request to the chat room - in order to actually change the URL
                         System.out.println("On login, request URI is: " + request.getRequestURI());
                         response.getWriter().print("User" + usernameFromSession + " logged in right now");
                         response.setStatus(HttpServletResponse.SC_OK);

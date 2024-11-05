@@ -51,7 +51,7 @@ public class SheetsManagementController {
     @FXML
     private TableColumn<UserAccessDTO, String> permissionStatusColumn;
     @FXML
-    private TableColumn<UserAccessDTO, String> permmissionActionColumn;
+    private TableColumn<UserAccessDTO, String> permissionActionColumn;
     @FXML
     private ComboBox<String> permissionComboBox;
     @FXML
@@ -100,13 +100,37 @@ public class SheetsManagementController {
     }
 
     private void initializeSheetsTable() {
-        // Setting up the TableView columns
         sheetNameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getSheetName()));
         uploadedByColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getOwner()));
         sheetSizeColumn.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getSize())));
         accessPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getUserPermission(userName)));
+
+        centerTableColumnText(sheetNameColumn);
+        centerTableColumnText(uploadedByColumn);
+        centerTableColumnText(sheetSizeColumn);
+        centerTableColumnText(accessPermissionColumn);
+
         sheetsActionColumn.setCellFactory(createButtonCellFactory());
     }
+
+    private <T> void centerTableColumnText(TableColumn<T, String> column) {
+        column.setCellFactory(tc -> {
+            TableCell<T, String> cell = new TableCell<>() {
+                @Override
+                protected void updateItem(String item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item);
+                        setStyle("-fx-alignment: CENTER;"); // Center the text
+                    }
+                }
+            };
+            return cell;
+        });
+    }
+
 
     private void initializePermissionsTable() {
         userAccessList = FXCollections.observableArrayList();
@@ -121,7 +145,12 @@ public class SheetsManagementController {
         requestedPermissionColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getRequestedAccessPermission()));
         permissionStatusColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getAccessPermissionStatus()));
 
-        permmissionActionColumn.setCellFactory(param -> new TableCell<>() {
+        centerTableColumnText(userNameColumn);
+        centerTableColumnText(currentPermissionColumn);
+        centerTableColumnText(requestedPermissionColumn);
+        centerTableColumnText(permissionStatusColumn);
+
+        permissionActionColumn.setCellFactory(param -> new TableCell<>() {
             private final Button approveButton = new Button("Approve");
             private final Button rejectButton = new Button("Reject");
             private final HBox actionButtons = new HBox(approveButton, rejectButton);
@@ -241,14 +270,13 @@ public class SheetsManagementController {
                 } else {
                     SheetDTO sheet = getTableView().getItems().get(getIndex());
                     if (sheet != null) {
-                        // Check the access permission
                         String accessPermission = sheet.getUserPermission(userName);
                         if ("None".equalsIgnoreCase(accessPermission)) {
-                            openButton.setDisable(true); // Disable the button
-                            openButton.setStyle("-fx-background-color: lightgrey; -fx-cursor: not-allowed;"); // Add hover effect
+                            openButton.setDisable(true);
+                            openButton.setStyle("-fx-background-color: lightgrey; -fx-cursor: not-allowed;");
                         } else {
-                            openButton.setDisable(false); // Enable the button
-                            openButton.setStyle(""); // Reset style
+                            openButton.setDisable(false);
+                            openButton.setStyle("");
                         }
                         setGraphic(openButton);
                     }
@@ -279,15 +307,15 @@ public class SheetsManagementController {
         if (currentlySelectedSheet != null) {
             requests.rejectAccessPermission(currentlySelectedSheet.getSheetName(), userAccess);
 
-            // Update the user access status
             userAccess.setAccessPermissionStatus("Rejected");
             refreshPermissionsTable();
         }
     }
 
     private void refreshPermissionsTable() {
-        permissionsTable.refresh(); // Refresh the table to reflect updated data
+        permissionsTable.refresh();
     }
+
 
     @FXML
     public void loadXMLFile(ActionEvent event) {

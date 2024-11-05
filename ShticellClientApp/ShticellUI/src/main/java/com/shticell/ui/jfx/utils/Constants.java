@@ -9,7 +9,6 @@ public class Constants {
     public final static String SHEETS_MANAGEMENT_PAGE_FXML_RESOURCE_LOCATION = "/com/shticell/ui/jfx/sheetsManagement/sheets-management.fxml";
     public final static String MAIN_PAGE_FXML_RESOURCE_LOCATION = "/com/shticell/ui/jfx/main/main.fxml";
     public final static String LOGIN_PAGE = "/login";
-    public final static String SHEET_OPERATION_PAGE = "/sheetOperation";
     public final static String UPLOAD_FILE_PAGE = "/loadSheet";
     public final static String UPDATE_CELL = "/updateCell";
     public final static String SORT_SHEET = "/sortSheet";

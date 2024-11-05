@@ -40,7 +40,6 @@ public class SheetsRefresher extends TimerTask {
                 .build();
 
         try {
-            // Sending the synchronous request
             Response response = HttpClientUtil.getClient().newCall(request).execute();
             if (response.code() != 200) {
                 System.err.println("Failed to fetch sheets: " + response.message());
@@ -51,15 +50,13 @@ public class SheetsRefresher extends TimerTask {
             String responseBody = response.body().string();
             response.close();
 
-            // Parsing the response
+
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(new TypeToken<Map<String, SheetDTO>>() {}.getType(), new MapOfSheetsDeserializer())
                     .create();
             Map<String, SheetDTO> allSheets = gson.fromJson(responseBody, new TypeToken<Map<String, SheetDTO>>() {}.getType());
             System.out.println("Fetched sheets from refresher: " + allSheets);
-            // Using the consumer to handle the response
             Platform.runLater(() -> {
-               // responseConsumer.accept(allSheets);
                 controller.populateSheetsTable(allSheets);
             });
 

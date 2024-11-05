@@ -46,9 +46,8 @@ public class ManagementRequests {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Platform.runLater(() -> {
                     controller.showErrorAlert("Upload Error", "An error occurred while uploading the file: " + e.getMessage());
-                    callback.onUploadFailed(e.getMessage());  // Notify failure
-                });
-            }
+
+            });}
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -56,8 +55,7 @@ public class ManagementRequests {
                     String responseBody = response.body().string();
                     response.close();
                     Platform.runLater(() -> {
-                        controller.showErrorAlert("Upload Error", "An error occurred while uploading the file: " + responseBody);
-                        callback.onUploadFailed(responseBody);  // Notify failure
+                        callback.onUploadFailed(responseBody);
                     });
                 } else {
                     Platform.runLater(() -> {
@@ -73,7 +71,7 @@ public class ManagementRequests {
                             callback.onUploadSuccess(sheet);  // Notify success
                         } catch (Exception e) {
                             controller.showErrorAlert("Upload Error", "An error occurred while uploading the file: " + e.getMessage());
-                            callback.onUploadFailed(e.getMessage());  // Notify failure
+                            callback.onUploadFailed(e.getMessage());
                         }
                     });
                 }
@@ -127,7 +125,6 @@ public class ManagementRequests {
                 .addQueryParameter("requestedPermission", requestedPermission)
                 .toString();
 
-        // async
         HttpClientUtil.runAsync(finalUrl, new Callback() {
 
             @Override
@@ -150,11 +147,9 @@ public class ManagementRequests {
                             e.printStackTrace();
                             controller.showErrorAlert("Request access fail", "error occurred while trying to request access permission: " + e.getMessage());
                         }});
-
                 }
             }
         });
-        
     }
 
     public void rejectAccessPermission(String sheetName, UserAccessDTO accessPermission) {
@@ -184,6 +179,7 @@ public class ManagementRequests {
                         try {
                             String responseBody = response.body().string();
                             response.close();
+                            controller.showErrorAlert("Reject access fail", "error occurred while trying reject access request: " + responseBody);
                         }catch (Exception e){
                             e.printStackTrace();
                             controller.showErrorAlert("Reject access fail", "error occurred while trying reject access request: " + e.getMessage());

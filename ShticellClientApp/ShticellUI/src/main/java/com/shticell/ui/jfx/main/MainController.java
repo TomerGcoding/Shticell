@@ -25,15 +25,7 @@ public class MainController {
     private String userName;
 
     @FXML
-    public void initialize() {
-//        try {
-//            loadSheetOperationPage();
-//            loadSheetsManagementPage();
-//        } catch (Exception e) {
-//            System.out.println("Error loading pages" + e.getMessage());
-//            e.printStackTrace();
-//        }
-    }
+    public void initialize() {}
 
     public void loadPages(String userName) {
         this.userName = userName;
