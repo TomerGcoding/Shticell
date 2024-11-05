@@ -2,9 +2,6 @@
   <artifact type="jar" name="ShticellUI">
     <output-path>$PROJECT_DIR$/out/artifacts/ShticellUI</output-path>
     <root id="archive" name="ShticellUI.jar">
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/ShticellUI/src/META-INF/MANIFEST.MF" />
-      </element>
       <element id="module-output" name="ShticellUI" />
       <element id="library" level="project" name="JavaFX" />
       <element id="library" level="project" name="JAXB" />
