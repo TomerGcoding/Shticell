@@ -141,71 +141,76 @@ public class SheetOperationController {
     public void setUserName (String userName) {
         userNameLabel.setText("Hello, " + userName + "!");
     }
-        // Method to handle a sheet being loaded and displayed
-        public void loadSheet (SheetDTO sheet){
-            this.sheet = sheet;
-            uiModel.nameProperty().setValue(sheet.getSheetName());
-            uiModel.selectedCellIdProperty().set(null);
-            uiModel.selectedCellOriginalValueProperty().set(null);
-            uiModel.selectedCellVersionProperty().set(0);
-            versionSelectorComponentController.clearAllVersions();
-            versionSelectorComponentController.addVersion(sheet.getCurrVersion());
-            uiModel.isDynamicAnalysisModeProperty().setValue(false);
-            gridManager.createSheetGridPane(sheet);
-            sheetTab.setContent(sheetGridPane);
-            rangeController.addLoadedRange(sheet);
-            versionSelectorComponentController.setSheetName(sheet.getSheetName());
+
+    // Method to handle a sheet being loaded and displayed
+    public void loadSheet (SheetDTO sheet){
+        this.sheet = sheet;
+        uiModel.nameProperty().setValue(sheet.getSheetName());
+        uiModel.selectedCellIdProperty().set(null);
+        uiModel.selectedCellOriginalValueProperty().set(null);
+        uiModel.selectedCellVersionProperty().set(0);
+        versionSelectorComponentController.clearAllVersions();
+        versionSelectorComponentController.addVersion(sheet.getCurrVersion());
+        uiModel.isDynamicAnalysisModeProperty().setValue(false);
+        gridManager.createSheetGridPane(sheet);
+        sheetTab.setContent(sheetGridPane);
+        rangeController.addLoadedRange(sheet);
+        versionSelectorComponentController.setSheetName(sheet.getSheetName());
+    }
+
+
+
+    @FXML
+    public void updateSelectedCellValue (ActionEvent event) {
+        if (uiModel.isThereNewVersionProperty().get()) {
+            showErrorAlert("Update Error", "Please update to the sheet latest version.");
+            return;
         }
-
-
-
-        @FXML
-        public void updateSelectedCellValue (ActionEvent event){
-            if (uiModel.isThereNewVersionProperty().get()){
-                showErrorAlert("Update Error", "Please update to the sheet latest version.");
-                return;
-            }
-            if (selectedCell.get() == null) {
-                throw new IllegalStateException("Please select a cell to update.");
-            }
-            if (isCellChanged(currentCellLabel.getText())) {
-                try {
-                    String cellId = currentCellLabel.getText();
-                    String cellValue = selectedCellOriginalValueTextField.getText();
-                    requests.updateCellRequest(sheet.getSheetName(), cellId, cellValue);
-                } catch (Exception e) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Error");
-                    alert.setHeaderText("Failed to update Cell:");
-                    alert.setContentText(e.getMessage());
-                    alert.showAndWait();
-                }
+        if (selectedCell.get() == null) {
+            throw new IllegalStateException("Please select a cell to update.");
+        }
+        if (isCellChanged(currentCellLabel.getText())) {
+            try {
+                String cellId = currentCellLabel.getText();
+                String cellValue = selectedCellOriginalValueTextField.getText();
+                requests.updateCellRequest(sheet.getSheetName(), cellId, cellValue);
+            } catch (Exception e) {
+                showErrorAlert("Update Error", "An error occurred while updating the cell: " + e.getMessage());
             }
         }
+    }
 
     protected void showUpdatedSheet(String cellId) {
+
         versionSelectorComponentController.addVersion(sheet.getCurrVersion());
         CellDTO updatedCell = sheet.getCell(cellId);
         uiModel.cellIdProperty(currentCellLabel.getText()).setValue(updatedCell.getEffectiveValue().toString());
         uiModel.selectedCellOriginalValueProperty().set(selectedCellOriginalValueTextField.getText());
         uiModel.selectedCellVersionProperty().setValue(updatedCell.getVersion());
         uiModel.selectedCellLastUserUpdatingProperty().set(updatedCell.getUserNameToUpdate());
+        // Update the chain of influenced cells
+        updateInfluencedCells(updatedCell);
+    }
 
-        for (String influencedCellId : updatedCell.getInfluencingOn()) {
-            uiModel.cellIdProperty(influencedCellId).setValue(sheet.getCell(influencedCellId).getEffectiveValue().toString());
+    private void updateInfluencedCells(CellDTO cell) {
+        for (String influencedCellId : cell.getInfluencingOn()) {
+            // Update the influenced cell's value in the UI
+            CellDTO influencedCell = sheet.getCell(influencedCellId);
+            uiModel.cellIdProperty(influencedCellId).setValue(influencedCell.getEffectiveValue().toString());
+
+            // Recursively update cells influenced by this cell
+            updateInfluencedCells(influencedCell);
         }
-//        loadSheet(sheet);
     }
 
     public void setSheet(SheetDTO sheet) {
         this.sheet = sheet;
     }
 
-    public void updateSheet (SheetDTO sheet){
-            this.sheet = sheet;
-            mainController.updateSheet(sheet);
-        }
-
+    public void updateSheet (SheetDTO sheet) {
+        this.sheet = sheet;
+        mainController.updateSheet(sheet);
+    }
 
     private boolean isCellChanged(String cellId) {
         CellDTO cell = sheet.getCell(cellId);
@@ -289,9 +294,8 @@ public class SheetOperationController {
         dialog.showAndWait();
     }
 
-    private void initializeFilterSheetButton() {
-        filterSheetButton.setOnAction(e -> showFilterDialog());
-    }
+    //Methods to handle the filter sheet feature
+    private void initializeFilterSheetButton() {filterSheetButton.setOnAction(e -> showFilterDialog());}
 
     private void showFilterDialog() {
         Dialog<Pair<String, List<String>>> dialog = new Dialog<>();
@@ -367,10 +371,6 @@ public class SheetOperationController {
         });
     }
 
-    public void colorRangeCells(List<String> rangeCellIds) {
-        gridManager.colorRangeCells(rangeCellIds);
-    }
-
     protected void showFilteredSheetDialog(SheetDTO filteredSheet) {
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Filtered Sheet");
@@ -383,6 +383,10 @@ public class SheetOperationController {
         dialog.showAndWait();
     }
 
+    //Method to color range cells upon click on the range name in the range component
+    public void colorRangeCells(List<String> rangeCellIds) {gridManager.colorRangeCells(rangeCellIds);}
+
+    //Method to show an error alert of any kind
     protected void showErrorAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -391,10 +395,10 @@ public class SheetOperationController {
         alert.showAndWait();
     }
 
-    public BorderPane getMainBorderPane() {
-        return mainBorderPane;
-    }
 
+    public BorderPane getMainBorderPane() { return mainBorderPane;}
+
+    //Method to create and set the range component and controller
     private void createRangeController() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/shticell/ui/jfx/range/range.fxml"));
         try {
@@ -408,6 +412,7 @@ public class SheetOperationController {
 
     }
 
+    //Method to apply the selected style to the sheet
     private void applyStyles(int styleNumber) {
         String mainStylesheet = String.format("main%d.css", styleNumber);
 
@@ -417,6 +422,7 @@ public class SheetOperationController {
         gridManager.setSheetStyle(styleNumber);
     }
 
+    //Method to add a mouse click event to a cell in the sheet grid pane
     public void addMouseClickEventForCell(String cellID, Label label) {
         label.setOnMouseClicked(event -> {
             gridManager.resetCellBorders();
@@ -452,10 +458,10 @@ public class SheetOperationController {
         mainController.setMainPanelTo(mainBorderPane);
     }
 
-    public void switchToManagementPage(ActionEvent event) {
-        mainController.switchToSheetsManagement();
-    }
+    // Method to switch to the sheets management page
+    public void switchToManagementPage(ActionEvent event) {mainController.switchToSheetsManagement();}
 
+    //Methods to handle dynamic analysis feature
     private void initializeDynamicAnalysisButton() {
         dynamicAnalysisButton.setOnAction(e -> {
             if (!dynamicAnalysisMode) {
@@ -582,6 +588,7 @@ public class SheetOperationController {
         // Any other cleanup or reset logic
     }
 
+    //Methods to handle update to latest version feature
     private void initializeShowLatestVersionButton() {
         showLatestVersionButton.setOnAction(e -> {
             try {

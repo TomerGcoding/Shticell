@@ -89,6 +89,7 @@ public class UIModel {
     public StringProperty fullPathProperty( ) {
         return this.fullPath;
     }
+
     public StringProperty nameProperty( ) {
         return this.name;
     }
