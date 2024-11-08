@@ -103,7 +103,6 @@ public class SheetDTO implements Serializable {
                 values.add(cell.getEffectiveValue().getValue().toString());
             }
         }
-    //    System.out.println("unique values in getUnique value: " + values);
         return values;
     }
 
@@ -129,13 +128,11 @@ public class SheetDTO implements Serializable {
 
     public SheetDTO copySheet() {
         try {
-            // Serialize the current object to a byte array
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
             oos.writeObject(this);
             oos.close();
 
-            // Deserialize the byte array to create a deep copy
             ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
             return (SheetDTO) ois.readObject();
         } catch (Exception e) {

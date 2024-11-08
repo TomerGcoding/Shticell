@@ -287,7 +287,6 @@ public class SheetImpl implements Sheet, Serializable {
         userAccessManager.setOwner(userName);
     }
 
-    //move method to userAccess!!!!!!!!!!!!!!! לעשות את זה
     @Override
     public void checkUserAccess(String userName, AccessPermissionType requiredAccessPermission) {
         UserAccessPermission accessPermission = userAccessManager.getUserAccessPermission(userName);

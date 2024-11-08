@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.Region?>
 <BorderPane fx:id="mainBorderPane" maxHeight="Infinity" maxWidth="Infinity" stylesheets="@main1.css" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.shticell.ui.jfx.sheetOperations.SheetOperationController">
    <top>
       <VBox fx:id="topVBox" maxHeight="Infinity" maxWidth="Infinity" spacing="5.0">
@@ -32,7 +33,8 @@
                   <Button fx:id="switchToManagementPageBtn" mnemonicParsing="false" onAction="#switchToManagementPage" text="Back To Menu " />
                   <ComboBox fx:id="changeStyleComboBox" promptText="Shticell Styles" HBox.hgrow="ALWAYS" />
                   <CheckBox fx:id="animationsCheckbox" alignment="CENTER" text="Activate animations" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" maxWidth="200.0" style="-fx-alignment: CENTER_RIGHT; -fx-text-fill: #4a90e2; -fx-font-weight: bold; -fx-font-size: 13;" text="Hello, User!" HBox.hgrow="ALWAYS" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label fx:id="userNameLabel" alignment="CENTER_RIGHT" maxWidth="200.0" style="-fx-alignment: CENTER_RIGHT; -fx-font-weight: bold; -fx-font-size: 13;" text="Hello, User!" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="5.0">
