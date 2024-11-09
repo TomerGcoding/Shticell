@@ -42,10 +42,9 @@ public class UIModel {
         this.isLoading = new SimpleBooleanProperty( false );
         this.isThereNewVersion = new SimpleBooleanProperty( false );
         sheetNameTab.textProperty().bind( this.name );
-        updateSelectedCellValueButton.disableProperty().bind( this.isDynamicAnalysisMode);
+        updateSelectedCellValueButton.disableProperty().set(false);
         versionSelectorComponent.disableProperty().bind( this.isDynamicAnalysisMode);
         selectedCellOriginalValueTextField.disableProperty().bind(this.isLoading);
-        sheetNameTab.disableProperty().bind( this.isDynamicAnalysisMode);
         currentCellLabel.textProperty().bind( this.selectedCellId );
         selectedCellOriginalValueTextField.textProperty().bindBidirectional( this.selectedCellOriginalValue );
         lastVersionUpdateLabel.textProperty().bind(this.selectedCellVersion.asString());

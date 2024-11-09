@@ -158,8 +158,6 @@ public class SheetOperationController {
         versionSelectorComponentController.setSheetName(sheet.getSheetName());
     }
 
-
-
     @FXML
     public void updateSelectedCellValue (ActionEvent event) {
         if (uiModel.isThereNewVersionProperty().get()) {
@@ -171,9 +169,17 @@ public class SheetOperationController {
         }
         if (isCellChanged(currentCellLabel.getText())) {
             try {
-                String cellId = currentCellLabel.getText();
-                String cellValue = selectedCellOriginalValueTextField.getText();
-                requests.updateCellRequest(sheet.getSheetName(), cellId, cellValue);
+                if (!dynamicAnalysisMode) {
+                    String cellId = currentCellLabel.getText();
+                    String cellValue = selectedCellOriginalValueTextField.getText();
+                    requests.updateCellRequest(sheet.getSheetName(), cellId, cellValue);
+                }
+                else {
+                    String cellId = currentCellLabel.getText();
+                    String cellValue = Double.toString(dynamicAnalysisSlider.getValue());
+                    exitDynamicAnalysisMode();
+                    requests.updateCellRequest(sheet.getSheetName(), cellId, cellValue);
+                }
             } catch (Exception e) {
                 showErrorAlert("Update Error", "An error occurred while updating the cell: " + e.getMessage());
             }
@@ -425,17 +431,19 @@ public class SheetOperationController {
     //Method to add a mouse click event to a cell in the sheet grid pane
     public void addMouseClickEventForCell(String cellID, Label label) {
         label.setOnMouseClicked(event -> {
-            gridManager.resetCellBorders();
-            selectedCell.set(label);
-            int cellRow = CoordinateDTO.cellIdToIndex(cellID)[0];
-            int cellCol = CoordinateDTO.cellIdToIndex(cellID)[1];
-            CellDTO cell = sheet.getCell(cellRow, cellCol);
-            uiModel.selectedCellOriginalValueProperty().set(cell == null ? "" : cell.getOriginalValue());
-            uiModel.selectedCellVersionProperty().set(cell == null ? 0 : cell.getVersion());
-            uiModel.selectedCellLastUserUpdatingProperty().set(cell == null ? "" : cell.getUserNameToUpdate());
-            uiModel.selectedCellIdProperty().set(cellID);
-            gridManager.highlightDependenciesAndInfluences(cell);
-            AnimationManager.animateCellSelection(label);
+            if(!dynamicAnalysisMode) {
+                gridManager.resetCellBorders();
+                selectedCell.set(label);
+                int cellRow = CoordinateDTO.cellIdToIndex(cellID)[0];
+                int cellCol = CoordinateDTO.cellIdToIndex(cellID)[1];
+                CellDTO cell = sheet.getCell(cellRow, cellCol);
+                uiModel.selectedCellOriginalValueProperty().set(cell == null ? "" : cell.getOriginalValue());
+                uiModel.selectedCellVersionProperty().set(cell == null ? 0 : cell.getVersion());
+                uiModel.selectedCellLastUserUpdatingProperty().set(cell == null ? "" : cell.getUserNameToUpdate());
+                uiModel.selectedCellIdProperty().set(cellID);
+                gridManager.highlightDependenciesAndInfluences(cell);
+                AnimationManager.animateCellSelection(label);
+            }
         });
     }
 
