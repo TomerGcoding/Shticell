@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="WebAppShticell:Web">
+    <output-path>$PROJECT_DIR$/out/artifacts/WebAppShticell_Web</output-path>
+    <root id="archive" name="WebAppShticell_Web.war">
+      <element id="artifact" artifact-name="WebAppShticell:Web exploded" />
+    </root>
+  </artifact>
+</component>
